@@ -18,6 +18,7 @@ import {RuleBlacklistInvariantStorage} from
 import {RuleWhitelist} from "src/rules/validation/RuleWhitelist.sol";
 import {RuleWhitelistWrapper} from "src/rules/validation/RuleWhitelistWrapper.sol";
 import {RuleMaxTotalSupply} from "src/rules/validation/RuleMaxTotalSupply.sol";
+import {RuleIdentityRegistry} from "src/rules/validation/RuleIdentityRegistry.sol";
 // RuleConditionalTransfer
 import {RuleConditionalTransferLight} from "src/rules/operation/RuleConditionalTransferLight.sol";
 import {
@@ -29,6 +30,8 @@ import {RuleAddressSetInvariantStorage} from
     "src/rules/validation/abstract/RuleAddressSet/invariantStorage/RuleAddressSetInvariantStorage.sol";
 import {RuleMaxTotalSupplyInvariantStorage} from
     "src/rules/validation/abstract/RuleMaxTotalSupplyInvariantStorage.sol";
+import {RuleIdentityRegistryInvariantStorage} from
+    "src/rules/validation/abstract/RuleIdentityRegistryInvariantStorage.sol";
 
 import {RuleSanctionsListInvariantStorage} from "src/rules/validation/abstract/RuleSanctionsListInvariantStorage.sol";
 // Rule interface
@@ -46,6 +49,7 @@ abstract contract HelperContract is
     RuleAddressSetInvariantStorage,
     RuleSanctionsListInvariantStorage,
     RuleMaxTotalSupplyInvariantStorage,
+    RuleIdentityRegistryInvariantStorage,
     RuleConditionalTransferLightInvariantStorage,
     RuleEngineInvariantStorage
 {
@@ -77,6 +81,7 @@ abstract contract HelperContract is
     RuleBlacklist public ruleBlacklist;
     RuleWhitelist public ruleWhitelist;
     RuleMaxTotalSupply public ruleMaxTotalSupply;
+    RuleIdentityRegistry public ruleIdentityRegistry;
     RuleConditionalTransferLight public ruleConditionalTransferLight;
 
     // CMTAT

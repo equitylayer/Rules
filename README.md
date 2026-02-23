@@ -98,6 +98,10 @@ Here the list of codes used by the different rules
 |                         | Free slot                            | 72-79 |
 | RuleMaxTotalSupply      | CODE_MAX_TOTAL_SUPPLY_EXCEEDED       | 80    |
 |                         | Free slot                            | 81-89 |
+| RuleIdentityRegistry    | CODE_ADDRESS_FROM_NOT_VERIFIED       | 90    |
+|                         | CODE_ADDRESS_TO_NOT_VERIFIED         | 91    |
+|                         | CODE_ADDRESS_SPENDER_NOT_VERIFIED    | 92    |
+|                         | Free slot                            | 93-99 |
 
 Note: 
 
@@ -219,11 +223,12 @@ There are two categories of rules: validation rules (Read-only) and operation ru
 | RuleBlacklist                                                | Ready-only                           | ☑                                     | This rule can be used to forbid transfer from/to addresses in the blacklist |
 | RuleSanctionList                                             | Ready-only                           | ☑                                     | The purpose of this contract is to use the oracle contract from [Chainalysis](https://go.chainalysis.com/chainalysis-oracle-docs.html) to forbid transfer from/to an address included in a sanctions designation (US, EU, or UN). |
 | RuleMaxTotalSupply                                           | Ready-only                           | ☑                                     | This rule limits minting so that the total supply never exceeds a configured maximum. |
+| RuleIdentityRegistry                                         | Ready-only                           | ☑                                     | This rule checks the ERC-3643 Identity Registry for transfer participants when configured. |
 | RuleConditionalTransferLight                                | Ready-Write                          | ☒<br /> (experimental rule)           | This rule requires that transfers have to be approved by an operator before being executed. Each approval is consumed once and the same transfer can be approved multiple times. |
 
 ### Read-only (validation) rule
 
-Currently, there are five validation rules: whitelist, whitelistWrapper, blacklist, sanctionlist, and max total supply.
+Currently, there are six validation rules: whitelist, whitelistWrapper, blacklist, sanctionlist, max total supply, and identity registry.
 
 #### Whitelist
 
@@ -290,6 +295,10 @@ During a transfer, if either address (from or to) is in the sanction list of the
 #### Max total supply
 
 Limits minting so that total supply never exceeds a configured maximum. Transfers and burns are not affected; only mints (`from == address(0)`) are checked.
+
+#### Identity registry
+
+If an identity registry address is set, this rule checks `isVerified` for the sender, recipient, and spender (for `transferFrom`). Zero addresses are ignored, and burns (`to == address(0)`) are always allowed so non‑verified holders can burn.
 
 ### Read-Write (Operation) rule
 
