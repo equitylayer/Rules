@@ -94,8 +94,8 @@ Here the list of codes used by the different rules
 |                         | CODE_ADDRESS_TO_IS_BLACKLISTED       | 37    |
 |                         | CODE_ADDRESS_SPENDER_IS_BLACKLISTED  | 38    |
 |                         | Free slot                            | 39-44 |
-| RuleConditionalTransfer | CODE_TRANSFER_REQUEST_NOT_APPROVED   | 45    |
-|                         | Free slot                            | 46-50 |
+| RuleConditionalTransferLight | CODE_TRANSFER_REQUEST_NOT_APPROVED   | 71    |
+|                         | Free slot                            | 72-79 |
 
 Note: 
 
@@ -216,7 +216,7 @@ There are two categories of rules: validation rules (Read-only) and operation ru
 | RuleWhitelistWrapper                                         | Ready-only                           | ☑                                     | This rule can be used to restrict transfers from/to only addresses inside a group of whitelist rules managed by different operators. |
 | RuleBlacklist                                                | Ready-only                           | ☑                                     | This rule can be used to forbid transfer from/to addresses in the blacklist |
 | RuleSanctionList                                             | Ready-only                           | ☑                                     | The purpose of this contract is to use the oracle contract from [Chainalysis](https://go.chainalysis.com/chainalysis-oracle-docs.html) to forbid transfer from/to an address included in a sanctions designation (US, EU, or UN). |
-| RuleConditionalTransfer<br />(Separate [GitHub repository](https://github.com/CMTA/RuleConditionalTransfer)) | Ready-Write                          | ☒<br /> (experimental rule)           | This rule requires that transfers have to be approved before being executed by the token. Implement several options such as a time limit for approving a request as well as for carrying out the transfer. |
+| RuleConditionalTransferLight                                | Ready-Write                          | ☒<br /> (experimental rule)           | This rule requires that transfers have to be approved by an operator before being executed. Each approval is consumed once and the same transfer can be approved multiple times. |
 
 ### Read-only (validation) rule
 
@@ -286,23 +286,11 @@ During a transfer, if either address (from or to) is in the sanction list of the
 
 ### Read-Write (Operation) rule
 
-For the moment, there is only one operation rule available: ConditionalTransfer.
+For the moment, there is only one operation rule available: ConditionalTransferLight.
 
-#### Conditional transfer
+#### Conditional transfer (light)
 
-> This rule has been moved to a dedicated repository: [RuleConditionalTransfer](https://github.com/CMTA/RuleConditionalTransfer)
-
-This rule requires that transfers must be approved before being executed by the token holders. During the transfer call, the rule will check if the transfer has been approved. If it has, the approval will be removed since the transfer has been processed, applying a write operation on the blockchain.
-
-This rule requires that transfers be approved by the token holders before being executed.
-
-Initially, this rule was designed to implement a specific requirement in Swiss law (Vinkulierung), but it has since been generalized to be more flexible.
-
-According to Swiss law, if a transfer is not approved or denied within three months, the request is considered approved. This option can be activated by setting the option AUTOMATIC_APPROVAL in the rule.
-
-We have added another option, not required by Swiss law, to automatically perform a transfer if the transfer request is approved. This option can be activated by setting the option AUTOMATIC_TRANSFER in the rule.
-
-Reference: [Taurus - Token Transfer Management: How to Apply Restrictions with CMTAT and ERC-1404](https://www.taurushq.com/blog/token-transfer-management-how-to-apply-restrictions-with-cmtat-and-erc-1404/)
+This rule requires that transfers must be approved by an operator before being executed. It hashes `(from, to, value)` to track approvals and allows the same transfer to be approved multiple times. Each successful transfer consumes one approval, applying a write operation on the blockchain.
 
 
 
