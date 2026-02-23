@@ -198,6 +198,11 @@ contract RuleWhitelistWrapper is
         checkSpender = value;
     }
 
+    /**
+     * @dev Restrict rules management to the dedicated role.
+     */
+    function _onlyRulesManager() internal virtual override onlyRole(RULES_MANAGEMENT_ROLE) {}
+
     /*//////////////////////////////////////////////////////////////
                            ERC-2771
     //////////////////////////////////////////////////////////////*/

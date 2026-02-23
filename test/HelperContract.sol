@@ -3,7 +3,6 @@ pragma solidity ^0.8.20;
 
 import "forge-std/Test.sol";
 import "CMTAT/deployment/CMTATStandalone.sol";
-import "CMTAT/libraries/Errors.sol";
 
 // RuleEngine
 import {RuleEngineInvariantStorage} from "RuleEngine/modules/library/RuleEngineInvariantStorage.sol";
