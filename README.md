@@ -96,6 +96,8 @@ Here the list of codes used by the different rules
 |                         | Free slot                            | 39-44 |
 | RuleConditionalTransferLight | CODE_TRANSFER_REQUEST_NOT_APPROVED   | 71    |
 |                         | Free slot                            | 72-79 |
+| RuleMaxTotalSupply      | CODE_MAX_TOTAL_SUPPLY_EXCEEDED       | 80    |
+|                         | Free slot                            | 81-89 |
 
 Note: 
 
@@ -216,11 +218,12 @@ There are two categories of rules: validation rules (Read-only) and operation ru
 | RuleWhitelistWrapper                                         | Ready-only                           | ☑                                     | This rule can be used to restrict transfers from/to only addresses inside a group of whitelist rules managed by different operators. |
 | RuleBlacklist                                                | Ready-only                           | ☑                                     | This rule can be used to forbid transfer from/to addresses in the blacklist |
 | RuleSanctionList                                             | Ready-only                           | ☑                                     | The purpose of this contract is to use the oracle contract from [Chainalysis](https://go.chainalysis.com/chainalysis-oracle-docs.html) to forbid transfer from/to an address included in a sanctions designation (US, EU, or UN). |
+| RuleMaxTotalSupply                                           | Ready-only                           | ☑                                     | This rule limits minting so that the total supply never exceeds a configured maximum. |
 | RuleConditionalTransferLight                                | Ready-Write                          | ☒<br /> (experimental rule)           | This rule requires that transfers have to be approved by an operator before being executed. Each approval is consumed once and the same transfer can be approved multiple times. |
 
 ### Read-only (validation) rule
 
-Currently, there are four validation rules: whitelist, whitelistWrapper, blacklist, and sanctionlist.
+Currently, there are five validation rules: whitelist, whitelistWrapper, blacklist, sanctionlist, and max total supply.
 
 #### Whitelist
 
@@ -283,6 +286,10 @@ During a transfer, if either address (from or to) is in the sanction list of the
 
 
 ![surya_inheritance_RuleWhitelistWrapper.sol](./doc/surya/surya_inheritance/surya_inheritance_RuleSanctionList.sol.png)
+
+#### Max total supply
+
+Limits minting so that total supply never exceeds a configured maximum. Transfers and burns are not affected; only mints (`from == address(0)`) are checked.
 
 ### Read-Write (Operation) rule
 
