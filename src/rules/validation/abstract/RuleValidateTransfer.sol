@@ -8,6 +8,7 @@ import {IERC3643ComplianceRead} from "CMTAT/interfaces/tokenization/IERC3643Part
 import {IERC7551Compliance} from "CMTAT/interfaces/tokenization/draft-IERC7551.sol";
 /* ==== RuleEngine === */
 import {IRule} from "RuleEngine/interfaces/IRule.sol";
+import {RuleInterfaceId} from "RuleEngine/modules/library/RuleInterfaceId.sol";
 import {
     IERC7943NonFungibleCompliance,
     IERC7943NonFungibleComplianceExtend
@@ -80,6 +81,6 @@ abstract contract RuleValidateTransfer is IERC7943NonFungibleComplianceExtend, I
     }
 
     function supportsInterface(bytes4 interfaceId) public view virtual returns (bool) {
-        return interfaceId == type(IRule).interfaceId;
+        return interfaceId == type(IRule).interfaceId || interfaceId == RuleInterfaceId.IRULE_INTERFACE_ID;
     }
 }
