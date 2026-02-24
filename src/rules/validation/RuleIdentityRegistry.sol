@@ -30,7 +30,7 @@ contract RuleIdentityRegistry is
         }
     }
 
-    function setIdentityRegistry(address newRegistry) public onlyRole(DEFAULT_ADMIN_ROLE) {
+    function setIdentityRegistry(address newRegistry) public onlyIdentityRegistryManager {
         if (newRegistry == address(0)) {
             revert RuleIdentityRegistry_RegistryAddressZeroNotAllowed();
         }
@@ -38,7 +38,7 @@ contract RuleIdentityRegistry is
         emit IdentityRegistryUpdated(newRegistry);
     }
 
-    function clearIdentityRegistry() public onlyRole(DEFAULT_ADMIN_ROLE) {
+    function clearIdentityRegistry() public onlyIdentityRegistryManager {
         identityRegistry = IIdentityRegistryVerified(address(0));
         emit IdentityRegistryUpdated(address(0));
     }
@@ -173,5 +173,18 @@ contract RuleIdentityRegistry is
         returns (bool)
     {
         return AccessControl.supportsInterface(interfaceId) || RuleValidateTransfer.supportsInterface(interfaceId);
+    }
+
+    /*//////////////////////////////////////////////////////////////
+                            ACCESS CONTROL
+    //////////////////////////////////////////////////////////////*/
+
+    modifier onlyIdentityRegistryManager() {
+        _authorizeIdentityRegistryManager();
+        _;
+    }
+
+    function _authorizeIdentityRegistryManager() internal virtual {
+        _checkRole(DEFAULT_ADMIN_ROLE, _msgSender());
     }
 }

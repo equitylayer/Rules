@@ -53,7 +53,7 @@ contract RuleConditionalTransferLight is
     /**
      * @notice Approve a specific transfer. Can be approved multiple times.
      */
-    function approveTransfer(address from, address to, uint256 value) public onlyRole(OPERATOR_ROLE) {
+    function approveTransfer(address from, address to, uint256 value) public onlyTransferApprover {
         bytes32 transferHash = keccak256(abi.encodePacked(from, to, value));
         approvalCounts[transferHash] += 1;
         emit TransferApproved(from, to, value, approvalCounts[transferHash]);
@@ -74,7 +74,7 @@ contract RuleConditionalTransferLight is
     function transferred(address from, address to, uint256 value)
         public
         override(IERC3643IComplianceContract)
-        onlyRole(RULE_ENGINE_CONTRACT_ROLE)
+        onlyTransferExecutor
     {
         bytes32 transferHash = keccak256(abi.encodePacked(from, to, value));
         uint256 count = approvalCounts[transferHash];
@@ -90,7 +90,7 @@ contract RuleConditionalTransferLight is
     function transferred(address, /* spender */ address from, address to, uint256 value)
         public
         override(IRuleEngine)
-        onlyRole(RULE_ENGINE_CONTRACT_ROLE)
+        onlyTransferExecutor
     {
         transferred(from, to, value);
     }
@@ -154,5 +154,27 @@ contract RuleConditionalTransferLight is
     {
         return detectTransferRestrictionFrom(spender, from, to, value)
             == uint8(IERC1404Extend.REJECTED_CODE_BASE.TRANSFER_OK);
+    }
+
+    /*//////////////////////////////////////////////////////////////
+                            ACCESS CONTROL
+    //////////////////////////////////////////////////////////////*/
+
+    modifier onlyTransferApprover() {
+        _authorizeTransferApproval();
+        _;
+    }
+
+    modifier onlyTransferExecutor() {
+        _authorizeTransferExecution();
+        _;
+    }
+
+    function _authorizeTransferApproval() internal virtual {
+        _checkRole(OPERATOR_ROLE, _msgSender());
+    }
+
+    function _authorizeTransferExecution() internal virtual {
+        _checkRole(RULE_ENGINE_CONTRACT_ROLE, _msgSender());
     }
 }

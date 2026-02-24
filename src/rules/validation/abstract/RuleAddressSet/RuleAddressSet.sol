@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: MPL-2.0
 pragma solidity ^0.8.20;
 
-import {AccessControlModuleStandalone} from "../../../../modules/AccessControlModuleStandalone.sol";
 import {MetaTxModuleStandalone, ERC2771Context, Context} from "../../../../modules/MetaTxModuleStandalone.sol";
 import {RuleAddressSetInternal} from "./RuleAddressSetInternal.sol";
 import {RuleAddressSetInvariantStorage} from "./invariantStorage/RuleAddressSetInvariantStorage.sol";
@@ -19,7 +18,6 @@ import {IAddressList} from "../../../interfaces/IAddressList.sol";
  */
 
 abstract contract RuleAddressSet is
-    AccessControlModuleStandalone,
     MetaTxModuleStandalone,
     RuleAddressSetInternal,
     RuleAddressSetInvariantStorage,
@@ -38,16 +36,9 @@ abstract contract RuleAddressSet is
 
     /**
      * @notice Initializes the RuleAddressSet contract.
-     * @param admin The address granted the default admin role.
      * @param forwarderIrrevocable Address of the ERC2771 forwarder (for meta-transactions).
-     * @dev Reverts if the admin address is the zero address.
      */
-    constructor(address admin, address forwarderIrrevocable)
-        MetaTxModuleStandalone(forwarderIrrevocable)
-        AccessControlModuleStandalone(admin)
-    {
-        // nothing to do
-    }
+    constructor(address forwarderIrrevocable) MetaTxModuleStandalone(forwarderIrrevocable) {}
 
     /*//////////////////////////////////////////////////////////////
                               CORE LOGIC
@@ -60,7 +51,7 @@ abstract contract RuleAddressSet is
      * - Accessible only by accounts with the `ADDRESS_LIST_ADD_ROLE`.
      * @param targetAddresses Array of addresses to be added.
      */
-    function addAddresses(address[] calldata targetAddresses) public onlyRole(ADDRESS_LIST_ADD_ROLE) {
+    function addAddresses(address[] calldata targetAddresses) public onlyAddressListAdd {
         _addAddresses(targetAddresses);
         emit AddAddresses(targetAddresses);
     }
@@ -72,7 +63,7 @@ abstract contract RuleAddressSet is
      * - Accessible only by accounts with the `ADDRESS_LIST_REMOVE_ROLE`.
      * @param targetAddresses Array of addresses to remove.
      */
-    function removeAddresses(address[] calldata targetAddresses) public onlyRole(ADDRESS_LIST_REMOVE_ROLE) {
+    function removeAddresses(address[] calldata targetAddresses) public onlyAddressListRemove {
         _removeAddresses(targetAddresses);
         emit RemoveAddresses(targetAddresses);
     }
@@ -84,7 +75,7 @@ abstract contract RuleAddressSet is
      * - Accessible only by accounts with the `ADDRESS_LIST_ADD_ROLE`.
      * @param targetAddress The address to be added.
      */
-    function addAddress(address targetAddress) public onlyRole(ADDRESS_LIST_ADD_ROLE) {
+    function addAddress(address targetAddress) public onlyAddressListAdd {
         if (_isAddressListed(targetAddress)) {
             revert RuleAddressSet_AddressAlreadyListed();
         }
@@ -99,13 +90,31 @@ abstract contract RuleAddressSet is
      * - Accessible only by accounts with the `ADDRESS_LIST_REMOVE_ROLE`.
      * @param targetAddress The address to be removed.
      */
-    function removeAddress(address targetAddress) public onlyRole(ADDRESS_LIST_REMOVE_ROLE) {
+    function removeAddress(address targetAddress) public onlyAddressListRemove {
         if (!_isAddressListed(targetAddress)) {
             revert RuleAddressSet_AddressNotFound();
         }
         _removeAddress(targetAddress);
         emit RemoveAddress(targetAddress);
     }
+
+    /*//////////////////////////////////////////////////////////////
+                            ACCESS CONTROL
+    //////////////////////////////////////////////////////////////*/
+
+    modifier onlyAddressListAdd() {
+        _authorizeAddressListAdd();
+        _;
+    }
+
+    modifier onlyAddressListRemove() {
+        _authorizeAddressListRemove();
+        _;
+    }
+
+    function _authorizeAddressListAdd() internal view virtual;
+
+    function _authorizeAddressListRemove() internal view virtual;
 
     /**
      * @notice Returns the total number of currently listed addresses.
@@ -149,17 +158,17 @@ abstract contract RuleAddressSet is
     //////////////////////////////////////////////////////////////*/
 
     /// @inheritdoc ERC2771Context
-    function _msgSender() internal view override(ERC2771Context, Context) returns (address sender) {
+    function _msgSender() internal view virtual override(ERC2771Context) returns (address sender) {
         return ERC2771Context._msgSender();
     }
 
     /// @inheritdoc ERC2771Context
-    function _msgData() internal view override(ERC2771Context, Context) returns (bytes calldata) {
+    function _msgData() internal view virtual override(ERC2771Context) returns (bytes calldata) {
         return ERC2771Context._msgData();
     }
 
     /// @inheritdoc ERC2771Context
-    function _contextSuffixLength() internal view override(ERC2771Context, Context) returns (uint256) {
+    function _contextSuffixLength() internal view virtual override(ERC2771Context) returns (uint256) {
         return ERC2771Context._contextSuffixLength();
     }
 }

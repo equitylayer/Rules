@@ -32,12 +32,12 @@ contract RuleMaxTotalSupply is AccessControlModuleStandalone, RuleValidateTransf
         maxTotalSupply = maxTotalSupply_;
     }
 
-    function setMaxTotalSupply(uint256 newMaxTotalSupply) public onlyRole(DEFAULT_ADMIN_ROLE) {
+    function setMaxTotalSupply(uint256 newMaxTotalSupply) public onlyMaxTotalSupplyManager {
         maxTotalSupply = newMaxTotalSupply;
         emit MaxTotalSupplyUpdated(newMaxTotalSupply);
     }
 
-    function setTokenContract(address newTokenContract) public onlyRole(DEFAULT_ADMIN_ROLE) {
+    function setTokenContract(address newTokenContract) public onlyMaxTotalSupplyManager {
         if (newTokenContract == address(0)) {
             revert RuleMaxTotalSupply_TokenAddressZeroNotAllowed();
         }
@@ -152,5 +152,18 @@ contract RuleMaxTotalSupply is AccessControlModuleStandalone, RuleValidateTransf
         returns (bool)
     {
         return AccessControl.supportsInterface(interfaceId) || RuleValidateTransfer.supportsInterface(interfaceId);
+    }
+
+    /*//////////////////////////////////////////////////////////////
+                            ACCESS CONTROL
+    //////////////////////////////////////////////////////////////*/
+
+    modifier onlyMaxTotalSupplyManager() {
+        _authorizeMaxTotalSupplyManager();
+        _;
+    }
+
+    function _authorizeMaxTotalSupplyManager() internal virtual {
+        _checkRole(DEFAULT_ADMIN_ROLE, _msgSender());
     }
 }

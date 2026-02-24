@@ -174,7 +174,7 @@ contract RuleSanctionsList is
      * @param sanctionContractOracle_ address of your oracle contract
      * @dev zero address is authorized to authorize all transfers
      */
-    function setSanctionListOracle(ISanctionsList sanctionContractOracle_) public virtual onlyRole(SANCTIONLIST_ROLE) {
+    function setSanctionListOracle(ISanctionsList sanctionContractOracle_) public virtual onlySanctionListManager {
         _setSanctionListOracle(sanctionContractOracle_);
     }
 
@@ -235,6 +235,19 @@ contract RuleSanctionsList is
     function _setSanctionListOracle(ISanctionsList sanctionContractOracle_) internal {
         sanctionsList = sanctionContractOracle_;
         emit SetSanctionListOracle(sanctionContractOracle_);
+    }
+
+    /*//////////////////////////////////////////////////////////////
+                            ACCESS CONTROL
+    //////////////////////////////////////////////////////////////*/
+
+    modifier onlySanctionListManager() {
+        _authorizeSanctionListManager();
+        _;
+    }
+
+    function _authorizeSanctionListManager() internal virtual {
+        _checkRole(SANCTIONLIST_ROLE, _msgSender());
     }
 
     /*//////////////////////////////////////////////////////////////

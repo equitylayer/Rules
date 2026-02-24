@@ -2,17 +2,13 @@
 pragma solidity ^0.8.20;
 
 import {AccessControl} from "OZ/access/AccessControl.sol";
+import {Context} from "OZ/utils/Context.sol";
 /* ==== Abtract contracts === */
+import {AccessControlModuleStandalone} from "../../modules/AccessControlModuleStandalone.sol";
+import {RuleWhitelistBase} from "./abstract/RuleWhitelistBase.sol";
 import {RuleAddressSet} from "./abstract/RuleAddressSet/RuleAddressSet.sol";
-import {RuleWhitelistCommon, RuleValidateTransfer} from "./abstract/RuleWhitelistCommon.sol";
 /* ==== CMTAT === */
 import {IERC1404, IERC1404Extend} from "CMTAT/interfaces/tokenization/draft-IERC1404.sol";
-/* ==== Interfaces === */
-import {IIdentityRegistryVerified} from "../interfaces/IIdentityRegistry.sol";
-import {
-    IERC7943NonFungibleCompliance,
-    IERC7943NonFungibleComplianceExtend
-} from "../interfaces/IERC7943NonFungibleCompliance.sol";
 
 /**
  * @title Rule Whitelist
@@ -22,7 +18,7 @@ import {
  * - Integrates restriction code logic from {RuleWhitelistCommon}.
  * - Implements {IERC1404} to return specific restriction codes for non-whitelisted transfers.
  */
-contract RuleWhitelist is RuleAddressSet, RuleWhitelistCommon, IIdentityRegistryVerified {
+contract RuleWhitelist is RuleWhitelistBase, AccessControlModuleStandalone {
     /*//////////////////////////////////////////////////////////////
                               CONSTRUCTOR
     //////////////////////////////////////////////////////////////*/
@@ -31,139 +27,54 @@ contract RuleWhitelist is RuleAddressSet, RuleWhitelistCommon, IIdentityRegistry
      * @param forwarderIrrevocable Address of the forwarder, required for the gasless support
      */
     constructor(address admin, address forwarderIrrevocable, bool checkSpender_)
-        RuleAddressSet(admin, forwarderIrrevocable)
+        RuleWhitelistBase(forwarderIrrevocable, checkSpender_)
+        AccessControlModuleStandalone(admin)
     {
-        checkSpender = checkSpender_;
+        // no-op
     }
 
     /* ============  View Functions ============ */
 
     /**
-     * @notice Detects whether a transfer between two addresses is allowed under the whitelist rule.
-     * @dev
-     * - Returns a restriction code indicating why a transfer is blocked.
-     * - Implements the `IERC1404.detectTransferRestriction` interface.
-     * @param from The address sending tokens.
-     * @param to The address receiving tokens.
-     * @return code Restriction code (e.g., `TRANSFER_OK` or specific whitelist rejection).
-     *
-     * | Condition | Returned Code |
-     * |------------|---------------|
-     * | `from` not whitelisted | `CODE_ADDRESS_FROM_NOT_WHITELISTED` |
-     * | `to` not whitelisted | `CODE_ADDRESS_TO_NOT_WHITELISTED` |
-     * | Both whitelisted | `TRANSFER_OK` |
+     * @notice Indicates whether this contract supports a given interface.
+     * @param interfaceId The interface identifier, as specified in ERC-165.
+     * @return supported True if the interface is supported.
      */
-    function detectTransferRestriction(address from, address to, uint256 /* value */ )
+    function supportsInterface(bytes4 interfaceId)
         public
         view
         virtual
-        override(IERC1404)
-        returns (uint8 code)
+        override(AccessControl, RuleWhitelistBase)
+        returns (bool)
     {
-        if (!isAddressListed(from)) {
-            return CODE_ADDRESS_FROM_NOT_WHITELISTED;
-        } else if (!isAddressListed(to)) {
-            return CODE_ADDRESS_TO_NOT_WHITELISTED;
-        } else {
-            return uint8(REJECTED_CODE_BASE.TRANSFER_OK);
-        }
+        return AccessControl.supportsInterface(interfaceId) || RuleWhitelistBase.supportsInterface(interfaceId);
     }
 
-    /**
-     * @inheritdoc IERC7943NonFungibleComplianceExtend
-     */
-    function detectTransferRestriction(address from, address to, uint256, /* tokenId */ uint256 value)
-        public
-        view
-        virtual
-        override(IERC7943NonFungibleComplianceExtend)
-        returns (uint8)
-    {
-        return detectTransferRestriction(from, to, value);
+    /*//////////////////////////////////////////////////////////////
+                            ACCESS CONTROL
+    //////////////////////////////////////////////////////////////*/
+
+    function _authorizeCheckSpenderManager() internal view virtual override {
+        _checkRole(DEFAULT_ADMIN_ROLE, _msgSender());
     }
 
-    /**
-     * @notice Detects transfer restriction for delegated transfers (`transferFrom`).
-     * @dev
-     * - Checks the `spender`, `from`, and `to` addresses for whitelist compliance.
-     * - Implements `IERC1404Extend.detectTransferRestrictionFrom`.
-     * @param spender The address initiating the transfer on behalf of another.
-     * @param from The address from which tokens are transferred.
-     * @param to The address receiving the tokens.
-     * @param value The amount being transferred (unused in this check).
-     * @return code Restriction code, or `TRANSFER_OK` if all parties are whitelisted.
-     *
-     * | Condition | Returned Code |
-     * |------------|---------------|
-     * | `spender` not whitelisted | `CODE_ADDRESS_SPENDER_NOT_WHITELISTED` |
-     * | `from` or `to` not whitelisted | respective restriction code from `detectTransferRestriction` |
-     * | All whitelisted | `TRANSFER_OK` |
-     */
-    function detectTransferRestrictionFrom(address spender, address from, address to, uint256 value)
-        public
-        view
-        virtual
-        override(IERC1404Extend)
-        returns (uint8 code)
-    {
-        if (checkSpender && !isAddressListed(spender)) {
-            return CODE_ADDRESS_SPENDER_NOT_WHITELISTED;
-        }
-        return detectTransferRestriction(from, to, value);
+    function _authorizeAddressListAdd() internal view virtual override {
+        _checkRole(ADDRESS_LIST_ADD_ROLE, _msgSender());
     }
 
-    /**
-     * @inheritdoc IERC7943NonFungibleComplianceExtend
-     */
-    function detectTransferRestrictionFrom(
-        address spender,
-        address from,
-        address to,
-        uint256, /* tokenId */
-        uint256 value
-    ) public view override(IERC7943NonFungibleComplianceExtend) returns (uint8) {
-        return detectTransferRestrictionFrom(spender, from, to, value);
+    function _authorizeAddressListRemove() internal view virtual override {
+        _checkRole(ADDRESS_LIST_REMOVE_ROLE, _msgSender());
     }
 
-    /**
-     * @notice Checks whether a specific address is currently listed.
-     * @param targetAddress The address to check.
-     * @return isListed True if listed, false otherwise.
-     */
-    function isVerified(address targetAddress)
-        public
-        view
-        virtual
-        override(IIdentityRegistryVerified)
-        returns (bool isListed)
-    {
-        isListed = _isAddressListed(targetAddress);
+    function _msgSender() internal view override(Context, RuleAddressSet) returns (address sender) {
+        return super._msgSender();
     }
 
-    function supportsInterface(bytes4 interfaceId) public view virtual override(AccessControl, RuleValidateTransfer) returns (bool) {
-        return AccessControl.supportsInterface(interfaceId) || RuleValidateTransfer.supportsInterface(interfaceId);
+    function _msgData() internal view override(Context, RuleAddressSet) returns (bytes calldata) {
+        return super._msgData();
     }
 
-    /** 
-    * @notice Sets whether the rule should enforce spender-based checks.
-    * @dev
-    *  - Restricted to holders of the `DEFAULT_ADMIN_ROLE`.
-    *  - Updates the internal `checkSpender` flag.
-    *  - Emits a {CheckSpenderUpdated} event.
-    * @param value The new state of the `checkSpender` flag.
-    */
-    function setCheckSpender(bool value)
-        public virtual
-        onlyRole(DEFAULT_ADMIN_ROLE) // or a dedicated role if you prefer
-    {
-        _setCheckSpender(value);
-        emit CheckSpenderUpdated(value);
-    }
-
-    /**
-    * @dev Internal helper to update the `checkSpender` flag.
-    */ 
-    function _setCheckSpender(bool value) internal {
-        checkSpender = value;
+    function _contextSuffixLength() internal view override(Context, RuleAddressSet) returns (uint256) {
+        return super._contextSuffixLength();
     }
 }

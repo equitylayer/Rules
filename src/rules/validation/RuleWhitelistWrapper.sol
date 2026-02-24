@@ -150,10 +150,7 @@ contract RuleWhitelistWrapper is
     *  - Emits a {CheckSpenderUpdated} event.
     * @param value The new state of the `checkSpender` flag.
     */
-    function setCheckSpender(bool value)
-        public virtual
-        onlyRole(DEFAULT_ADMIN_ROLE) // or a dedicated role if you prefer
-    {
+    function setCheckSpender(bool value) public virtual onlyCheckSpenderManager {
         _setCheckSpender(value);
         emit CheckSpenderUpdated(value);
     }
@@ -196,6 +193,19 @@ contract RuleWhitelistWrapper is
     */
     function _setCheckSpender(bool value) internal {
         checkSpender = value;
+    }
+
+    /*//////////////////////////////////////////////////////////////
+                            ACCESS CONTROL
+    //////////////////////////////////////////////////////////////*/
+
+    modifier onlyCheckSpenderManager() {
+        _authorizeCheckSpenderManager();
+        _;
+    }
+
+    function _authorizeCheckSpenderManager() internal virtual {
+        _checkRole(DEFAULT_ADMIN_ROLE, _msgSender());
     }
 
     /**
