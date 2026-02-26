@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MPL-2.0
 pragma solidity ^0.8.20;
 
-import {MetaTxModuleStandalone, ERC2771Context, Context} from "../../../../modules/MetaTxModuleStandalone.sol";
+import {MetaTxModuleStandalone, ERC2771Context} from "../../../../modules/MetaTxModuleStandalone.sol";
 import {RuleAddressSetInternal} from "./RuleAddressSetInternal.sol";
 import {RuleAddressSetInvariantStorage} from "./invariantStorage/RuleAddressSetInvariantStorage.sol";
 /* ==== Interfaces === */

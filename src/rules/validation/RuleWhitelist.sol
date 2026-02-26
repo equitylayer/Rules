@@ -8,7 +8,6 @@ import {AccessControlModuleStandalone} from "../../modules/AccessControlModuleSt
 import {RuleWhitelistBase} from "./abstract/RuleWhitelistBase.sol";
 import {RuleAddressSet} from "./abstract/RuleAddressSet/RuleAddressSet.sol";
 /* ==== CMTAT === */
-import {IERC1404, IERC1404Extend} from "CMTAT/interfaces/tokenization/draft-IERC1404.sol";
 
 /**
  * @title Rule Whitelist

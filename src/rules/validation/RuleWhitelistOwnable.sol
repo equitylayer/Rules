@@ -2,6 +2,7 @@
 pragma solidity ^0.8.20;
 
 import {Ownable} from "OZ/access/Ownable.sol";
+import {Ownable2Step} from "OZ/access/Ownable2Step.sol";
 import {Context} from "OZ/utils/Context.sol";
 import {RuleWhitelistBase} from "./abstract/RuleWhitelistBase.sol";
 import {RuleAddressSet} from "./abstract/RuleAddressSet/RuleAddressSet.sol";
@@ -10,7 +11,7 @@ import {RuleAddressSet} from "./abstract/RuleAddressSet/RuleAddressSet.sol";
  * @title RuleWhitelistOwnable
  * @notice Ownable variant of RuleWhitelist with owner-based authorization hooks.
  */
-contract RuleWhitelistOwnable is RuleWhitelistBase, Ownable {
+contract RuleWhitelistOwnable is RuleWhitelistBase, Ownable2Step {
     constructor(address owner, address forwarderIrrevocable, bool checkSpender_)
         RuleWhitelistBase(forwarderIrrevocable, checkSpender_)
         Ownable(owner)

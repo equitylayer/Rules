@@ -322,6 +322,14 @@ For all rules, the default admin is the address put in argument(`admin`) inside 
 
 See also [docs.openzeppelin.com - AccessControl](https://docs.openzeppelin.com/contracts/5.x/api/access#AccessControl)
 
+### Ownable2Step variants
+
+For simpler ownership-based control, some rules provide `Ownable2Step` variants (two-step ownership transfer):
+
+- `RuleWhitelistOwnable`
+- `RuleBlacklistOwnable`
+- `RuleWhitelistWrapperOwnable2Step`
+
 ### Address List
 
 Common access control between `blacklistRule`and `WhitelistRule`

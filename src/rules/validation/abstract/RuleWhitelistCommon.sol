@@ -8,10 +8,7 @@ import {IRuleEngine} from "CMTAT/interfaces/engine/IRuleEngine.sol";
 import {RuleWhitelistInvariantStorage} from "./RuleAddressSet/invariantStorage/RuleWhitelistInvariantStorage.sol";
 import {RuleValidateTransfer} from "./RuleValidateTransfer.sol";
 /* ==== Interface === */
-import {
-    IERC7943NonFungibleCompliance,
-    IERC7943NonFungibleComplianceExtend
-} from "../../interfaces/IERC7943NonFungibleCompliance.sol";
+import {IERC7943NonFungibleComplianceExtend} from "../../interfaces/IERC7943NonFungibleCompliance.sol";
 
 /**
  * @title Rule Whitelist Common
