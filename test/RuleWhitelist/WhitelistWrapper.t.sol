@@ -1,20 +1,21 @@
 // SPDX-License-Identifier: MPL-2.0
 pragma solidity ^0.8.20;
 
-import "forge-std/Test.sol";
-import "CMTAT/deployment/CMTATStandalone.sol";
-import "../HelperContract.sol";
+import {Test} from "forge-std/Test.sol";
+import {HelperContract} from "../HelperContract.sol";
 import {AccessControlModuleStandalone} from "../../src/modules/AccessControlModuleStandalone.sol";
+import {RuleWhitelist} from "src/rules/validation/RuleWhitelist.sol";
+import {RuleWhitelistWrapper} from "src/rules/validation/RuleWhitelistWrapper.sol";
 /**
  * @title Integration test with the CMTAT
  */
 
 contract CMTATIntegrationWhitelistWrapper is Test, HelperContract {
-    uint256 ADDRESS1_BALANCE_INIT = 31;
-    uint256 ADDRESS2_BALANCE_INIT = 32;
-    uint256 ADDRESS3_BALANCE_INIT = 33;
+    uint256 constant ADDRESS1_BALANCE_INIT = 31;
+    uint256 constant ADDRESS2_BALANCE_INIT = 32;
+    uint256 constant ADDRESS3_BALANCE_INIT = 33;
 
-    uint256 FLAG = 5;
+    uint256 constant FLAG = 5;
     RuleWhitelist ruleWhitelist2;
     RuleWhitelist ruleWhitelist3;
     RuleWhitelistWrapper ruleWhitelistWrapper;

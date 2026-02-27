@@ -54,7 +54,7 @@ contract RuleConditionalTransferLight is
      * @notice Approve a specific transfer. Can be approved multiple times.
      */
     function approveTransfer(address from, address to, uint256 value) public onlyTransferApprover {
-        bytes32 transferHash = keccak256(abi.encodePacked(from, to, value));
+        bytes32 transferHash = _transferHash(from, to, value);
         approvalCounts[transferHash] += 1;
         emit TransferApproved(from, to, value, approvalCounts[transferHash]);
     }
@@ -63,7 +63,7 @@ contract RuleConditionalTransferLight is
      * @notice Returns number of times a transfer is approved.
      */
     function approvedCount(address from, address to, uint256 value) public view returns (uint256) {
-        bytes32 transferHash = keccak256(abi.encodePacked(from, to, value));
+        bytes32 transferHash = _transferHash(from, to, value);
         return approvalCounts[transferHash];
     }
 
@@ -76,7 +76,7 @@ contract RuleConditionalTransferLight is
         override(IERC3643IComplianceContract)
         onlyTransferExecutor
     {
-        bytes32 transferHash = keccak256(abi.encodePacked(from, to, value));
+        bytes32 transferHash = _transferHash(from, to, value);
         uint256 count = approvalCounts[transferHash];
 
         if (count == 0) {
@@ -105,11 +105,21 @@ contract RuleConditionalTransferLight is
         override(IERC1404)
         returns (uint8)
     {
-        bytes32 transferHash = keccak256(abi.encodePacked(from, to, value));
+        bytes32 transferHash = _transferHash(from, to, value);
         if (approvalCounts[transferHash] == 0) {
             return CODE_TRANSFER_REQUEST_NOT_APPROVED;
         }
         return uint8(IERC1404Extend.REJECTED_CODE_BASE.TRANSFER_OK);
+    }
+
+    function _transferHash(address from, address to, uint256 value) internal pure returns (bytes32 hash) {
+        assembly {
+            let ptr := mload(0x40)
+            mstore(ptr, shl(96, from))
+            mstore(add(ptr, 0x14), shl(96, to))
+            mstore(add(ptr, 0x28), value)
+            hash := keccak256(ptr, 0x48)
+        }
     }
 
     function detectTransferRestrictionFrom(address, /* spender */ address from, address to, uint256 value)

@@ -2,7 +2,7 @@
 pragma solidity ^0.8.20;
 
 import {Test} from "forge-std/Test.sol";
-import "../HelperContract.sol";
+import {HelperContract} from "../HelperContract.sol";
 
 interface IOwnable2StepLike {
     function owner() external view returns (address);

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MPL-2.0
 pragma solidity ^0.8.20;
 
-import "../../validation/abstract/RuleCommonInvariantStorage.sol";
+import {RuleCommonInvariantStorage} from "../../validation/abstract/RuleCommonInvariantStorage.sol";
 
 abstract contract RuleConditionalTransferLightInvariantStorage is RuleCommonInvariantStorage {
     /* ============ Role ============ */

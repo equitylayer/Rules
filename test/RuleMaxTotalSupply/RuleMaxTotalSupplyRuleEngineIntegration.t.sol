@@ -1,9 +1,11 @@
 // SPDX-License-Identifier: MPL-2.0
 pragma solidity ^0.8.20;
 
-import "forge-std/Test.sol";
-import "../HelperContract.sol";
-import "../utils/TotalSupplyMock.sol";
+import {Test} from "forge-std/Test.sol";
+import {HelperContract} from "../HelperContract.sol";
+import {TotalSupplyMock} from "../utils/TotalSupplyMock.sol";
+import {RuleEngine} from "RuleEngine/RuleEngine.sol";
+import {RuleMaxTotalSupply} from "src/rules/validation/RuleMaxTotalSupply.sol";
 
 /**
  * @title Integration test between RuleEngine and RuleMaxTotalSupply

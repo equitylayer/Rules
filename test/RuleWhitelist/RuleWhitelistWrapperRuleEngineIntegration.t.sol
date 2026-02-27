@@ -1,8 +1,11 @@
 // SPDX-License-Identifier: MPL-2.0
 pragma solidity ^0.8.20;
 
-import "forge-std/Test.sol";
-import "../HelperContract.sol";
+import {Test} from "forge-std/Test.sol";
+import {HelperContract} from "../HelperContract.sol";
+import {RuleWhitelist} from "src/rules/validation/RuleWhitelist.sol";
+import {RuleWhitelistWrapper} from "src/rules/validation/RuleWhitelistWrapper.sol";
+import {RuleEngine} from "RuleEngine/RuleEngine.sol";
 
 /**
  * @title Integration test between RuleEngine and RuleWhitelistWrapper

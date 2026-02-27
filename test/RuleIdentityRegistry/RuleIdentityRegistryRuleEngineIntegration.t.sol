@@ -1,9 +1,11 @@
 // SPDX-License-Identifier: MPL-2.0
 pragma solidity ^0.8.20;
 
-import "forge-std/Test.sol";
-import "../HelperContract.sol";
-import "../utils/IdentityRegistryMock.sol";
+import {Test} from "forge-std/Test.sol";
+import {HelperContract} from "../HelperContract.sol";
+import {IdentityRegistryMock} from "../utils/IdentityRegistryMock.sol";
+import {RuleEngine} from "RuleEngine/RuleEngine.sol";
+import {RuleIdentityRegistry} from "src/rules/validation/RuleIdentityRegistry.sol";
 
 /**
  * @title Integration test between RuleEngine and RuleIdentityRegistry

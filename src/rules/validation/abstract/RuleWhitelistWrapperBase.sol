@@ -5,7 +5,8 @@ pragma solidity ^0.8.20;
 /* ==== OpenZeppelin === */
 import {AccessControl} from "OZ/access/AccessControl.sol";
 /* ==== Abtract contracts === */
-import {MetaTxModuleStandalone, ERC2771Context, Context} from "../../../modules/MetaTxModuleStandalone.sol";
+import {MetaTxModuleStandalone, ERC2771Context} from "../../../modules/MetaTxModuleStandalone.sol";
+import {Context} from "OZ/utils/Context.sol";
 import {RuleAddressSet} from "./RuleAddressSet/RuleAddressSet.sol";
 import {RuleWhitelistCommon} from "./RuleWhitelistCommon.sol";
 import {RuleValidateTransfer} from "./RuleValidateTransfer.sol";

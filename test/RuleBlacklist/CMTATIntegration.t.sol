@@ -1,41 +1,42 @@
 // SPDX-License-Identifier: MPL-2.0
 pragma solidity ^0.8.20;
 
-import "forge-std/Test.sol";
-import "CMTAT/deployment/CMTATStandalone.sol";
-import "../HelperContract.sol";
-import "RuleEngine/RuleEngine.sol";
+import {Test} from "forge-std/Test.sol";
+import {HelperContract} from "../HelperContract.sol";
+import {RuleEngine} from "RuleEngine/RuleEngine.sol";
+import {CMTATDeployment} from "RuleEngine/../test/utils/CMTATDeployment.sol";
+import {RuleBlacklist} from "src/rules/validation/RuleBlacklist.sol";
 
 /**
  * @title Integration test with the CMTAT
  */
 contract CMTATIntegration is Test, HelperContract {
-    uint256 ADDRESS1_BALANCE_INIT = 31;
-    uint256 ADDRESS2_BALANCE_INIT = 32;
-    uint256 ADDRESS3_BALANCE_INIT = 33;
+    uint256 constant ADDRESS1_BALANCE_INIT = 31;
+    uint256 constant ADDRESS2_BALANCE_INIT = 32;
+    uint256 constant ADDRESS3_BALANCE_INIT = 33;
     // Arrange
     function setUp() public {
         // CMTAT
         cmtatDeployment = new CMTATDeployment();
-        CMTAT_CONTRACT = cmtatDeployment.cmtat();
+        cmtatContract = cmtatDeployment.cmtat();
 
         vm.prank(DEFAULT_ADMIN_ADDRESS);
         ruleBlacklist = new RuleBlacklist(DEFAULT_ADMIN_ADDRESS, ZERO_ADDRESS);
 
         // specific arrange
         vm.prank(DEFAULT_ADMIN_ADDRESS);
-        ruleEngineMock = new RuleEngine(DEFAULT_ADMIN_ADDRESS, ZERO_ADDRESS, address(CMTAT_CONTRACT));
+        ruleEngineMock = new RuleEngine(DEFAULT_ADMIN_ADDRESS, ZERO_ADDRESS, address(cmtatContract));
         vm.prank(DEFAULT_ADMIN_ADDRESS);
         ruleEngineMock.addRule(ruleBlacklist);
         vm.prank(DEFAULT_ADMIN_ADDRESS);
-        CMTAT_CONTRACT.mint(ADDRESS1, ADDRESS1_BALANCE_INIT);
+        cmtatContract.mint(ADDRESS1, ADDRESS1_BALANCE_INIT);
         vm.prank(DEFAULT_ADMIN_ADDRESS);
-        CMTAT_CONTRACT.mint(ADDRESS2, ADDRESS2_BALANCE_INIT);
+        cmtatContract.mint(ADDRESS2, ADDRESS2_BALANCE_INIT);
         vm.prank(DEFAULT_ADMIN_ADDRESS);
-        CMTAT_CONTRACT.mint(ADDRESS3, ADDRESS3_BALANCE_INIT);
+        cmtatContract.mint(ADDRESS3, ADDRESS3_BALANCE_INIT);
         vm.prank(DEFAULT_ADMIN_ADDRESS);
         // We set the Rule Engine
-        CMTAT_CONTRACT.setRuleEngine(ruleEngineMock);
+        cmtatContract.setRuleEngine(ruleEngineMock);
     }
 
     /**
@@ -44,7 +45,7 @@ contract CMTATIntegration is Test, HelperContract {
     function testCanTransferIfAddressNotBlacklisted() public {
         // Act
         vm.prank(ADDRESS1);
-        CMTAT_CONTRACT.transfer(ADDRESS2, 21);
+        assertTrue(cmtatContract.transfer(ADDRESS2, 21));
     }
 
     function testCannotTransferIfAddressToIsBlacklisted() public {
@@ -65,7 +66,7 @@ contract CMTATIntegration is Test, HelperContract {
             )
         );
         // Act
-        CMTAT_CONTRACT.transfer(ADDRESS2, amount);
+        cmtatContract.transfer(ADDRESS2, amount);
     }
 
     function testCannotTransferIfAddressFronIsBlacklisted() public {
@@ -86,7 +87,7 @@ contract CMTATIntegration is Test, HelperContract {
             )
         );
         // Act
-        CMTAT_CONTRACT.transfer(ADDRESS2, amount);
+        cmtatContract.transfer(ADDRESS2, amount);
     }
 
     function testCannotTransferIfBothAddressesAreBlacklisted() public {
@@ -111,7 +112,7 @@ contract CMTATIntegration is Test, HelperContract {
                 CODE_ADDRESS_FROM_IS_BLACKLISTED
             )
         );
-        CMTAT_CONTRACT.transfer(ADDRESS2, amount);
+        cmtatContract.transfer(ADDRESS2, amount);
     }
 
     /**
@@ -123,10 +124,10 @@ contract CMTATIntegration is Test, HelperContract {
         resBool = ruleBlacklist.isAddressListed(ADDRESS2);
         // Assert
         assertEq(resBool, true);
-        uint8 res1 = CMTAT_CONTRACT.detectTransferRestriction(ADDRESS1, ADDRESS2, 11);
+        uint8 res1 = cmtatContract.detectTransferRestriction(ADDRESS1, ADDRESS2, 11);
         // Assert
         assertEq(res1, CODE_ADDRESS_TO_IS_BLACKLISTED);
-        string memory message1 = CMTAT_CONTRACT.messageForTransferRestriction(res1);
+        string memory message1 = cmtatContract.messageForTransferRestriction(res1);
         // Assert
         assertEq(message1, TEXT_ADDRESS_TO_IS_BLACKLISTED);
     }
@@ -140,23 +141,23 @@ contract CMTATIntegration is Test, HelperContract {
         resBool = ruleBlacklist.isAddressListed(ADDRESS1);
         assertEq(resBool, true);
         // Act
-        uint8 res1 = CMTAT_CONTRACT.detectTransferRestriction(ADDRESS1, ADDRESS2, 11);
+        uint8 res1 = cmtatContract.detectTransferRestriction(ADDRESS1, ADDRESS2, 11);
         // Assert
         assertEq(res1, CODE_ADDRESS_FROM_IS_BLACKLISTED);
         // Act
-        string memory message1 = CMTAT_CONTRACT.messageForTransferRestriction(res1);
+        string memory message1 = cmtatContract.messageForTransferRestriction(res1);
         // Assert
         assertEq(message1, TEXT_ADDRESS_FROM_IS_BLACKLISTED);
     }
 
     function testDetectAndMessageWithFromAndToNotBlacklisted() public view {
         // Act
-        uint8 res1 = CMTAT_CONTRACT.detectTransferRestriction(ADDRESS1, ADDRESS2, 11);
+        uint8 res1 = cmtatContract.detectTransferRestriction(ADDRESS1, ADDRESS2, 11);
 
         // Assert
         assertEq(res1, TRANSFER_OK);
         // Act
-        string memory message1 = CMTAT_CONTRACT.messageForTransferRestriction(res1);
+        string memory message1 = cmtatContract.messageForTransferRestriction(res1);
         // Assert
         assertEq(message1, TEXT_TRANSFER_OK);
     }
@@ -171,11 +172,11 @@ contract CMTATIntegration is Test, HelperContract {
         (bool success,) = address(ruleBlacklist).call(abi.encodeWithSignature("addAddresses(address[])", blacklist));
         require(success);
         // Act
-        uint8 res1 = CMTAT_CONTRACT.detectTransferRestriction(ADDRESS1, ADDRESS2, 11);
+        uint8 res1 = cmtatContract.detectTransferRestriction(ADDRESS1, ADDRESS2, 11);
         // Assert
         assertEq(res1, CODE_ADDRESS_FROM_IS_BLACKLISTED);
         // Act
-        string memory message1 = CMTAT_CONTRACT.messageForTransferRestriction(res1);
+        string memory message1 = cmtatContract.messageForTransferRestriction(res1);
         // Assert
         assertEq(message1, TEXT_ADDRESS_FROM_IS_BLACKLISTED);
     }
@@ -183,10 +184,10 @@ contract CMTATIntegration is Test, HelperContract {
     function testCanMintIfAddressNotInTheBlacklist() public {
         // Act
         vm.prank(DEFAULT_ADMIN_ADDRESS);
-        CMTAT_CONTRACT.mint(ADDRESS1, 11);
+        cmtatContract.mint(ADDRESS1, 11);
 
         // Assert
-        resUint256 = CMTAT_CONTRACT.balanceOf(ADDRESS1);
+        resUint256 = cmtatContract.balanceOf(ADDRESS1);
         assertEq(resUint256, ADDRESS1_BALANCE_INIT + 11);
     }
 
@@ -211,12 +212,12 @@ contract CMTATIntegration is Test, HelperContract {
             )
         );
         vm.prank(DEFAULT_ADMIN_ADDRESS);
-        CMTAT_CONTRACT.mint(ADDRESS1, amount);
+        cmtatContract.mint(ADDRESS1, amount);
     }
 
     function testCanReturnMessageNotFoundWithUnknownCodeId() public view {
         // Act
-        string memory message1 = CMTAT_CONTRACT.messageForTransferRestriction(255);
+        string memory message1 = cmtatContract.messageForTransferRestriction(255);
 
         // Assert
         assertEq(message1, TEXT_CODE_NOT_FOUND);
