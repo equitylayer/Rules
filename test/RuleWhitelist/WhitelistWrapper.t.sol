@@ -65,6 +65,16 @@ contract CMTATIntegrationWhitelistWrapper is Test, HelperContract {
         assertEq(resString, TEXT_CODE_NOT_FOUND);
     }
 
+    function testWrapperWithZeroRulesRejectsTransfers() public {
+        RuleWhitelistWrapper emptyWrapper =
+            new RuleWhitelistWrapper(WHITELIST_OPERATOR_ADDRESS, ZERO_ADDRESS, true);
+
+        resUint8 = emptyWrapper.detectTransferRestriction(ADDRESS1, ADDRESS2, 20);
+        assertEq(resUint8, CODE_ADDRESS_FROM_NOT_WHITELISTED);
+        resBool = emptyWrapper.canTransfer(ADDRESS1, ADDRESS2, 20);
+        assertEq(resBool, false);
+    }
+
     function testDetectTransferRestrictionFrom() public {
         // Act
         resUint8 = ruleWhitelistWrapper.detectTransferRestriction(ADDRESS1, ADDRESS2, 20);

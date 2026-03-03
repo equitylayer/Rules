@@ -71,7 +71,7 @@ contract RuleSanctionsList is
      * @return The restricion code or REJECTED_CODE_BASE.TRANSFER_OK
      *
      */
-    function detectTransferRestriction(address from, address to, uint256 /*value */ )
+    function detectTransferRestriction(address from, address to, uint256 /* value */)
         public
         view
         override(IERC1404)
@@ -90,7 +90,7 @@ contract RuleSanctionsList is
     /**
      * @inheritdoc IERC7943NonFungibleComplianceExtend
      */
-    function detectTransferRestriction(address from, address to, uint256, /* tokenId */ uint256 value)
+    function detectTransferRestriction(address from, address to, uint256 /* tokenId */, uint256 value)
         public
         view
         virtual
@@ -124,7 +124,7 @@ contract RuleSanctionsList is
         address spender,
         address from,
         address to,
-        uint256, /* tokenId */
+        uint256 /* tokenId */,
         uint256 value
     ) public view virtual override(IERC7943NonFungibleComplianceExtend) returns (uint8) {
         return detectTransferRestrictionFrom(spender, from, to, value);
@@ -222,7 +222,7 @@ contract RuleSanctionsList is
         );
     }
 
-    function transferred(address spender, address from, address to, uint256 /* tokenId */,uint256 value)
+    function transferred(address spender, address from, address to, uint256 /* tokenId */, uint256 value)
         public
         view
         virtual
@@ -231,7 +231,7 @@ contract RuleSanctionsList is
         transferred(spender, from, to, value);
     }
 
-    function transferred(address from, address to, uint256 /* tokenId */,uint256 value)
+    function transferred(address from, address to, uint256 /* tokenId */, uint256 value)
         public
         view
         virtual

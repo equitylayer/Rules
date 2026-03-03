@@ -280,4 +280,15 @@ contract RuleSanctionlistTest is Test, HelperContract {
         // Assert
         assertFalse(resBool);
     }
+
+    function testClearOracleDisablesChecks() public {
+        vm.prank(SANCTIONLIST_OPERATOR_ADDRESS);
+        ruleSanctionList.clearSanctionListOracle();
+
+        resUint8 = ruleSanctionList.detectTransferRestriction(ATTACKER, ADDRESS2, 20);
+        assertEq(resUint8, NO_ERROR);
+
+        resBool = ruleSanctionList.canTransfer(ATTACKER, ADDRESS2, 20);
+        assertEq(resBool, true);
+    }
 }

@@ -18,6 +18,7 @@ import {IRuleEngine} from "CMTAT/interfaces/engine/IRuleEngine.sol";
  * @notice Restricts minting so that total supply never exceeds a maximum value.
  */
 contract RuleMaxTotalSupply is AccessControlModuleStandalone, RuleValidateTransfer, RuleMaxTotalSupplyInvariantStorage {
+    /// @dev tokenContract is trusted to return a correct totalSupply.
     ITotalSupply public tokenContract;
     uint256 public maxTotalSupply;
 
@@ -38,11 +39,12 @@ contract RuleMaxTotalSupply is AccessControlModuleStandalone, RuleValidateTransf
         if (newTokenContract == address(0)) {
             revert RuleMaxTotalSupply_TokenAddressZeroNotAllowed();
         }
+        // The admin is responsible for pointing to a compliant totalSupply implementation.
         tokenContract = ITotalSupply(newTokenContract);
         emit TokenContractUpdated(newTokenContract);
     }
 
-    function detectTransferRestriction(address from, address, uint256 value)
+    function detectTransferRestriction(address from, address /* to */, uint256 value)
         public
         view
         override(IERC1404)
@@ -90,6 +92,7 @@ contract RuleMaxTotalSupply is AccessControlModuleStandalone, RuleValidateTransf
         view
         override(IERC3643IComplianceContract)
     {
+        // Required by ERC-3643 ICompliance, even for read-only rules.
         uint8 code = this.detectTransferRestriction(from, to, value);
         require(
             code == uint8(IERC1404Extend.REJECTED_CODE_BASE.TRANSFER_OK),
@@ -102,6 +105,7 @@ contract RuleMaxTotalSupply is AccessControlModuleStandalone, RuleValidateTransf
         view
         override(IRuleEngine)
     {
+        // Required by IRuleEngine, even for read-only rules.
         uint8 code = this.detectTransferRestrictionFrom(spender, from, to, value);
         require(
             code == uint8(IERC1404Extend.REJECTED_CODE_BASE.TRANSFER_OK),
@@ -109,7 +113,7 @@ contract RuleMaxTotalSupply is AccessControlModuleStandalone, RuleValidateTransf
         );
     }
 
-    function transferred(address from, address to, uint256, uint256 value)
+    function transferred(address from, address to, uint256 /* tokenId */, uint256 value)
         public
         view
         override(IERC7943NonFungibleComplianceExtend)
@@ -117,7 +121,7 @@ contract RuleMaxTotalSupply is AccessControlModuleStandalone, RuleValidateTransf
         transferred(from, to, value);
     }
 
-    function transferred(address spender, address from, address to, uint256, uint256 value)
+    function transferred(address spender, address from, address to, uint256 /* tokenId */, uint256 value)
         public
         view
         override(IERC7943NonFungibleComplianceExtend)

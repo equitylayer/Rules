@@ -53,4 +53,52 @@ contract RuleConditionalTransferLightRuleEngineIntegration is Test, HelperContra
         vm.prank(address(ruleEngineMock));
         ruleConditionalTransferLight.transferred(ADDRESS1, ADDRESS2, amount);
     }
+
+    function testTransferredWithoutApprovalReverts() public {
+        vm.expectRevert(TransferNotApproved.selector);
+        vm.prank(address(ruleEngineMock));
+        ruleConditionalTransferLight.transferred(ADDRESS1, ADDRESS2, 10);
+    }
+
+    function testCancelApproval() public {
+        uint256 amount = 10;
+
+        vm.prank(CONDITIONAL_TRANSFER_OPERATOR_ADDRESS);
+        ruleConditionalTransferLight.approveTransfer(ADDRESS1, ADDRESS2, amount);
+        vm.prank(CONDITIONAL_TRANSFER_OPERATOR_ADDRESS);
+        ruleConditionalTransferLight.approveTransfer(ADDRESS1, ADDRESS2, amount);
+
+        vm.prank(CONDITIONAL_TRANSFER_OPERATOR_ADDRESS);
+        ruleConditionalTransferLight.cancelTransferApproval(ADDRESS1, ADDRESS2, amount);
+
+        resUint256 = ruleConditionalTransferLight.approvedCount(ADDRESS1, ADDRESS2, amount);
+        assertEq(resUint256, 1);
+
+        vm.prank(CONDITIONAL_TRANSFER_OPERATOR_ADDRESS);
+        ruleConditionalTransferLight.cancelTransferApproval(ADDRESS1, ADDRESS2, amount);
+        resUint256 = ruleConditionalTransferLight.approvedCount(ADDRESS1, ADDRESS2, amount);
+        assertEq(resUint256, 0);
+
+        vm.expectRevert(TransferApprovalNotFound.selector);
+        vm.prank(CONDITIONAL_TRANSFER_OPERATOR_ADDRESS);
+        ruleConditionalTransferLight.cancelTransferApproval(ADDRESS1, ADDRESS2, amount);
+    }
+
+    function testFuzz_ApproveAndConsume(address from, address to, uint96 value, uint8 approvals, uint8 consumes) public {
+        approvals = uint8(bound(approvals, 0, 20));
+        consumes = uint8(bound(consumes, 0, approvals));
+
+        for (uint256 i = 0; i < approvals; ++i) {
+            vm.prank(CONDITIONAL_TRANSFER_OPERATOR_ADDRESS);
+            ruleConditionalTransferLight.approveTransfer(from, to, value);
+        }
+
+        for (uint256 i = 0; i < consumes; ++i) {
+            vm.prank(address(ruleEngineMock));
+            ruleConditionalTransferLight.transferred(from, to, value);
+        }
+
+        resUint256 = ruleConditionalTransferLight.approvedCount(from, to, value);
+        assertEq(resUint256, approvals - consumes);
+    }
 }

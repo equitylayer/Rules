@@ -164,4 +164,24 @@ contract RuleWhitelistAddTest is Test, HelperContract {
         resUint256 = ruleWhitelist.listedAddressCount();
         assertEq(resUint256, 3);
     }
+
+    function testFuzz_AddRemoveIdempotent(address addressA, address addressB) public {
+        address[] memory targets = new address[](3);
+        targets[0] = addressA;
+        targets[1] = addressB;
+        targets[2] = addressA;
+
+        vm.prank(WHITELIST_OPERATOR_ADDRESS);
+        ruleWhitelist.addAddresses(targets);
+
+        uint256 expectedCount = addressA == addressB ? 1 : 2;
+        resUint256 = ruleWhitelist.listedAddressCount();
+        assertEq(resUint256, expectedCount);
+
+        vm.prank(WHITELIST_OPERATOR_ADDRESS);
+        ruleWhitelist.removeAddresses(targets);
+
+        resUint256 = ruleWhitelist.listedAddressCount();
+        assertEq(resUint256, 0);
+    }
 }

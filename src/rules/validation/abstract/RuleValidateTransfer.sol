@@ -70,7 +70,7 @@ abstract contract RuleValidateTransfer is IERC7943NonFungibleComplianceExtend, I
     /**
      * @inheritdoc IERC7943NonFungibleComplianceExtend
      */
-    function canTransferFrom(address spender, address from, address to, uint256, /* tokenId */ uint256 value)
+    function canTransferFrom(address spender, address from, address to, uint256 /* tokenId */, uint256 value)
         public
         view
         virtual

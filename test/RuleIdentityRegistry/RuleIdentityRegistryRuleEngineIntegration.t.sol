@@ -61,4 +61,24 @@ contract RuleIdentityRegistryRuleEngineIntegration is Test, HelperContract {
         resBool = ruleEngineMock.canTransferFrom(ADDRESS3, ADDRESS1, ADDRESS2, amount);
         assertEq(resBool, true);
     }
+
+    function testClearIdentityRegistryDisablesChecks() public {
+        uint256 amount = 10;
+        vm.prank(DEFAULT_ADMIN_ADDRESS);
+        ruleIdentityRegistry.clearIdentityRegistry();
+
+        resUint8 = ruleEngineMock.detectTransferRestriction(ADDRESS1, ADDRESS2, amount);
+        assertEq(resUint8, TRANSFER_OK);
+        resBool = ruleEngineMock.canTransfer(ADDRESS1, ADDRESS2, amount);
+        assertEq(resBool, true);
+    }
+
+    function testBurnBypassesVerification() public {
+        uint256 amount = 10;
+        resUint8 = ruleEngineMock.detectTransferRestriction(ADDRESS1, address(0), amount);
+        assertEq(resUint8, TRANSFER_OK);
+
+        resUint8 = ruleEngineMock.detectTransferRestrictionFrom(ADDRESS3, ADDRESS1, address(0), amount);
+        assertEq(resUint8, TRANSFER_OK);
+    }
 }

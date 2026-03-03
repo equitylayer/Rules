@@ -100,7 +100,7 @@ abstract contract RuleWhitelistCommon is RuleValidateTransfer, RuleWhitelistInva
     }
 
 
-    function transferred(address spender, address from, address to, uint256 /* tokenId */,uint256 value)
+    function transferred(address spender, address from, address to, uint256 /* tokenId */, uint256 value)
         public
         view
         virtual
@@ -109,7 +109,7 @@ abstract contract RuleWhitelistCommon is RuleValidateTransfer, RuleWhitelistInva
         transferred(spender, from, to, value);
     }
 
-    function transferred(address from, address to, uint256 /* tokenId */,uint256 value)
+    function transferred(address from, address to, uint256 /* tokenId */, uint256 value)
         public
         view
         virtual

@@ -43,6 +43,12 @@ contract RuleSanctionlistAddTest is Test, HelperContract {
         vm.assertEq(address(sanctionListOracleGet), address(ZERO_ADDRESS));
     }
 
+    function testCannotSetOracleToZero() public {
+        vm.prank(SANCTIONLIST_OPERATOR_ADDRESS);
+        vm.expectRevert(RuleSanctionsList_OracleAddressZeroNotAllowed.selector);
+        ruleSanctionList.setSanctionListOracle(ISanctionsList(ZERO_ADDRESS));
+    }
+
     function testCannotAttackerSetOracle() public {
         vm.prank(ATTACKER);
         vm.expectRevert(abi.encodeWithSelector(AccessControlUnauthorizedAccount.selector, ATTACKER, SANCTIONLIST_ROLE));

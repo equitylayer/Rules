@@ -16,6 +16,7 @@ import {IIdentityRegistryVerified} from "../interfaces/IIdentityRegistry.sol";
 /**
  * @title RuleIdentityRegistry
  * @notice Checks the ERC-3643 Identity Registry for transfer participants when configured.
+ * @dev Burns (to == address(0)) are allowed even if the sender is not verified.
  */
 contract RuleIdentityRegistry is
     AccessControlModuleStandalone,
@@ -43,7 +44,7 @@ contract RuleIdentityRegistry is
         emit IdentityRegistryUpdated(address(0));
     }
 
-    function detectTransferRestriction(address from, address to, uint256)
+    function detectTransferRestriction(address from, address to, uint256 /* value */)
         public
         view
         override(IERC1404)
@@ -66,7 +67,7 @@ contract RuleIdentityRegistry is
         return uint8(IERC1404Extend.REJECTED_CODE_BASE.TRANSFER_OK);
     }
 
-    function detectTransferRestriction(address from, address to, uint256, uint256 value)
+    function detectTransferRestriction(address from, address to, uint256 /* tokenId */, uint256 value)
         public
         view
         override(IERC7943NonFungibleComplianceExtend)
@@ -98,7 +99,7 @@ contract RuleIdentityRegistry is
         address spender,
         address from,
         address to,
-        uint256,
+        uint256 /* tokenId */,
         uint256 value
     ) public view override(IERC7943NonFungibleComplianceExtend) returns (uint8) {
         return detectTransferRestrictionFrom(spender, from, to, value);
@@ -109,6 +110,7 @@ contract RuleIdentityRegistry is
         view
         override(IERC3643IComplianceContract)
     {
+        // Required by ERC-3643 ICompliance, even for read-only rules.
         uint8 code = this.detectTransferRestriction(from, to, value);
         require(
             code == uint8(IERC1404Extend.REJECTED_CODE_BASE.TRANSFER_OK),
@@ -121,6 +123,7 @@ contract RuleIdentityRegistry is
         view
         override(IRuleEngine)
     {
+        // Required by IRuleEngine, even for read-only rules.
         uint8 code = this.detectTransferRestrictionFrom(spender, from, to, value);
         require(
             code == uint8(IERC1404Extend.REJECTED_CODE_BASE.TRANSFER_OK),
@@ -128,7 +131,7 @@ contract RuleIdentityRegistry is
         );
     }
 
-    function transferred(address from, address to, uint256, uint256 value)
+    function transferred(address from, address to, uint256 /* tokenId */, uint256 value)
         public
         view
         override(IERC7943NonFungibleComplianceExtend)
@@ -136,7 +139,7 @@ contract RuleIdentityRegistry is
         transferred(from, to, value);
     }
 
-    function transferred(address spender, address from, address to, uint256, uint256 value)
+    function transferred(address spender, address from, address to, uint256 /* tokenId */, uint256 value)
         public
         view
         override(IERC7943NonFungibleComplianceExtend)

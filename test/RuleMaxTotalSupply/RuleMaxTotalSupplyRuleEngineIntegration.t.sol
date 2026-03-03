@@ -49,4 +49,33 @@ contract RuleMaxTotalSupplyRuleEngineIntegration is Test, HelperContract {
         resBool = ruleEngineMock.canTransfer(ADDRESS1, ADDRESS2, 50);
         assertEq(resBool, true);
     }
+
+    function testSetMaxTotalSupplyToZero() public {
+        vm.prank(DEFAULT_ADMIN_ADDRESS);
+        ruleMaxTotalSupply.setMaxTotalSupply(0);
+
+        token.setTotalSupply(0);
+        resUint8 = ruleEngineMock.detectTransferRestriction(address(0), ADDRESS1, 1);
+        assertEq(resUint8, CODE_MAX_TOTAL_SUPPLY_EXCEEDED);
+        resBool = ruleEngineMock.canTransfer(address(0), ADDRESS1, 1);
+        assertEq(resBool, false);
+    }
+
+    function testFuzz_MaxTotalSupplyBounds(uint256 currentSupply, uint256 value, uint256 maxSupply) public {
+        currentSupply = bound(currentSupply, 0, type(uint256).max - 1);
+        value = bound(value, 0, type(uint256).max - currentSupply);
+        maxSupply = bound(maxSupply, 0, type(uint256).max);
+
+        vm.prank(DEFAULT_ADMIN_ADDRESS);
+        ruleMaxTotalSupply.setMaxTotalSupply(maxSupply);
+
+        token.setTotalSupply(currentSupply);
+        resUint8 = ruleEngineMock.detectTransferRestriction(address(0), ADDRESS1, value);
+
+        if (currentSupply + value > maxSupply) {
+            assertEq(resUint8, CODE_MAX_TOTAL_SUPPLY_EXCEEDED);
+        } else {
+            assertEq(resUint8, TRANSFER_OK);
+        }
+    }
 }

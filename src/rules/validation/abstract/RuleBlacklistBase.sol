@@ -34,7 +34,7 @@ abstract contract RuleBlacklistBase is RuleAddressSet, RuleValidateTransfer, Rul
         }
     }
 
-    function detectTransferRestriction(address from, address to, uint256, /* tokenId */ uint256 value)
+    function detectTransferRestriction(address from, address to, uint256 /* tokenId */, uint256 value)
         public
         view
         override(IERC7943NonFungibleComplianceExtend)
@@ -60,7 +60,7 @@ abstract contract RuleBlacklistBase is RuleAddressSet, RuleValidateTransfer, Rul
         address spender,
         address from,
         address to,
-        uint256, /* tokenId */
+        uint256 /* tokenId */,
         uint256 value
     ) public view override(IERC7943NonFungibleComplianceExtend) returns (uint8) {
         return detectTransferRestrictionFrom(spender, from, to, value);
@@ -125,7 +125,7 @@ abstract contract RuleBlacklistBase is RuleAddressSet, RuleValidateTransfer, Rul
         );
     }
 
-    function transferred(address spender, address from, address to, uint256 /* tokenId */,uint256 value)
+    function transferred(address spender, address from, address to, uint256 /* tokenId */, uint256 value)
         public
         view
         virtual
@@ -134,7 +134,7 @@ abstract contract RuleBlacklistBase is RuleAddressSet, RuleValidateTransfer, Rul
         transferred(spender, from, to, value);
     }
 
-    function transferred(address from, address to, uint256 /* tokenId */,uint256 value)
+    function transferred(address from, address to, uint256 /* tokenId */, uint256 value)
         public
         view
         virtual

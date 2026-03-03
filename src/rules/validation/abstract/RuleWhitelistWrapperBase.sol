@@ -19,6 +19,7 @@ import {IAddressList} from "../../interfaces/IAddressList.sol";
 
 /**
  * @title Wrapper to call several different whitelist rules (base)
+ * @dev Child rules must implement {IAddressList}.
  */
 abstract contract RuleWhitelistWrapperBase is
     RulesManagementModule,
@@ -45,7 +46,7 @@ abstract contract RuleWhitelistWrapperBase is
      * @return The restricion code or REJECTED_CODE_BASE.TRANSFER_OK
      *
      */
-    function detectTransferRestriction(address from, address to, uint256 /*value*/ )
+    function detectTransferRestriction(address from, address to, uint256 /* value */)
         public
         view
         virtual
@@ -66,7 +67,7 @@ abstract contract RuleWhitelistWrapperBase is
         }
     }
 
-    function detectTransferRestriction(address from, address to, uint256, /* tokenId */ uint256 value)
+    function detectTransferRestriction(address from, address to, uint256 /* tokenId */, uint256 value)
         public
         view
         virtual
@@ -112,7 +113,7 @@ abstract contract RuleWhitelistWrapperBase is
         address spender,
         address from,
         address to,
-        uint256, /* tokenId */
+        uint256 /* tokenId */,
         uint256 value
     ) public view virtual override(IERC7943NonFungibleComplianceExtend) returns (uint8) {
         return detectTransferRestrictionFrom(spender, from, to, value);
@@ -152,6 +153,7 @@ abstract contract RuleWhitelistWrapperBase is
         bool[] memory result = new bool[](targetAddress.length);
         for (uint256 i = 0; i < rulesLength; ++i) {
             // Call the whitelist rules
+            // Gas cost grows with the number of rules. Keep the wrapper list bounded.
             bool[] memory isListed = IAddressList(rule(i)).areAddressesListed(targetAddress);
             for (uint256 j = 0; j < targetAddress.length; ++j) {
                 if (isListed[j]) {

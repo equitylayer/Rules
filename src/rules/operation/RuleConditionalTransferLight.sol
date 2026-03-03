@@ -100,7 +100,7 @@ contract RuleConditionalTransferLight is
         emit TransferExecuted(from, to, value, approvalCounts[transferHash]);
     }
 
-    function transferred(address, /* spender */ address from, address to, uint256 value)
+    function transferred(address /* spender */, address from, address to, uint256 value)
         public
         override(IRuleEngine)
         onlyTransferExecutor
@@ -129,7 +129,7 @@ contract RuleConditionalTransferLight is
         return keccak256(abi.encodePacked(from, to, value));
     }
 
-    function detectTransferRestrictionFrom(address, /* spender */ address from, address to, uint256 value)
+    function detectTransferRestrictionFrom(address /* spender */, address from, address to, uint256 value)
         public
         view
         override(IERC1404Extend)

@@ -85,28 +85,29 @@ Here the list of codes used by the different rules
 | RuleWhitelist           | CODE_ADDRESS_FROM_NOT_WHITELISTED    | 21    |
 |                         | CODE_ADDRESS_TO_NOT_WHITELISTED      | 22    |
 |                         | CODE_ADDRESS_SPENDER_NOT_WHITELISTED | 23    |
-|                         | Free slot                            | 24-29 |
+|                         | Reserved slot                        | 24-29 |
 | RuleSanctionList        | CODE_ADDRESS_FROM_IS_SANCTIONED      | 30    |
 |                         | CODE_ADDRESS_TO_IS_SANCTIONED        | 31    |
 |                         | CODE_ADDRESS_SPENDER_IS_SANCTIONED   | 32    |
-|                         | Free slot                            | 33-35 |
+|                         | Reserved slot                        | 33-35 |
 | RuleBlacklist           | CODE_ADDRESS_FROM_IS_BLACKLISTED     | 36    |
 |                         | CODE_ADDRESS_TO_IS_BLACKLISTED       | 37    |
 |                         | CODE_ADDRESS_SPENDER_IS_BLACKLISTED  | 38    |
-|                         | Free slot                            | 39-44 |
+|                         | Reserved slot                        | 39-44 |
 | RuleConditionalTransferLight | CODE_TRANSFER_REQUEST_NOT_APPROVED   | 71    |
-|                         | Free slot                            | 72-79 |
+|                         | Reserved slot                        | 72-79 |
 | RuleMaxTotalSupply      | CODE_MAX_TOTAL_SUPPLY_EXCEEDED       | 80    |
-|                         | Free slot                            | 81-89 |
+|                         | Reserved slot                        | 81-89 |
 | RuleIdentityRegistry    | CODE_ADDRESS_FROM_NOT_VERIFIED       | 90    |
 |                         | CODE_ADDRESS_TO_NOT_VERIFIED         | 91    |
 |                         | CODE_ADDRESS_SPENDER_NOT_VERIFIED    | 92    |
-|                         | Free slot                            | 93-99 |
+|                         | Reserved slot                        | 93-99 |
 
 Note: 
 
 - The CMTAT already uses the code 0-6 and the code 7-12 should be left free to allow further additions in the CMTAT.
 - If you decide to create your own rules, we encourage you to use code > 100 to leave free the other restriction codes for future rules added in this project.
+- Reserved slots are intentionally left unused for future rule expansion.
 
 ### Rules as Standalone Compliance Contracts
 
@@ -196,6 +197,13 @@ interface IRule is IRuleEngine {
 
 There are two categories of rules: validation rules (Read-only) and operation rules (read-write).
 
+## Deployment Guide
+
+1. Deploy the rule contract(s) with the desired admin and optional module addresses.
+2. Configure the rule state and roles, including whitelist/blacklist entries and oracle or registry addresses.
+3. Add rules to the RuleEngine, or set the rule directly on the CMTAT token.
+4. Verify the transfer flow end-to-end with a small test transfer before enabling production flows.
+
 ### Validation Rules (Read-Only)
 
 - Cannot modify blockchain state during transfers.
@@ -225,6 +233,17 @@ There are two categories of rules: validation rules (Read-only) and operation ru
 | RuleMaxTotalSupply                                           | Ready-only                           | ☑                                     | This rule limits minting so that the total supply never exceeds a configured maximum. |
 | RuleIdentityRegistry                                         | Ready-only                           | ☑                                     | This rule checks the ERC-3643 Identity Registry for transfer participants when configured. |
 | RuleConditionalTransferLight                                | Ready-Write                          | ☒<br /> (experimental rule)           | This rule requires that transfers have to be approved by an operator before being executed. Each approval is consumed once and the same transfer can be approved multiple times. |
+
+### Operational Notes
+
+- `RuleIdentityRegistry` allows burns (`to == address(0)`) even if the sender is not verified. This matters only if the token allows self-burn.
+- `RuleSanctionsList` rejects zero address in `setSanctionListOracle`. Use `clearSanctionListOracle()` to disable checks.
+- `RuleIdentityRegistry` can be disabled with `clearIdentityRegistry()`, which allows all transfers to pass this rule.
+- Constructors for `RuleSanctionsList` and `RuleIdentityRegistry` accept a zero address to start in a disabled state.
+- `RuleMaxTotalSupply` trusts the configured `tokenContract` to return an accurate `totalSupply()`.
+- `RuleWhitelistWrapper` requires child rules that implement `IAddressList`. Gas cost grows with the number of rules, and a wrapper with zero rules will reject all transfers.
+- Read-only rules still implement `transferred()` to comply with ERC-3643 and RuleEngine interfaces, but they do not change state.
+- `RuleConditionalTransferLight` approvals are keyed by `(from, to, value)` and are not nonce-based.
 
 ### Read-only (validation) rule
 
