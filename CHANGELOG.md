@@ -17,9 +17,24 @@ Please follow [https://changelog.md/](https://changelog.md/) conventions.
   - Update surya doc by running the 3 scripts in [./doc/script](./doc/script)
   - Update changelog
 
-## v0.2.0
+## v0.2.0 - TBD
 
-## v0.1.0
+Commit: `TBD`
+
+Main changes since v0.1.0:
+
+- Updated Solidity toolchain to 0.8.34 (Foundry/Hardhat).
+- Introduced `TransferContext` struct API and unified transfer hooks.
+- Refactored validation flow to internal hooks (no `this.` calls) via `RuleTransferValidation` and `RuleNFTAdapter`.
+- Added explicit sanctions oracle clearing (`clearSanctionListOracle`) and tightened oracle zero‑address handling.
+- Added batch summary events for address list updates.
+- Added deployable rules: `RuleIdentityRegistry`, `RuleMaxTotalSupply`, `RuleConditionalTransferLight`.
+- Reorganized validation contracts into `abstract/base`, `abstract/core`, `abstract/invariant`, and `deployment` folders.
+- Updated documentation: access‑control role table with hashes, rule‑engine flow diagrams, API accuracy, directory layout notes.
+
+## v0.1.0 - 2025-12-03
+
+Commit: `09376412269d2397fa7db6562e63bc65376d12b9`
 
 First release !
 
