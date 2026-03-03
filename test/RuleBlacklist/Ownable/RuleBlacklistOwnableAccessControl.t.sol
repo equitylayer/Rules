@@ -2,7 +2,7 @@
 pragma solidity ^0.8.20;
 
 import {OwnableAddressListTestBase} from "../../utils/OwnableAddressListTestBase.sol";
-import {RuleBlacklistOwnable} from "src/rules/validation/RuleBlacklistOwnable.sol";
+import {RuleBlacklistOwnable} from "src/rules/validation/deployment/RuleBlacklistOwnable.sol";
 import {IAddressList} from "src/rules/interfaces/IAddressList.sol";
 
 contract RuleBlacklistOwnableAccessControl is OwnableAddressListTestBase {

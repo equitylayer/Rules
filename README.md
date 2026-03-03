@@ -6,6 +6,19 @@ Each rule can be used **standalone**, directly plugged into a CMTAT token, **or*
 
 **Status:** *Repository under active development*
 
+## Table of Contents
+
+- [Overview](#overview)
+- [Compatibility](#compatibility)
+- [Architecture](#architecture)
+- [Types of Rules](#types-of-rules)
+- [Deployment Guide](#deployment-guide)
+- [Rules details](#rules-details)
+- [Access Control](#access-control)
+- [Toolchains and Usage](#toolchains-and-usage)
+- [API](#api)
+- [Intellectual property](#intellectual-property)
+
 ## Overview
 
 The **RuleEngine** is an external smart contract that applies transfer restrictions to security tokens such as **CMTAT** or [ERC-3643](https://eips.ethereum.org/EIPS/eip-3643)-compatible tokens through a RuleEngine.
@@ -78,6 +91,20 @@ function transferred(address spender, address from, address to, uint256 tokenId,
 - `*Base` contracts contain core logic without an access-control policy.
 - `*InvariantStorage` contracts group constants, custom errors, and events.
 - `*Common` contracts provide shared helper logic across variants (legacy naming retained for compatibility).
+
+### Directory Layout (Validation Rules)
+
+- `src/rules/validation/abstract/`: shared base contracts and invariant storage.
+- `src/rules/validation/abstract/base/`: base contracts with core rule logic (no access control).
+- `src/rules/validation/abstract/core/`: shared adapters/validation helpers.
+- `src/rules/validation/abstract/invariant/`: invariant storage contracts (constants, errors, events).
+- `src/rules/validation/deployment/`: deployable validation rules (concrete contracts).
+
+### Diagrams
+
+
+
+
 
 ### Rule - Code list
 
@@ -320,17 +347,19 @@ Documentation and the contracts addresses are available here: [Chainalysis oracl
 
 During a transfer, if either address (from or to) is in the sanction list of the Oracle, the rule will return false, and the transfer will be rejected by the CMTAT.
 
-
-
-![surya_inheritance_RuleWhitelistWrapper.sol](./doc/surya/surya_inheritance/surya_inheritance_RuleSanctionList.sol.png)
+![surya_inheritance_RuleSanctionsList.sol](./doc/surya/surya_inheritance/surya_inheritance_RuleSanctionsList.sol.png)
 
 #### Max total supply
 
 Limits minting so that total supply never exceeds a configured maximum. Transfers and burns are not affected; only mints (`from == address(0)`) are checked.
 
+![surya_inheritance_RuleMaxTotalSupply.sol](./doc/surya/surya_inheritance/surya_inheritance_RuleMaxTotalSupply.sol.png)
+
 #### Identity registry
 
 If an identity registry address is set, this rule checks `isVerified` for the sender, recipient, and spender (for `transferFrom`). Zero addresses are ignored, and burns (`to == address(0)`) are always allowed so non‑verified holders can burn.
+
+![surya_inheritance_RuleIdentityRegistry.sol](./doc/surya/surya_inheritance/surya_inheritance_RuleIdentityRegistry.sol.png)
 
 ### Read-Write (Operation) rule
 
@@ -339,6 +368,8 @@ For the moment, there is only one operation rule available: ConditionalTransferL
 #### Conditional transfer (light)
 
 This rule requires that transfers must be approved by an operator before being executed. It hashes `(from, to, value)` to track approvals and allows the same transfer to be approved multiple times. Each successful transfer consumes one approval, applying a write operation on the blockchain.
+
+![surya_inheritance_RuleConditionalTransferLight.sol](./doc/surya/surya_inheritance/surya_inheritance_RuleConditionalTransferLight.sol.png)
 
 
 
@@ -354,6 +385,18 @@ For all rules, the default admin is the address put in argument(`admin`) inside 
 
 See also [docs.openzeppelin.com - AccessControl](https://docs.openzeppelin.com/contracts/5.x/api/access#AccessControl)
 
+### Role Summary
+
+| Role | Hash | Functions (by rule) |
+| --- | --- | --- |
+| `DEFAULT_ADMIN_ROLE` | `0x0000000000000000000000000000000000000000000000000000000000000000` | `grantRole`, `revokeRole`, `renounceRole` (all AccessControl rules); `setCheckSpender` (RuleWhitelist, RuleWhitelistWrapper); `setMaxTotalSupply`, `setTokenContract` (RuleMaxTotalSupply); `setIdentityRegistry`, `clearIdentityRegistry` (RuleIdentityRegistry) |
+| `ADDRESS_LIST_ADD_ROLE` | `0x1b03c849816e077359373cf0a8d6d8f741d643bc1e95273ffe11515f83bebf61` | `addAddress`, `addAddresses` (RuleWhitelist, RuleBlacklist) |
+| `ADDRESS_LIST_REMOVE_ROLE` | `0x1b94c92b564251ed6b49246d9a82eb7a486b6490f3b3a3bf3b28d2e99801f3ec` | `removeAddress`, `removeAddresses` (RuleWhitelist, RuleBlacklist) |
+| `SANCTIONLIST_ROLE` | `0x30842281ac34bdc7d568c7ab276f84ba6fc1a1de1ae858b0afd35e716fb0650d` | `setSanctionListOracle`, `clearSanctionListOracle` (RuleSanctionsList) |
+| `RULES_MANAGEMENT_ROLE` | `0xea5f4eb72290e50c32abd6c23e45de3d8300b3286e1cbc2e293114b92e034e5e` | `setRules`, `clearRules`, `addRule`, `removeRule` (RuleWhitelistWrapper) |
+| `OPERATOR_ROLE` | `0x97667070c54ef182b0f5858b034beac1b6f3089aa2d3188bb1e8929f4fa9b929` | `approveTransfer`, `cancelTransferApproval` (RuleConditionalTransferLight) |
+| `RULE_ENGINE_CONTRACT_ROLE` | `0x5007339590b47d4786f4ab2ef7ffa0ec54bc5fe7244dd97bc6efa6ab3799807b` | `transferred` (RuleConditionalTransferLight transfer execution) |
+
 ### Ownable2Step variants
 
 For simpler ownership-based control, some rules provide `Ownable2Step` variants (two-step ownership transfer):
@@ -366,15 +409,7 @@ For simpler ownership-based control, some rules provide `Ownable2Step` variants 
 
 Common access control between `blacklistRule`and `WhitelistRule`
 
-Here a schema of the Access Control.
-![alt text](./doc/security/accessControl/access-control-RuleWhitelist.png)
-
-
-
-### RuleSanctionList
-
-![alt text](./doc/security/accessControl/access-control-RuleSanctionList.drawio.png)
-
+These roles are listed above in the Role Summary table.
 
 
 ## Toolchains and Usage
@@ -563,7 +598,7 @@ $ cast --help
 
 ### IRuleEngine
 
-> Each rule implements the IRuleEngine interface
+> Only rules that need a post-transfer hook implement `IRuleEngine` (e.g., operation rules). Validation-only rules do not.
 
 #### transferred
 
@@ -572,8 +607,8 @@ function transferred(address spender, address from, address to, uint256 value)
     external;
 ```
 
-Called during an ERC-20 token transfer
- Used by rules to update internal state or enforce operation-based restrictions.
+Called by a token or RuleEngine after a transfer.
+ Used by stateful rules to update internal state or enforce operation-based restrictions.
 
 ##### Parameters
 
@@ -781,7 +816,7 @@ Hook invoked during an ERC-20 token transfer.
 ```
 function addAddresses(address[] calldata targetAddresses)
     public
-    onlyRole(ADDRESS_LIST_ADD_ROLE)
+    onlyAddressListAdd
 ```
 
 ##### Description
@@ -791,8 +826,8 @@ Adds multiple addresses to the internal address set.
 ##### Details
 
 - Does **not** revert if one or more addresses are already listed.
-- Restricted to callers holding the `ADDRESS_LIST_ADD_ROLE`.
-- Emits an `AddAddresses` event.
+- Restricted by the rule's access control policy (role- or owner-based).
+- Emits `AddAddresses` and `AddressesBatchAdded`.
 
 ##### Parameters
 
@@ -807,7 +842,7 @@ Adds multiple addresses to the internal address set.
 ```
 function removeAddresses(address[] calldata targetAddresses)
     public
-    onlyRole(ADDRESS_LIST_REMOVE_ROLE)
+    onlyAddressListRemove
 ```
 
 ##### Description
@@ -817,8 +852,8 @@ Removes multiple addresses from the internal set.
 ##### Details
 
 - Does **not** revert if an address is not currently listed.
-- Restricted to callers holding the `ADDRESS_LIST_REMOVE_ROLE`.
-- Emits a `RemoveAddresses` event.
+- Restricted by the rule's access control policy (role- or owner-based).
+- Emits `RemoveAddresses` and `AddressesBatchRemoved`.
 
 ##### Parameters
 
@@ -833,7 +868,7 @@ Removes multiple addresses from the internal set.
 ```
 function addAddress(address targetAddress)
     public
-    onlyRole(ADDRESS_LIST_ADD_ROLE)
+    onlyAddressListAdd
 ```
 
 ##### Description
@@ -843,7 +878,7 @@ Adds a **single** address to the set.
 ##### Details
 
 - **Reverts** if the address is already listed.
-- Restricted to callers holding the `ADDRESS_LIST_ADD_ROLE`.
+- Restricted by the rule's access control policy (role- or owner-based).
 - Emits an `AddAddress` event.
 
 ##### Parameters
@@ -859,7 +894,7 @@ Adds a **single** address to the set.
 ```
 function removeAddress(address targetAddress)
     public
-    onlyRole(ADDRESS_LIST_REMOVE_ROLE)
+    onlyAddressListRemove
 ```
 
 ##### Description
@@ -869,7 +904,7 @@ Removes a **single** address from the set.
 ##### Details
 
 - **Reverts** if the address is not listed.
-- Restricted to callers holding the `ADDRESS_LIST_REMOVE_ROLE`.
+- Restricted by the rule's access control policy (role- or owner-based).
 - Emits a `RemoveAddress` event.
 
 ##### Parameters
@@ -983,7 +1018,7 @@ Checks the listing status of multiple addresses in a single call.
 
 ##### Null address
 
-It is possible to add the null address (0x0) to the blacklist. If it is the case, it will not be possible to mint and burn tokens.
+It is possible to add the null address (0x0) to the address list. In a whitelist, this enables mint/burn flows (since `from`/`to` can be zero). In a blacklist, adding `0x0` blocks mint/burn.
 
 ##### Duplicate address
 
@@ -1209,8 +1244,8 @@ Signals to the compliance engine that a transfer has successfully occurred.
 ##### Details
 
 - May modify compliance state.
-- Must be called by the token contract after a successful transfer.
-- Must revert if invoked by unauthorized callers.
+- For stateful rules, should be called by the token contract or RuleEngine after a successful transfer.
+- Rules may enforce access control on callers depending on their policy.
 
 ##### Parameters
 
@@ -1252,14 +1287,13 @@ Set the sanctions-oracle contract used for transfer-restriction checks.
 
 | Name                      | Type             | Description                                                  |
 | ------------------------- | ---------------- | ------------------------------------------------------------ |
-| `sanctionContractOracle_` | `ISanctionsList` | Address of the sanctions-oracle. Passing the zero address disables sanctions checks. |
+| `sanctionContractOracle_` | `ISanctionsList` | Address of the sanctions-oracle. Zero address is not allowed; use `clearSanctionListOracle`. |
 
 ##### Description
 
 Updates the sanctions-oracle contract reference.
  This function may only be called by accounts granted the `SANCTIONLIST_ROLE`.
-
-Setting the oracle to the zero address is permitted and effectively disables all sanctions-based transfer restrictions.
+ Passing the zero address reverts; use `clearSanctionListOracle` to disable checks.
 
 ##### Emits
 

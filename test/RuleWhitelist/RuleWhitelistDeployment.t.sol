@@ -5,7 +5,7 @@ import {Test} from "forge-std/Test.sol";
 import {HelperContract} from "../HelperContract.sol";
 import {MinimalForwarderMock} from "CMTAT/mocks/MinimalForwarderMock.sol";
 import {AccessControlModuleStandalone} from "../../src/modules/AccessControlModuleStandalone.sol";
-import {RuleWhitelist} from "src/rules/validation/RuleWhitelist.sol";
+import {RuleWhitelist} from "src/rules/validation/deployment/RuleWhitelist.sol";
 /**
  * @title General functions of the RuleWhitelist
  */

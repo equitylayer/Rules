@@ -4,14 +4,14 @@ pragma solidity ^0.8.20;
 
 import {AccessControl} from "OZ/access/AccessControl.sol";
 /* ==== Abstract contracts === */
-import {MetaTxModuleStandalone, ERC2771Context} from "../../modules/MetaTxModuleStandalone.sol";
+import {MetaTxModuleStandalone, ERC2771Context} from "../../../modules/MetaTxModuleStandalone.sol";
 import {Context} from "OZ/utils/Context.sol";
-import {AccessControlModuleStandalone} from "../../modules/AccessControlModuleStandalone.sol";
-import {RuleSanctionsListInvariantStorage} from "./abstract/RuleSanctionsListInvariantStorage.sol";
-import {RuleNFTAdapter} from "./abstract/RuleNFTAdapter.sol";
-import {RuleValidateTransfer} from "./abstract/RuleValidateTransfer.sol";
+import {AccessControlModuleStandalone} from "../../../modules/AccessControlModuleStandalone.sol";
+import {RuleSanctionsListInvariantStorage} from "../abstract/invariant/RuleSanctionsListInvariantStorage.sol";
+import {RuleNFTAdapter} from "../abstract/core/RuleNFTAdapter.sol";
+import {RuleTransferValidation} from "../abstract/core/RuleTransferValidation.sol";
 /* ==== Interfaces === */
-import {ISanctionsList} from "../interfaces/ISanctionsList.sol";
+import {ISanctionsList} from "../../interfaces/ISanctionsList.sol";
 /* ==== CMTAT === */
 import {IERC1404, IERC1404Extend} from "CMTAT/interfaces/tokenization/draft-IERC1404.sol";
 import {IERC3643IComplianceContract} from "CMTAT/interfaces/tokenization/IERC3643Partial.sol";
@@ -148,10 +148,10 @@ contract RuleSanctionsList is
         public
         view
         virtual
-        override(AccessControl, RuleValidateTransfer)
+        override(AccessControl, RuleTransferValidation)
         returns (bool)
     {
-        return AccessControl.supportsInterface(interfaceId) || RuleValidateTransfer.supportsInterface(interfaceId);
+        return AccessControl.supportsInterface(interfaceId) || RuleTransferValidation.supportsInterface(interfaceId);
     }
 
     /* ============  State Functions ============ */

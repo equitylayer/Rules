@@ -5,7 +5,7 @@ pragma solidity ^0.8.20;
 import {IERC3643IComplianceContract} from "CMTAT/interfaces/tokenization/IERC3643Partial.sol";
 import {IRuleEngine} from "CMTAT/interfaces/engine/IRuleEngine.sol";
 /* ==== Abstract contracts === */
-import {RuleWhitelistInvariantStorage} from "./RuleAddressSet/invariantStorage/RuleWhitelistInvariantStorage.sol";
+import {RuleWhitelistInvariantStorage} from "../RuleAddressSet/invariantStorage/RuleWhitelistInvariantStorage.sol";
 import {RuleNFTAdapter} from "./RuleNFTAdapter.sol";
 
 /**
@@ -16,7 +16,7 @@ import {RuleNFTAdapter} from "./RuleNFTAdapter.sol";
  * - Defines utility functions for restriction code validation and message mapping.
  * - Inherits restriction code constants and messages from {RuleWhitelistInvariantStorage}.
  */
-abstract contract RuleWhitelistCommon is RuleNFTAdapter, RuleWhitelistInvariantStorage {
+abstract contract RuleWhitelistShared is RuleNFTAdapter, RuleWhitelistInvariantStorage {
     /**
      * Indicate if the spender is verified or not
      */

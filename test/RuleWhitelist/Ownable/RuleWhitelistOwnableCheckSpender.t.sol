@@ -3,7 +3,7 @@ pragma solidity ^0.8.20;
 
 import {Test} from "forge-std/Test.sol";
 import {HelperContract} from "../../HelperContract.sol";
-import {RuleWhitelistOwnable} from "src/rules/validation/RuleWhitelistOwnable.sol";
+import {RuleWhitelistOwnable} from "src/rules/validation/deployment/RuleWhitelistOwnable.sol";
 
 contract RuleWhitelistOwnableCheckSpender is Test, HelperContract {
     error OwnableUnauthorizedAccount(address account);

@@ -4,9 +4,9 @@ pragma solidity ^0.8.20;
 import {AccessControl} from "OZ/access/AccessControl.sol";
 import {Context} from "OZ/utils/Context.sol";
 /* ==== Abstract contracts === */
-import {AccessControlModuleStandalone} from "../../modules/AccessControlModuleStandalone.sol";
-import {RuleWhitelistBase} from "./abstract/RuleWhitelistBase.sol";
-import {RuleAddressSet} from "./abstract/RuleAddressSet/RuleAddressSet.sol";
+import {AccessControlModuleStandalone} from "../../../modules/AccessControlModuleStandalone.sol";
+import {RuleWhitelistBase} from "../abstract/base/RuleWhitelistBase.sol";
+import {RuleAddressSet} from "../abstract/RuleAddressSet/RuleAddressSet.sol";
 /* ==== CMTAT === */
 
 /**
@@ -14,7 +14,7 @@ import {RuleAddressSet} from "./abstract/RuleAddressSet/RuleAddressSet.sol";
  * @notice Manages a whitelist of authorized addresses and enforces whitelist-based transfer restrictions.
  * @dev
  * - Inherits core address management logic from {RuleAddressSet}.
- * - Integrates restriction code logic from {RuleWhitelistCommon}.
+ * - Integrates restriction code logic from {RuleWhitelistShared}.
  * - Implements {IERC1404} to return specific restriction codes for non-whitelisted transfers.
  */
 contract RuleWhitelist is RuleWhitelistBase, AccessControlModuleStandalone {

@@ -4,7 +4,7 @@ pragma solidity ^0.8.20;
 import {Test} from "forge-std/Test.sol";
 import {HelperContract} from "../HelperContract.sol";
 import {CMTATDeployment} from "RuleEngine/../test/utils/CMTATDeployment.sol";
-import {RuleBlacklist} from "src/rules/validation/RuleBlacklist.sol";
+import {RuleBlacklist} from "src/rules/validation/deployment/RuleBlacklist.sol";
 import {IRuleEngine} from "CMTAT/interfaces/engine/IRuleEngine.sol";
 
 

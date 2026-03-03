@@ -5,7 +5,7 @@ import {Test} from "forge-std/Test.sol";
 import {HelperContract} from "../HelperContract.sol";
 import {IdentityRegistryMock} from "../utils/IdentityRegistryMock.sol";
 import {RuleEngine} from "RuleEngine/RuleEngine.sol";
-import {RuleIdentityRegistry} from "src/rules/validation/RuleIdentityRegistry.sol";
+import {RuleIdentityRegistry} from "src/rules/validation/deployment/RuleIdentityRegistry.sol";
 
 /**
  * @title Integration test between RuleEngine and RuleIdentityRegistry

@@ -7,16 +7,16 @@ import {IRuleEngine} from "CMTAT/interfaces/engine/IRuleEngine.sol";
 import {
     IERC7943NonFungibleCompliance,
     IERC7943NonFungibleComplianceExtend
-} from "../../interfaces/IERC7943NonFungibleCompliance.sol";
-import {RuleValidateTransfer} from "./RuleValidateTransfer.sol";
-import {ITransferContext} from "../../interfaces/ITransferContext.sol";
+} from "../../../interfaces/IERC7943NonFungibleCompliance.sol";
+import {RuleTransferValidation} from "./RuleTransferValidation.sol";
+import {ITransferContext} from "../../../interfaces/ITransferContext.sol";
 
 /**
  * @title Rule NFT Adapter
  * @notice Provides ERC-7943 overloads for rules that already implement core transfer checks.
- * @dev Delegates tokenId overloads to RuleValidateTransfer's internal hooks.
+ * @dev Delegates tokenId overloads to RuleTransferValidation's internal hooks.
  */
-abstract contract RuleNFTAdapter is RuleValidateTransfer, IERC7943NonFungibleComplianceExtend, ITransferContext {
+abstract contract RuleNFTAdapter is RuleTransferValidation, IERC7943NonFungibleComplianceExtend, ITransferContext {
     bytes4 internal constant TRANSFERRED_SELECTOR_ERC3643 =
         IERC3643IComplianceContract.transferred.selector;
     bytes4 internal constant TRANSFERRED_SELECTOR_RULE_ENGINE =

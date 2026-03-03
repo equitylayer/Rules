@@ -2,7 +2,7 @@
 pragma solidity ^0.8.20;
 
 import {Ownable2StepTestBase, IOwnable2StepLike} from "../../utils/Ownable2StepTestBase.sol";
-import {RuleWhitelistOwnable} from "src/rules/validation/RuleWhitelistOwnable.sol";
+import {RuleWhitelistOwnable} from "src/rules/validation/deployment/RuleWhitelistOwnable.sol";
 
 contract RuleWhitelistOwnable2Step is Ownable2StepTestBase {
     function _deployOwnable2Step() internal override returns (IOwnable2StepLike, address) {

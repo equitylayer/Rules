@@ -5,7 +5,7 @@ import {Test} from "forge-std/Test.sol";
 import {HelperContract} from "../HelperContract.sol";
 import {SanctionListOracle} from "../utils/SanctionListOracle.sol";
 import {RuleEngine} from "RuleEngine/RuleEngine.sol";
-import {RuleSanctionsList} from "src/rules/validation/RuleSanctionsList.sol";
+import {RuleSanctionsList} from "src/rules/validation/deployment/RuleSanctionsList.sol";
 
 /**
  * @title Integration test between RuleEngine and RuleSanctionsList

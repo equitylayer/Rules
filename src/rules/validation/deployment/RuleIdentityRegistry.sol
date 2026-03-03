@@ -2,14 +2,14 @@
 pragma solidity ^0.8.20;
 
 import {AccessControl} from "OZ/access/AccessControl.sol";
-import {AccessControlModuleStandalone} from "../../modules/AccessControlModuleStandalone.sol";
-import {RuleNFTAdapter} from "./abstract/RuleNFTAdapter.sol";
-import {RuleIdentityRegistryInvariantStorage} from "./abstract/RuleIdentityRegistryInvariantStorage.sol";
-import {RuleValidateTransfer} from "./abstract/RuleValidateTransfer.sol";
+import {AccessControlModuleStandalone} from "../../../modules/AccessControlModuleStandalone.sol";
+import {RuleNFTAdapter} from "../abstract/core/RuleNFTAdapter.sol";
+import {RuleIdentityRegistryInvariantStorage} from "../abstract/invariant/RuleIdentityRegistryInvariantStorage.sol";
+import {RuleTransferValidation} from "../abstract/core/RuleTransferValidation.sol";
 import {IERC1404, IERC1404Extend} from "CMTAT/interfaces/tokenization/draft-IERC1404.sol";
 import {IERC3643IComplianceContract} from "CMTAT/interfaces/tokenization/IERC3643Partial.sol";
 import {IRuleEngine} from "CMTAT/interfaces/engine/IRuleEngine.sol";
-import {IIdentityRegistryVerified} from "../interfaces/IIdentityRegistry.sol";
+import {IIdentityRegistryVerified} from "../../interfaces/IIdentityRegistry.sol";
 
 /**
  * @title RuleIdentityRegistry
@@ -155,10 +155,10 @@ contract RuleIdentityRegistry is
         public
         view
         virtual
-        override(AccessControl, RuleValidateTransfer)
+        override(AccessControl, RuleTransferValidation)
         returns (bool)
     {
-        return AccessControl.supportsInterface(interfaceId) || RuleValidateTransfer.supportsInterface(interfaceId);
+        return AccessControl.supportsInterface(interfaceId) || RuleTransferValidation.supportsInterface(interfaceId);
     }
 
     /*//////////////////////////////////////////////////////////////

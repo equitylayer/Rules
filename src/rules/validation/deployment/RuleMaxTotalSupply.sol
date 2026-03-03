@@ -2,12 +2,12 @@
 pragma solidity ^0.8.20;
 
 import {AccessControl} from "OZ/access/AccessControl.sol";
-import {AccessControlModuleStandalone} from "../../modules/AccessControlModuleStandalone.sol";
-import {RuleNFTAdapter} from "./abstract/RuleNFTAdapter.sol";
-import {RuleMaxTotalSupplyInvariantStorage} from "./abstract/RuleMaxTotalSupplyInvariantStorage.sol";
-import {RuleValidateTransfer} from "./abstract/RuleValidateTransfer.sol";
+import {AccessControlModuleStandalone} from "../../../modules/AccessControlModuleStandalone.sol";
+import {RuleNFTAdapter} from "../abstract/core/RuleNFTAdapter.sol";
+import {RuleMaxTotalSupplyInvariantStorage} from "../abstract/invariant/RuleMaxTotalSupplyInvariantStorage.sol";
+import {RuleTransferValidation} from "../abstract/core/RuleTransferValidation.sol";
 import {IERC1404, IERC1404Extend} from "CMTAT/interfaces/tokenization/draft-IERC1404.sol";
-import {ITotalSupply} from "../interfaces/ITotalSupply.sol";
+import {ITotalSupply} from "../../interfaces/ITotalSupply.sol";
 import {IERC3643IComplianceContract} from "CMTAT/interfaces/tokenization/IERC3643Partial.sol";
 import {IRuleEngine} from "CMTAT/interfaces/engine/IRuleEngine.sol";
 
@@ -141,10 +141,10 @@ contract RuleMaxTotalSupply is
         public
         view
         virtual
-        override(AccessControl, RuleValidateTransfer)
+        override(AccessControl, RuleTransferValidation)
         returns (bool)
     {
-        return AccessControl.supportsInterface(interfaceId) || RuleValidateTransfer.supportsInterface(interfaceId);
+        return AccessControl.supportsInterface(interfaceId) || RuleTransferValidation.supportsInterface(interfaceId);
     }
 
     /*//////////////////////////////////////////////////////////////

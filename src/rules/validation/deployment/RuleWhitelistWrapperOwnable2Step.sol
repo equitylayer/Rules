@@ -7,7 +7,7 @@ import {Ownable} from "OZ/access/Ownable.sol";
 import {Ownable2Step} from "OZ/access/Ownable2Step.sol";
 import {Context} from "OZ/utils/Context.sol";
 /* ==== Abstract contracts === */
-import {RuleWhitelistWrapperBase} from "./abstract/RuleWhitelistWrapperBase.sol";
+import {RuleWhitelistWrapperBase} from "../abstract/base/RuleWhitelistWrapperBase.sol";
 
 /**
  * @title Wrapper to call several different whitelist rules (Ownable2Step)

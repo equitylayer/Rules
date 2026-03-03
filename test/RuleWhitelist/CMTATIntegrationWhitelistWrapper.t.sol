@@ -4,8 +4,8 @@ pragma solidity ^0.8.20;
 import {Test} from "forge-std/Test.sol";
 import {HelperContract} from "../HelperContract.sol";
 import {CMTATDeployment} from "RuleEngine/../test/utils/CMTATDeployment.sol";
-import {RuleWhitelist} from "src/rules/validation/RuleWhitelist.sol";
-import {RuleWhitelistWrapper} from "src/rules/validation/RuleWhitelistWrapper.sol";
+import {RuleWhitelist} from "src/rules/validation/deployment/RuleWhitelist.sol";
+import {RuleWhitelistWrapper} from "src/rules/validation/deployment/RuleWhitelistWrapper.sol";
 import {RuleEngine} from "RuleEngine/RuleEngine.sol";
 import {AccessControlModuleStandalone} from "../../src/modules/AccessControlModuleStandalone.sol";
 /**

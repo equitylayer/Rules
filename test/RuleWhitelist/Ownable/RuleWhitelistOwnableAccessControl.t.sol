@@ -3,7 +3,7 @@ pragma solidity ^0.8.20;
 
 import {OwnableAddressListTestBase} from "../../utils/OwnableAddressListTestBase.sol";
 import {IAddressList} from "src/rules/interfaces/IAddressList.sol";
-import {RuleWhitelistOwnable} from "src/rules/validation/RuleWhitelistOwnable.sol";
+import {RuleWhitelistOwnable} from "src/rules/validation/deployment/RuleWhitelistOwnable.sol";
 
 contract RuleWhitelistOwnableAccessControl is OwnableAddressListTestBase {
     function _deployAddressList() internal override returns (IAddressList, address) {

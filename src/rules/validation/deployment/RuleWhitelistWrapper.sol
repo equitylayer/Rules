@@ -6,8 +6,8 @@ pragma solidity ^0.8.20;
 import {AccessControl} from "OZ/access/AccessControl.sol";
 import {Context} from "OZ/utils/Context.sol";
 /* ==== Abstract contracts === */
-import {AccessControlModuleStandalone} from "../../modules/AccessControlModuleStandalone.sol";
-import {RuleWhitelistWrapperBase} from "./abstract/RuleWhitelistWrapperBase.sol";
+import {AccessControlModuleStandalone} from "../../../modules/AccessControlModuleStandalone.sol";
+import {RuleWhitelistWrapperBase} from "../abstract/base/RuleWhitelistWrapperBase.sol";
 
 /**
  * @title Wrapper to call several different whitelist rules

@@ -3,7 +3,7 @@ pragma solidity ^0.8.20;
 
 import {Test} from "forge-std/Test.sol";
 import {HelperContract} from "../HelperContract.sol";
-import {RuleWhitelist} from "src/rules/validation/RuleWhitelist.sol";
+import {RuleWhitelist} from "src/rules/validation/deployment/RuleWhitelist.sol";
 
 /**
  * @title General functions of the RuleWhitelist

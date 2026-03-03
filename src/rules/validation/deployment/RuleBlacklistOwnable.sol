@@ -4,8 +4,8 @@ pragma solidity ^0.8.20;
 import {Ownable} from "OZ/access/Ownable.sol";
 import {Ownable2Step} from "OZ/access/Ownable2Step.sol";
 import {Context} from "OZ/utils/Context.sol";
-import {RuleBlacklistBase} from "./abstract/RuleBlacklistBase.sol";
-import {RuleAddressSet} from "./abstract/RuleAddressSet/RuleAddressSet.sol";
+import {RuleBlacklistBase} from "../abstract/base/RuleBlacklistBase.sol";
+import {RuleAddressSet} from "../abstract/RuleAddressSet/RuleAddressSet.sol";
 
 /**
  * @title RuleBlacklistOwnable

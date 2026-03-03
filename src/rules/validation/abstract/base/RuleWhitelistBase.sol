@@ -1,17 +1,17 @@
 // SPDX-License-Identifier: MPL-2.0
 pragma solidity ^0.8.20;
 
-import {RuleAddressSet} from "./RuleAddressSet/RuleAddressSet.sol";
-import {RuleWhitelistCommon} from "./RuleWhitelistCommon.sol";
-import {RuleValidateTransfer} from "./RuleValidateTransfer.sol";
+import {RuleAddressSet} from "../RuleAddressSet/RuleAddressSet.sol";
+import {RuleWhitelistShared} from "../core/RuleWhitelistShared.sol";
+import {RuleTransferValidation} from "../core/RuleTransferValidation.sol";
 import {IERC1404Extend} from "CMTAT/interfaces/tokenization/draft-IERC1404.sol";
-import {IIdentityRegistryVerified} from "../../interfaces/IIdentityRegistry.sol";
+import {IIdentityRegistryVerified} from "../../../interfaces/IIdentityRegistry.sol";
 
 /**
  * @title RuleWhitelistBase
  * @notice Core whitelist logic without access-control policy.
  */
-abstract contract RuleWhitelistBase is RuleAddressSet, RuleWhitelistCommon, IIdentityRegistryVerified {
+abstract contract RuleWhitelistBase is RuleAddressSet, RuleWhitelistShared, IIdentityRegistryVerified {
     constructor(address forwarderIrrevocable, bool checkSpender_) RuleAddressSet(forwarderIrrevocable) {
         checkSpender = checkSpender_;
     }
@@ -64,8 +64,8 @@ abstract contract RuleWhitelistBase is RuleAddressSet, RuleWhitelistCommon, IIde
         checkSpender = value;
     }
 
-    function supportsInterface(bytes4 interfaceId) public view virtual override(RuleValidateTransfer) returns (bool) {
-        return RuleValidateTransfer.supportsInterface(interfaceId);
+    function supportsInterface(bytes4 interfaceId) public view virtual override(RuleTransferValidation) returns (bool) {
+        return RuleTransferValidation.supportsInterface(interfaceId);
     }
 
     /*//////////////////////////////////////////////////////////////

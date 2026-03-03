@@ -5,16 +5,16 @@ pragma solidity ^0.8.20;
 /* ==== OpenZeppelin === */
 import {AccessControl} from "OZ/access/AccessControl.sol";
 /* ==== Abstract contracts === */
-import {MetaTxModuleStandalone, ERC2771Context} from "../../../modules/MetaTxModuleStandalone.sol";
+import {MetaTxModuleStandalone, ERC2771Context} from "../../../../modules/MetaTxModuleStandalone.sol";
 import {Context} from "OZ/utils/Context.sol";
-import {RuleWhitelistCommon} from "./RuleWhitelistCommon.sol";
-import {RuleValidateTransfer} from "./RuleValidateTransfer.sol";
+import {RuleWhitelistShared} from "../core/RuleWhitelistShared.sol";
+import {RuleTransferValidation} from "../core/RuleTransferValidation.sol";
 /* ==== RuleEngine === */
 import {RulesManagementModule} from "RuleEngine/modules/RulesManagementModule.sol";
 /* ==== CMTAT === */
 import {IERC1404, IERC1404Extend} from "CMTAT/interfaces/tokenization/draft-IERC1404.sol";
 /* ==== Interfaces === */
-import {IAddressList} from "../../interfaces/IAddressList.sol";
+import {IAddressList} from "../../../interfaces/IAddressList.sol";
 
 /**
  * @title Wrapper to call several different whitelist rules (base)
@@ -23,7 +23,7 @@ import {IAddressList} from "../../interfaces/IAddressList.sol";
 abstract contract RuleWhitelistWrapperBase is
     RulesManagementModule,
     MetaTxModuleStandalone,
-    RuleWhitelistCommon
+    RuleWhitelistShared
 {
     /*//////////////////////////////////////////////////////////////
                               CONSTRUCTOR
@@ -95,16 +95,16 @@ abstract contract RuleWhitelistWrapperBase is
         }
     }
 
-    // ERC-7943 tokenId overloads are provided by {RuleNFTAdapter} via RuleWhitelistCommon.
+    // ERC-7943 tokenId overloads are provided by {RuleNFTAdapter} via RuleWhitelistShared.
 
     function supportsInterface(bytes4 interfaceId)
         public
         view
         virtual
-        override(AccessControl, RuleValidateTransfer)
+        override(AccessControl, RuleTransferValidation)
         returns (bool)
     {
-        return AccessControl.supportsInterface(interfaceId) || RuleValidateTransfer.supportsInterface(interfaceId);
+        return AccessControl.supportsInterface(interfaceId) || RuleTransferValidation.supportsInterface(interfaceId);
     }
 
     /* ============  Access control ============ */
@@ -125,9 +125,9 @@ abstract contract RuleWhitelistWrapperBase is
     function _transferred(address from, address to, uint256 value)
         internal
         view
-        override(RulesManagementModule, RuleWhitelistCommon)
+        override(RulesManagementModule, RuleWhitelistShared)
     {
-        RuleWhitelistCommon._transferred(from, to, value);
+        RuleWhitelistShared._transferred(from, to, value);
     }
 
     function _transferred(address spender, address from, address to, uint256 value)
@@ -135,7 +135,7 @@ abstract contract RuleWhitelistWrapperBase is
         view
         override(RulesManagementModule)
     {
-        RuleWhitelistCommon._transferredFrom(spender, from, to, value);
+        RuleWhitelistShared._transferredFrom(spender, from, to, value);
     }
 
     /*//////////////////////////////////////////////////////////////

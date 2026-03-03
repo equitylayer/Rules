@@ -4,10 +4,10 @@ pragma solidity ^0.8.20;
 
 import {AccessControl} from "OZ/access/AccessControl.sol";
 import {Context} from "OZ/utils/Context.sol";
-import {AccessControlModuleStandalone} from "../../modules/AccessControlModuleStandalone.sol";
+import {AccessControlModuleStandalone} from "../../../modules/AccessControlModuleStandalone.sol";
 /* ==== Abstract contracts === */
-import {RuleBlacklistBase} from "./abstract/RuleBlacklistBase.sol";
-import {RuleAddressSet} from "./abstract/RuleAddressSet/RuleAddressSet.sol";
+import {RuleBlacklistBase} from "../abstract/base/RuleBlacklistBase.sol";
+import {RuleAddressSet} from "../abstract/RuleAddressSet/RuleAddressSet.sol";
 
 /**
  * @title a blacklist manager

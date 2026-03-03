@@ -3,7 +3,7 @@
 pragma solidity ^0.8.20;
 
 import {RuleCommonInvariantStorage} from "./RuleCommonInvariantStorage.sol";
-import {ISanctionsList} from "../../interfaces/ISanctionsList.sol";
+import {ISanctionsList} from "../../../interfaces/ISanctionsList.sol";
 
 abstract contract RuleSanctionsListInvariantStorage is RuleCommonInvariantStorage {
     /* ============ Event ============ */

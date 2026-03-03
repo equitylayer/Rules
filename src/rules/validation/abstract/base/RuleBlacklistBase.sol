@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MPL-2.0
 pragma solidity ^0.8.20;
 
-import {RuleAddressSet} from "./RuleAddressSet/RuleAddressSet.sol";
-import {RuleNFTAdapter} from "./RuleNFTAdapter.sol";
-import {RuleValidateTransfer} from "./RuleValidateTransfer.sol";
-import {RuleBlacklistInvariantStorage} from "./RuleAddressSet/invariantStorage/RuleBlacklistInvariantStorage.sol";
+import {RuleAddressSet} from "../RuleAddressSet/RuleAddressSet.sol";
+import {RuleNFTAdapter} from "../core/RuleNFTAdapter.sol";
+import {RuleTransferValidation} from "../core/RuleTransferValidation.sol";
+import {RuleBlacklistInvariantStorage} from "../RuleAddressSet/invariantStorage/RuleBlacklistInvariantStorage.sol";
 import {IERC1404, IERC1404Extend} from "CMTAT/interfaces/tokenization/draft-IERC1404.sol";
 import {IERC3643IComplianceContract} from "CMTAT/interfaces/tokenization/IERC3643Partial.sol";
 import {IRuleEngine} from "CMTAT/interfaces/engine/IRuleEngine.sol";
@@ -72,8 +72,8 @@ abstract contract RuleBlacklistBase is RuleAddressSet, RuleNFTAdapter, RuleBlack
         }
     }
 
-    function supportsInterface(bytes4 interfaceId) public view virtual override(RuleValidateTransfer) returns (bool) {
-        return RuleValidateTransfer.supportsInterface(interfaceId);
+    function supportsInterface(bytes4 interfaceId) public view virtual override(RuleTransferValidation) returns (bool) {
+        return RuleTransferValidation.supportsInterface(interfaceId);
     }
 
     /**

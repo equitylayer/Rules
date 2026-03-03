@@ -5,7 +5,7 @@ import {Test} from "forge-std/Test.sol";
 import {HelperContract} from "../HelperContract.sol";
 import {RuleEngine} from "RuleEngine/RuleEngine.sol";
 import {CMTATDeployment} from "RuleEngine/../test/utils/CMTATDeployment.sol";
-import {RuleBlacklist} from "src/rules/validation/RuleBlacklist.sol";
+import {RuleBlacklist} from "src/rules/validation/deployment/RuleBlacklist.sol";
 
 /**
  * @title Integration test with the CMTAT

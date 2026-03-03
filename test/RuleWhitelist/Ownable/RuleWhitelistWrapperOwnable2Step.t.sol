@@ -2,8 +2,8 @@
 pragma solidity ^0.8.20;
 
 import {Ownable2StepTestBase, IOwnable2StepLike} from "../../utils/Ownable2StepTestBase.sol";
-import {RuleWhitelist} from "src/rules/validation/RuleWhitelist.sol";
-import {RuleWhitelistWrapperOwnable2Step} from "src/rules/validation/RuleWhitelistWrapperOwnable2Step.sol";
+import {RuleWhitelist} from "src/rules/validation/deployment/RuleWhitelist.sol";
+import {RuleWhitelistWrapperOwnable2Step} from "src/rules/validation/deployment/RuleWhitelistWrapperOwnable2Step.sol";
 
 contract RuleWhitelistWrapperOwnable2StepTest is Ownable2StepTestBase {
     RuleWhitelistWrapperOwnable2Step internal wrapper;
