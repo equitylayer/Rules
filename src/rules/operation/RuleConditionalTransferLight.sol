@@ -125,6 +125,13 @@ contract RuleConditionalTransferLight is
         return uint8(IERC1404Extend.REJECTED_CODE_BASE.TRANSFER_OK);
     }
 
+    /**
+     * @notice Computes approval bucket hash for a transfer tuple.
+     * @param from Sender address.
+     * @param to Recipient address.
+     * @param value Amount to transfer.
+     * @return hash Approval bucket hash.
+     */
     function _transferHash(address from, address to, uint256 value) internal pure returns (bytes32 hash) {
         return keccak256(abi.encodePacked(from, to, value));
     }

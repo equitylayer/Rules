@@ -73,6 +73,12 @@ function transferred(address spender, address from, address to, uint256 tokenId,
 
 ## Architecture
 
+### Naming Conventions
+
+- `*Base` contracts contain core logic without an access-control policy.
+- `*InvariantStorage` contracts group constants, custom errors, and events.
+- `*Common` contracts provide shared helper logic across variants (legacy naming retained for compatibility).
+
 ### Rule - Code list
 
 > It is very important that each rule uses an unique code
@@ -241,6 +247,7 @@ There are two categories of rules: validation rules (Read-only) and operation ru
 - `RuleIdentityRegistry` can be disabled with `clearIdentityRegistry()`, which allows all transfers to pass this rule.
 - Constructors for `RuleSanctionsList` and `RuleIdentityRegistry` accept a zero address to start in a disabled state.
 - `RuleMaxTotalSupply` trusts the configured `tokenContract` to return an accurate `totalSupply()`.
+- `RuleMaxTotalSupply` does not allow clearing the token contract; disable the rule by removing it from the RuleEngine or token.
 - `RuleWhitelistWrapper` requires child rules that implement `IAddressList`. Gas cost grows with the number of rules, and a wrapper with zero rules will reject all transfers.
 - Read-only rules still implement `transferred()` to comply with ERC-3643 and RuleEngine interfaces, but they do not change state.
 - `RuleConditionalTransferLight` approvals are keyed by `(from, to, value)` and are not nonce-based.

@@ -5,11 +5,9 @@ import {AccessControl} from "OZ/access/AccessControl.sol";
 import {AccessControlModuleStandalone} from "../../modules/AccessControlModuleStandalone.sol";
 import {RuleValidateTransfer} from "./abstract/RuleValidateTransfer.sol";
 import {RuleMaxTotalSupplyInvariantStorage} from "./abstract/RuleMaxTotalSupplyInvariantStorage.sol";
+import {RuleNFTAdapter} from "./abstract/RuleNFTAdapter.sol";
 import {IERC1404, IERC1404Extend} from "CMTAT/interfaces/tokenization/draft-IERC1404.sol";
 import {ITotalSupply} from "../interfaces/ITotalSupply.sol";
-import {
-    IERC7943NonFungibleComplianceExtend
-} from "../interfaces/IERC7943NonFungibleCompliance.sol";
 import {IERC3643IComplianceContract} from "CMTAT/interfaces/tokenization/IERC3643Partial.sol";
 import {IRuleEngine} from "CMTAT/interfaces/engine/IRuleEngine.sol";
 
@@ -17,11 +15,21 @@ import {IRuleEngine} from "CMTAT/interfaces/engine/IRuleEngine.sol";
  * @title RuleMaxTotalSupply
  * @notice Restricts minting so that total supply never exceeds a maximum value.
  */
-contract RuleMaxTotalSupply is AccessControlModuleStandalone, RuleValidateTransfer, RuleMaxTotalSupplyInvariantStorage {
+contract RuleMaxTotalSupply is
+    AccessControlModuleStandalone,
+    RuleValidateTransfer,
+    RuleNFTAdapter,
+    RuleMaxTotalSupplyInvariantStorage
+{
     /// @dev tokenContract is trusted to return a correct totalSupply.
     ITotalSupply public tokenContract;
     uint256 public maxTotalSupply;
 
+    /**
+     * @param admin Address that receives the default admin role.
+     * @param tokenContract_ Token contract that exposes totalSupply (must be non-zero).
+     * @param maxTotalSupply_ Initial maximum supply.
+     */
     constructor(address admin, address tokenContract_, uint256 maxTotalSupply_) AccessControlModuleStandalone(admin) {
         if (tokenContract_ == address(0)) {
             revert RuleMaxTotalSupply_TokenAddressZeroNotAllowed();
@@ -59,15 +67,6 @@ contract RuleMaxTotalSupply is AccessControlModuleStandalone, RuleValidateTransf
         return uint8(IERC1404Extend.REJECTED_CODE_BASE.TRANSFER_OK);
     }
 
-    function detectTransferRestriction(address from, address to, uint256, uint256 value)
-        public
-        view
-        override(IERC7943NonFungibleComplianceExtend)
-        returns (uint8)
-    {
-        return detectTransferRestriction(from, to, value);
-    }
-
     function detectTransferRestrictionFrom(address, address from, address to, uint256 value)
         public
         view
@@ -77,16 +76,12 @@ contract RuleMaxTotalSupply is AccessControlModuleStandalone, RuleValidateTransf
         return detectTransferRestriction(from, to, value);
     }
 
-    function detectTransferRestrictionFrom(
-        address spender,
-        address from,
-        address to,
-        uint256,
-        uint256 value
-    ) public view override(IERC7943NonFungibleComplianceExtend) returns (uint8) {
-        return detectTransferRestrictionFrom(spender, from, to, value);
-    }
+    // ERC-7943 tokenId overloads are provided by {RuleNFTAdapter}.
 
+    /**
+     * @inheritdoc IERC3643IComplianceContract
+     * @dev Validation only; does not modify state.
+     */
     function transferred(address from, address to, uint256 value)
         public
         view
@@ -100,6 +95,10 @@ contract RuleMaxTotalSupply is AccessControlModuleStandalone, RuleValidateTransf
         );
     }
 
+    /**
+     * @inheritdoc IRuleEngine
+     * @dev Validation only; does not modify state.
+     */
     function transferred(address spender, address from, address to, uint256 value)
         public
         view
@@ -113,21 +112,7 @@ contract RuleMaxTotalSupply is AccessControlModuleStandalone, RuleValidateTransf
         );
     }
 
-    function transferred(address from, address to, uint256 /* tokenId */, uint256 value)
-        public
-        view
-        override(IERC7943NonFungibleComplianceExtend)
-    {
-        transferred(from, to, value);
-    }
-
-    function transferred(address spender, address from, address to, uint256 /* tokenId */, uint256 value)
-        public
-        view
-        override(IERC7943NonFungibleComplianceExtend)
-    {
-        transferred(spender, from, to, value);
-    }
+    // ERC-7943 tokenId overloads are provided by {RuleNFTAdapter}.
 
     function canReturnTransferRestrictionCode(uint8 restrictionCode) external pure override returns (bool) {
         return restrictionCode == CODE_MAX_TOTAL_SUPPLY_EXCEEDED;

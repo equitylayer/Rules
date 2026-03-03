@@ -3,20 +3,18 @@ pragma solidity ^0.8.20;
 
 import {RuleAddressSet} from "./RuleAddressSet/RuleAddressSet.sol";
 import {RuleValidateTransfer} from "./RuleValidateTransfer.sol";
+import {RuleNFTAdapter} from "./RuleNFTAdapter.sol";
 import {RuleBlacklistInvariantStorage} from "./RuleAddressSet/invariantStorage/RuleBlacklistInvariantStorage.sol";
 import {IERC1404, IERC1404Extend} from "CMTAT/interfaces/tokenization/draft-IERC1404.sol";
 import {IERC3643IComplianceContract} from "CMTAT/interfaces/tokenization/IERC3643Partial.sol";
 import {IRuleEngine} from "CMTAT/interfaces/engine/IRuleEngine.sol";
 import {IRule} from "RuleEngine/interfaces/IRule.sol";
-import {
-    IERC7943NonFungibleComplianceExtend
-} from "../../interfaces/IERC7943NonFungibleCompliance.sol";
 
 /**
  * @title RuleBlacklistBase
  * @notice Core blacklist logic without access-control policy.
  */
-abstract contract RuleBlacklistBase is RuleAddressSet, RuleValidateTransfer, RuleBlacklistInvariantStorage {
+abstract contract RuleBlacklistBase is RuleAddressSet, RuleValidateTransfer, RuleNFTAdapter, RuleBlacklistInvariantStorage {
     constructor(address forwarderIrrevocable) RuleAddressSet(forwarderIrrevocable) {}
 
     function detectTransferRestriction(address from, address to, uint256 /* value */ )
@@ -34,15 +32,6 @@ abstract contract RuleBlacklistBase is RuleAddressSet, RuleValidateTransfer, Rul
         }
     }
 
-    function detectTransferRestriction(address from, address to, uint256 /* tokenId */, uint256 value)
-        public
-        view
-        override(IERC7943NonFungibleComplianceExtend)
-        returns (uint8)
-    {
-        return detectTransferRestriction(from, to, value);
-    }
-
     function detectTransferRestrictionFrom(address spender, address from, address to, uint256 value)
         public
         view
@@ -54,16 +43,6 @@ abstract contract RuleBlacklistBase is RuleAddressSet, RuleValidateTransfer, Rul
         } else {
             return detectTransferRestriction(from, to, value);
         }
-    }
-
-    function detectTransferRestrictionFrom(
-        address spender,
-        address from,
-        address to,
-        uint256 /* tokenId */,
-        uint256 value
-    ) public view override(IERC7943NonFungibleComplianceExtend) returns (uint8) {
-        return detectTransferRestrictionFrom(spender, from, to, value);
     }
 
     function canReturnTransferRestrictionCode(uint8 restrictionCode)
@@ -99,6 +78,10 @@ abstract contract RuleBlacklistBase is RuleAddressSet, RuleValidateTransfer, Rul
         return RuleValidateTransfer.supportsInterface(interfaceId);
     }
 
+    /**
+     * @inheritdoc IERC3643IComplianceContract
+     * @dev Validation only; does not modify state.
+     */
     function transferred(address from, address to, uint256 value)
         public
         view
@@ -112,6 +95,10 @@ abstract contract RuleBlacklistBase is RuleAddressSet, RuleValidateTransfer, Rul
         );
     }
 
+    /**
+     * @inheritdoc IRuleEngine
+     * @dev Validation only; does not modify state.
+     */
     function transferred(address spender, address from, address to, uint256 value)
         public
         view
@@ -124,22 +111,5 @@ abstract contract RuleBlacklistBase is RuleAddressSet, RuleValidateTransfer, Rul
             RuleBlacklist_InvalidTransferFrom(address(this), spender, from, to, value, code)
         );
     }
-
-    function transferred(address spender, address from, address to, uint256 /* tokenId */, uint256 value)
-        public
-        view
-        virtual
-        override(IERC7943NonFungibleComplianceExtend)
-    {
-        transferred(spender, from, to, value);
-    }
-
-    function transferred(address from, address to, uint256 /* tokenId */, uint256 value)
-        public
-        view
-        virtual
-        override(IERC7943NonFungibleComplianceExtend)
-    {
-        transferred(from, to, value);
-    }
+    // ERC-7943 tokenId overloads are provided by {RuleNFTAdapter}.
 }

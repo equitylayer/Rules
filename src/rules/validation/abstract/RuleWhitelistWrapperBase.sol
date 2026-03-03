@@ -14,7 +14,6 @@ import {RulesManagementModule} from "RuleEngine/modules/RulesManagementModule.so
 /* ==== CMTAT === */
 import {IERC1404, IERC1404Extend} from "CMTAT/interfaces/tokenization/draft-IERC1404.sol";
 /* ==== Interfaces === */
-import {IERC7943NonFungibleComplianceExtend} from "../../interfaces/IERC7943NonFungibleCompliance.sol";
 import {IAddressList} from "../../interfaces/IAddressList.sol";
 
 /**
@@ -67,16 +66,6 @@ abstract contract RuleWhitelistWrapperBase is
         }
     }
 
-    function detectTransferRestriction(address from, address to, uint256 /* tokenId */, uint256 value)
-        public
-        view
-        virtual
-        override(IERC7943NonFungibleComplianceExtend)
-        returns (uint8)
-    {
-        return detectTransferRestriction(from, to, value);
-    }
-
     function detectTransferRestrictionFrom(address spender, address from, address to, uint256 value)
         public
         view
@@ -106,18 +95,7 @@ abstract contract RuleWhitelistWrapperBase is
         }
     }
 
-    /**
-     * @inheritdoc IERC7943NonFungibleComplianceExtend
-     */
-    function detectTransferRestrictionFrom(
-        address spender,
-        address from,
-        address to,
-        uint256 /* tokenId */,
-        uint256 value
-    ) public view virtual override(IERC7943NonFungibleComplianceExtend) returns (uint8) {
-        return detectTransferRestrictionFrom(spender, from, to, value);
-    }
+    // ERC-7943 tokenId overloads are provided by {RuleNFTAdapter} via RuleWhitelistCommon.
 
     function supportsInterface(bytes4 interfaceId)
         public
@@ -148,6 +126,11 @@ abstract contract RuleWhitelistWrapperBase is
                             INTERNAL/PRIVATE FUNCTIONS
     //////////////////////////////////////////////////////////////*/
 
+    /**
+     * @notice Evaluates target addresses across all child rules.
+     * @param targetAddress Addresses to validate (from/to[/spender]).
+     * @return result Boolean array aligned with targetAddress indicating if each address is listed.
+     */
     function _detectTransferRestriction(address[] memory targetAddress) internal view returns (bool[] memory) {
         uint256 rulesLength = rulesCount();
         bool[] memory result = new bool[](targetAddress.length);
@@ -178,6 +161,10 @@ abstract contract RuleWhitelistWrapperBase is
 
     /**
      *  @dev Internal helper to update the `checkSpender` flag.
+     */
+    /**
+     * @notice Internal helper to update the `checkSpender` flag.
+     * @param value New flag value.
      */
     function _setCheckSpender(bool value) internal {
         checkSpender = value;

@@ -7,8 +7,7 @@ import {IRuleEngine} from "CMTAT/interfaces/engine/IRuleEngine.sol";
 /* ==== Abstract contracts === */
 import {RuleWhitelistInvariantStorage} from "./RuleAddressSet/invariantStorage/RuleWhitelistInvariantStorage.sol";
 import {RuleValidateTransfer} from "./RuleValidateTransfer.sol";
-/* ==== Interface === */
-import {IERC7943NonFungibleComplianceExtend} from "../../interfaces/IERC7943NonFungibleCompliance.sol";
+import {RuleNFTAdapter} from "./RuleNFTAdapter.sol";
 
 /**
  * @title Rule Whitelist Common
@@ -18,7 +17,7 @@ import {IERC7943NonFungibleComplianceExtend} from "../../interfaces/IERC7943NonF
  * - Defines utility functions for restriction code validation and message mapping.
  * - Inherits restriction code constants and messages from {RuleWhitelistInvariantStorage}.
  */
-abstract contract RuleWhitelistCommon is RuleValidateTransfer, RuleWhitelistInvariantStorage {
+abstract contract RuleWhitelistCommon is RuleValidateTransfer, RuleNFTAdapter, RuleWhitelistInvariantStorage {
     /**
      * Indicate if the spender is verified or not
      */
@@ -68,6 +67,7 @@ abstract contract RuleWhitelistCommon is RuleValidateTransfer, RuleWhitelistInva
      * @dev
      * - Validates that both `from` and `to` addresses are whitelisted.
      * - Reverts if any restriction code other than `TRANSFER_OK` is returned.
+     * - Validation only; does not modify state.
      * - Should be called during token transfer logic to enforce whitelist compliance.
      * @param from The address sending tokens.
      * @param to The address receiving tokens.
@@ -86,6 +86,7 @@ abstract contract RuleWhitelistCommon is RuleValidateTransfer, RuleWhitelistInva
      * @dev
      * - Validates that `spender`, `from`, and `to` are all whitelisted.
      * - Reverts if any restriction code other than `TRANSFER_OK` is returned.
+     * - Validation only; does not modify state.
      * @param spender The address performing the transfer on behalf of another.
      * @param from The address from which tokens are transferred.
      * @param to The recipient address.
@@ -100,21 +101,4 @@ abstract contract RuleWhitelistCommon is RuleValidateTransfer, RuleWhitelistInva
     }
 
 
-    function transferred(address spender, address from, address to, uint256 /* tokenId */, uint256 value)
-        public
-        view
-        virtual
-        override(IERC7943NonFungibleComplianceExtend)
-    {
-        transferred(spender, from, to, value);
-    }
-
-    function transferred(address from, address to, uint256 /* tokenId */, uint256 value)
-        public
-        view
-        virtual
-        override(IERC7943NonFungibleComplianceExtend)
-    {
-        transferred(from, to, value);
-    }
 }

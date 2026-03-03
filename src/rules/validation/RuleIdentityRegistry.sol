@@ -5,12 +5,10 @@ import {AccessControl} from "OZ/access/AccessControl.sol";
 import {AccessControlModuleStandalone} from "../../modules/AccessControlModuleStandalone.sol";
 import {RuleValidateTransfer} from "./abstract/RuleValidateTransfer.sol";
 import {RuleIdentityRegistryInvariantStorage} from "./abstract/RuleIdentityRegistryInvariantStorage.sol";
+import {RuleNFTAdapter} from "./abstract/RuleNFTAdapter.sol";
 import {IERC1404, IERC1404Extend} from "CMTAT/interfaces/tokenization/draft-IERC1404.sol";
 import {IERC3643IComplianceContract} from "CMTAT/interfaces/tokenization/IERC3643Partial.sol";
 import {IRuleEngine} from "CMTAT/interfaces/engine/IRuleEngine.sol";
-import {
-    IERC7943NonFungibleComplianceExtend
-} from "../interfaces/IERC7943NonFungibleCompliance.sol";
 import {IIdentityRegistryVerified} from "../interfaces/IIdentityRegistry.sol";
 
 /**
@@ -21,6 +19,7 @@ import {IIdentityRegistryVerified} from "../interfaces/IIdentityRegistry.sol";
 contract RuleIdentityRegistry is
     AccessControlModuleStandalone,
     RuleValidateTransfer,
+    RuleNFTAdapter,
     RuleIdentityRegistryInvariantStorage
 {
     IIdentityRegistryVerified public identityRegistry;
@@ -67,15 +66,6 @@ contract RuleIdentityRegistry is
         return uint8(IERC1404Extend.REJECTED_CODE_BASE.TRANSFER_OK);
     }
 
-    function detectTransferRestriction(address from, address to, uint256 /* tokenId */, uint256 value)
-        public
-        view
-        override(IERC7943NonFungibleComplianceExtend)
-        returns (uint8)
-    {
-        return detectTransferRestriction(from, to, value);
-    }
-
     function detectTransferRestrictionFrom(address spender, address from, address to, uint256 value)
         public
         view
@@ -95,16 +85,12 @@ contract RuleIdentityRegistry is
         return detectTransferRestriction(from, to, value);
     }
 
-    function detectTransferRestrictionFrom(
-        address spender,
-        address from,
-        address to,
-        uint256 /* tokenId */,
-        uint256 value
-    ) public view override(IERC7943NonFungibleComplianceExtend) returns (uint8) {
-        return detectTransferRestrictionFrom(spender, from, to, value);
-    }
+    // ERC-7943 tokenId overloads are provided by {RuleNFTAdapter}.
 
+    /**
+     * @inheritdoc IERC3643IComplianceContract
+     * @dev Validation only; does not modify state.
+     */
     function transferred(address from, address to, uint256 value)
         public
         view
@@ -118,6 +104,10 @@ contract RuleIdentityRegistry is
         );
     }
 
+    /**
+     * @inheritdoc IRuleEngine
+     * @dev Validation only; does not modify state.
+     */
     function transferred(address spender, address from, address to, uint256 value)
         public
         view
@@ -131,21 +121,7 @@ contract RuleIdentityRegistry is
         );
     }
 
-    function transferred(address from, address to, uint256 /* tokenId */, uint256 value)
-        public
-        view
-        override(IERC7943NonFungibleComplianceExtend)
-    {
-        transferred(from, to, value);
-    }
-
-    function transferred(address spender, address from, address to, uint256 /* tokenId */, uint256 value)
-        public
-        view
-        override(IERC7943NonFungibleComplianceExtend)
-    {
-        transferred(spender, from, to, value);
-    }
+    // ERC-7943 tokenId overloads are provided by {RuleNFTAdapter}.
 
     function canReturnTransferRestrictionCode(uint8 restrictionCode) external pure override returns (bool) {
         return restrictionCode == CODE_ADDRESS_FROM_NOT_VERIFIED || restrictionCode == CODE_ADDRESS_TO_NOT_VERIFIED

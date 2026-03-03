@@ -32,10 +32,19 @@ abstract contract RuleAddressSetInternal {
      * - Does not revert if an address is already listed.
      * - Skips existing entries silently.
      * @param addressesToAdd The array of addresses to add.
+     * @return added The number of newly added addresses.
+     * @return skipped The number of addresses that were already listed.
      */
-    function _addAddresses(address[] calldata addressesToAdd) internal {
+    function _addAddresses(address[] calldata addressesToAdd)
+        internal
+        returns (uint256 added, uint256 skipped)
+    {
         for (uint256 i = 0; i < addressesToAdd.length; ++i) {
-            _listedAddresses.add(addressesToAdd[i]);
+            if (_listedAddresses.add(addressesToAdd[i])) {
+                added += 1;
+            } else {
+                skipped += 1;
+            }
         }
     }
 
@@ -45,10 +54,19 @@ abstract contract RuleAddressSetInternal {
      * - Does not revert if an address is not found.
      * - Skips non-existing entries silently.
      * @param addressesToRemove The array of addresses to remove.
+     * @return removed The number of addresses removed.
+     * @return skipped The number of addresses that were not listed.
      */
-    function _removeAddresses(address[] calldata addressesToRemove) internal {
+    function _removeAddresses(address[] calldata addressesToRemove)
+        internal
+        returns (uint256 removed, uint256 skipped)
+    {
         for (uint256 i = 0; i < addressesToRemove.length; ++i) {
-            _listedAddresses.remove(addressesToRemove[i]);
+            if (_listedAddresses.remove(addressesToRemove[i])) {
+                removed += 1;
+            } else {
+                skipped += 1;
+            }
         }
     }
 

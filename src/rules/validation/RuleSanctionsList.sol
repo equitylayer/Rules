@@ -9,9 +9,9 @@ import {Context} from "OZ/utils/Context.sol";
 import {AccessControlModuleStandalone} from "../../modules/AccessControlModuleStandalone.sol";
 import {RuleSanctionsListInvariantStorage} from "./abstract/RuleSanctionsListInvariantStorage.sol";
 import {RuleValidateTransfer} from "./abstract/RuleValidateTransfer.sol";
+import {RuleNFTAdapter} from "./abstract/RuleNFTAdapter.sol";
 /* ==== Interfaces === */
 import {ISanctionsList} from "../interfaces/ISanctionsList.sol";
-import {IERC7943NonFungibleComplianceExtend} from "../interfaces/IERC7943NonFungibleCompliance.sol";
 /* ==== CMTAT === */
 import {IERC1404, IERC1404Extend} from "CMTAT/interfaces/tokenization/draft-IERC1404.sol";
 import {IERC3643IComplianceContract} from "CMTAT/interfaces/tokenization/IERC3643Partial.sol";
@@ -42,6 +42,7 @@ contract RuleSanctionsList is
     AccessControlModuleStandalone,
     MetaTxModuleStandalone,
     RuleValidateTransfer,
+    RuleNFTAdapter,
     RuleSanctionsListInvariantStorage
 {
     ISanctionsList public sanctionsList;
@@ -88,19 +89,6 @@ contract RuleSanctionsList is
     }
 
     /**
-     * @inheritdoc IERC7943NonFungibleComplianceExtend
-     */
-    function detectTransferRestriction(address from, address to, uint256 /* tokenId */, uint256 value)
-        public
-        view
-        virtual
-        override(IERC7943NonFungibleComplianceExtend)
-        returns (uint8)
-    {
-        return detectTransferRestriction(from, to, value);
-    }
-
-    /**
      * @inheritdoc IERC1404Extend
      */
     function detectTransferRestrictionFrom(address spender, address from, address to, uint256 value)
@@ -120,15 +108,7 @@ contract RuleSanctionsList is
         return uint8(REJECTED_CODE_BASE.TRANSFER_OK);
     }
 
-    function detectTransferRestrictionFrom(
-        address spender,
-        address from,
-        address to,
-        uint256 /* tokenId */,
-        uint256 value
-    ) public view virtual override(IERC7943NonFungibleComplianceExtend) returns (uint8) {
-        return detectTransferRestrictionFrom(spender, from, to, value);
-    }
+    // ERC-7943 tokenId overloads are provided by {RuleNFTAdapter}.
 
     /**
      * @notice To know if the restriction code is valid for this rule or not.
@@ -191,6 +171,7 @@ contract RuleSanctionsList is
 
     /**
      * @inheritdoc IERC3643IComplianceContract
+     * @dev Validation only; does not modify state.
      */
     function transferred(address from, address to, uint256 value)
         public
@@ -198,6 +179,7 @@ contract RuleSanctionsList is
         virtual
         override(IERC3643IComplianceContract)
     {
+        // Validation only; does not modify state.
         uint8 code = this.detectTransferRestriction(from, to, value);
         require(
             code == uint8(REJECTED_CODE_BASE.TRANSFER_OK),
@@ -208,6 +190,7 @@ contract RuleSanctionsList is
     
     /**
      * @inheritdoc IRuleEngine
+     * @dev Validation only; does not modify state.
      */
     function transferred(address spender, address from, address to, uint256 value)
         public
@@ -215,29 +198,12 @@ contract RuleSanctionsList is
         virtual
         override(IRuleEngine)
     {
+        // Validation only; does not modify state.
         uint8 code = this.detectTransferRestrictionFrom(spender, from, to, value);
         require(
             code == uint8(REJECTED_CODE_BASE.TRANSFER_OK),
             RuleSanctionsList_InvalidTransferFrom(address(this), spender, from, to, value, code)
         );
-    }
-
-    function transferred(address spender, address from, address to, uint256 /* tokenId */, uint256 value)
-        public
-        view
-        virtual
-        override(IERC7943NonFungibleComplianceExtend)
-    {
-        transferred(spender, from, to, value);
-    }
-
-    function transferred(address from, address to, uint256 /* tokenId */, uint256 value)
-        public
-        view
-        virtual
-        override(IERC7943NonFungibleComplianceExtend)
-    {
-        transferred(from, to, value);
     }
     /*//////////////////////////////////////////////////////////////
                             INTERNAL FUNCTIONS

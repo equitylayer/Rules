@@ -6,9 +6,6 @@ import {RuleWhitelistCommon} from "./RuleWhitelistCommon.sol";
 import {RuleValidateTransfer} from "./RuleValidateTransfer.sol";
 import {IERC1404, IERC1404Extend} from "CMTAT/interfaces/tokenization/draft-IERC1404.sol";
 import {IIdentityRegistryVerified} from "../../interfaces/IIdentityRegistry.sol";
-import {
-    IERC7943NonFungibleComplianceExtend
-} from "../../interfaces/IERC7943NonFungibleCompliance.sol";
 
 /**
  * @title RuleWhitelistBase
@@ -35,16 +32,6 @@ abstract contract RuleWhitelistBase is RuleAddressSet, RuleWhitelistCommon, IIde
         }
     }
 
-    function detectTransferRestriction(address from, address to, uint256 /* tokenId */, uint256 value)
-        public
-        view
-        virtual
-        override(IERC7943NonFungibleComplianceExtend)
-        returns (uint8)
-    {
-        return detectTransferRestriction(from, to, value);
-    }
-
     function detectTransferRestrictionFrom(address spender, address from, address to, uint256 value)
         public
         view
@@ -58,15 +45,7 @@ abstract contract RuleWhitelistBase is RuleAddressSet, RuleWhitelistCommon, IIde
         return detectTransferRestriction(from, to, value);
     }
 
-    function detectTransferRestrictionFrom(
-        address spender,
-        address from,
-        address to,
-        uint256 /* tokenId */,
-        uint256 value
-    ) public view override(IERC7943NonFungibleComplianceExtend) returns (uint8) {
-        return detectTransferRestrictionFrom(spender, from, to, value);
-    }
+    // ERC-7943 tokenId overloads are provided by {RuleNFTAdapter} via RuleWhitelistCommon.
 
     function isVerified(address targetAddress)
         public

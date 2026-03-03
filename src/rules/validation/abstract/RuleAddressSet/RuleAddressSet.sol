@@ -46,11 +46,13 @@ abstract contract RuleAddressSet is
      * @dev
      * - Does not revert if an address is already listed.
      * - Accessible only by accounts with the `ADDRESS_LIST_ADD_ROLE`.
+     * - Emits {AddressesBatchAdded} with summary counts.
      * @param targetAddresses Array of addresses to be added.
      */
     function addAddresses(address[] calldata targetAddresses) public onlyAddressListAdd {
-        _addAddresses(targetAddresses);
+        (uint256 added, uint256 skipped) = _addAddresses(targetAddresses);
         emit AddAddresses(targetAddresses);
+        emit AddressesBatchAdded(added, skipped);
     }
 
     /**
@@ -58,11 +60,13 @@ abstract contract RuleAddressSet is
      * @dev
      * - Does not revert if an address is not listed.
      * - Accessible only by accounts with the `ADDRESS_LIST_REMOVE_ROLE`.
+     * - Emits {AddressesBatchRemoved} with summary counts.
      * @param targetAddresses Array of addresses to remove.
      */
     function removeAddresses(address[] calldata targetAddresses) public onlyAddressListRemove {
-        _removeAddresses(targetAddresses);
+        (uint256 removed, uint256 skipped) = _removeAddresses(targetAddresses);
         emit RemoveAddresses(targetAddresses);
+        emit AddressesBatchRemoved(removed, skipped);
     }
 
     /**
