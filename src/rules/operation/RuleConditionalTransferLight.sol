@@ -60,6 +60,19 @@ contract RuleConditionalTransferLight is
     }
 
     /**
+     * @notice Cancel a previously approved transfer.
+     */
+    function cancelTransferApproval(address from, address to, uint256 value) public onlyTransferApprover {
+        bytes32 transferHash = _transferHash(from, to, value);
+        uint256 count = approvalCounts[transferHash];
+        if (count == 0) {
+            revert TransferApprovalNotFound();
+        }
+        approvalCounts[transferHash] = count - 1;
+        emit TransferApprovalCancelled(from, to, value, approvalCounts[transferHash]);
+    }
+
+    /**
      * @notice Returns number of times a transfer is approved.
      */
     function approvedCount(address from, address to, uint256 value) public view returns (uint256) {
@@ -113,13 +126,7 @@ contract RuleConditionalTransferLight is
     }
 
     function _transferHash(address from, address to, uint256 value) internal pure returns (bytes32 hash) {
-        assembly {
-            let ptr := mload(0x40)
-            mstore(ptr, shl(96, from))
-            mstore(add(ptr, 0x14), shl(96, to))
-            mstore(add(ptr, 0x28), value)
-            hash := keccak256(ptr, 0x48)
-        }
+        return keccak256(abi.encodePacked(from, to, value));
     }
 
     function detectTransferRestrictionFrom(address, /* spender */ address from, address to, uint256 value)

@@ -9,6 +9,7 @@ abstract contract RuleSanctionsListInvariantStorage is RuleCommonInvariantStorag
     /* ============ Event ============ */
     event SetSanctionListOracle(ISanctionsList newOracle);
     /* ============ Custom errors ============ */
+    error RuleSanctionsList_OracleAddressZeroNotAllowed();
     error RuleSanctionsList_InvalidTransfer(address rule, address from, address to, uint256 value, uint8 code);
     error RuleSanctionsList_InvalidTransferFrom(address rule, address spender, address from, address to, uint256 value, uint8 code);
     /* ============ Role ============ */

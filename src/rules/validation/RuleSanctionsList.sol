@@ -3,7 +3,7 @@
 pragma solidity ^0.8.20;
 
 import {AccessControl} from "OZ/access/AccessControl.sol";
-/* ==== Abtract contracts === */
+/* ==== Abstract contracts === */
 import {MetaTxModuleStandalone, ERC2771Context} from "../../modules/MetaTxModuleStandalone.sol";
 import {Context} from "OZ/utils/Context.sol";
 import {AccessControlModuleStandalone} from "../../modules/AccessControlModuleStandalone.sol";
@@ -33,7 +33,7 @@ import {IRule} from "RuleEngine/interfaces/IRule.sol";
  *  Features:
  *    - Supports ERC-1404, ERC-3643 (transferred) and ERC-7943 non-fungible compliance flows.
  *    - Oracle address can be updated by accounts holding `SANCTIONLIST_ROLE`.
- *    - Zero oracle address disables sanctions checks (all transfers allowed).
+ *    - Oracle can be explicitly cleared to disable sanctions checks.
  *
  *  The rule is designed for RuleEngine or for direct integration with
  *  CMTAT / ERC-3643 compliant tokens.
@@ -65,7 +65,7 @@ contract RuleSanctionsList is
     /* ============  View Functions ============ */
 
     /**
-     * @notice Check if an addres is in the SanctionsList or not
+     * @notice Check if an address is in the SanctionsList or not
      * @param from the origin address
      * @param to the destination address
      * @return The restricion code or REJECTED_CODE_BASE.TRANSFER_OK
@@ -173,10 +173,20 @@ contract RuleSanctionsList is
     /**
      * @notice Set the oracle contract
      * @param sanctionContractOracle_ address of your oracle contract
-     * @dev zero address is authorized to authorize all transfers
+     * @dev Reverts if the oracle is the zero address. Use {clearSanctionListOracle} to disable checks.
      */
     function setSanctionListOracle(ISanctionsList sanctionContractOracle_) public virtual onlySanctionListManager {
+        if (address(sanctionContractOracle_) == address(0)) {
+            revert RuleSanctionsList_OracleAddressZeroNotAllowed();
+        }
         _setSanctionListOracle(sanctionContractOracle_);
+    }
+
+    /**
+     * @notice Clear the oracle contract to disable sanctions checks.
+     */
+    function clearSanctionListOracle() public virtual onlySanctionListManager {
+        _setSanctionListOracle(ISanctionsList(address(0)));
     }
 
     /**

@@ -37,7 +37,7 @@ contract RuleSanctionlistAddTest is Test, HelperContract {
         // Remove
         vm.prank(SANCTIONLIST_OPERATOR_ADDRESS);
         emit SetSanctionListOracle(ISanctionsList(ZERO_ADDRESS));
-        ruleSanctionList.setSanctionListOracle(ISanctionsList(ZERO_ADDRESS));
+        ruleSanctionList.clearSanctionListOracle();
         // Assert
         sanctionListOracleGet = ruleSanctionList.sanctionsList();
         vm.assertEq(address(sanctionListOracleGet), address(ZERO_ADDRESS));

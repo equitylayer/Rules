@@ -5,7 +5,7 @@ pragma solidity ^0.8.20;
 /* ==== OpenZeppelin === */
 import {AccessControl} from "OZ/access/AccessControl.sol";
 import {Context} from "OZ/utils/Context.sol";
-/* ==== Abtract contracts === */
+/* ==== Abstract contracts === */
 import {AccessControlModuleStandalone} from "../../modules/AccessControlModuleStandalone.sol";
 import {RuleWhitelistWrapperBase} from "./abstract/RuleWhitelistWrapperBase.sol";
 

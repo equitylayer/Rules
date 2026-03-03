@@ -4,10 +4,9 @@ pragma solidity ^0.8.20;
 
 /* ==== OpenZeppelin === */
 import {AccessControl} from "OZ/access/AccessControl.sol";
-/* ==== Abtract contracts === */
+/* ==== Abstract contracts === */
 import {MetaTxModuleStandalone, ERC2771Context} from "../../../modules/MetaTxModuleStandalone.sol";
 import {Context} from "OZ/utils/Context.sol";
-import {RuleAddressSet} from "./RuleAddressSet/RuleAddressSet.sol";
 import {RuleWhitelistCommon} from "./RuleWhitelistCommon.sol";
 import {RuleValidateTransfer} from "./RuleValidateTransfer.sol";
 /* ==== RuleEngine === */
@@ -16,6 +15,7 @@ import {RulesManagementModule} from "RuleEngine/modules/RulesManagementModule.so
 import {IERC1404, IERC1404Extend} from "CMTAT/interfaces/tokenization/draft-IERC1404.sol";
 /* ==== Interfaces === */
 import {IERC7943NonFungibleComplianceExtend} from "../../interfaces/IERC7943NonFungibleCompliance.sol";
+import {IAddressList} from "../../interfaces/IAddressList.sol";
 
 /**
  * @title Wrapper to call several different whitelist rules (base)
@@ -152,7 +152,7 @@ abstract contract RuleWhitelistWrapperBase is
         bool[] memory result = new bool[](targetAddress.length);
         for (uint256 i = 0; i < rulesLength; ++i) {
             // Call the whitelist rules
-            bool[] memory isListed = RuleAddressSet(rule(i)).areAddressesListed(targetAddress);
+            bool[] memory isListed = IAddressList(rule(i)).areAddressesListed(targetAddress);
             for (uint256 j = 0; j < targetAddress.length; ++j) {
                 if (isListed[j]) {
                     result[j] = true;

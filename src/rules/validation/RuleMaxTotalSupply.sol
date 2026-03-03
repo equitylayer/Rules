@@ -6,15 +6,12 @@ import {AccessControlModuleStandalone} from "../../modules/AccessControlModuleSt
 import {RuleValidateTransfer} from "./abstract/RuleValidateTransfer.sol";
 import {RuleMaxTotalSupplyInvariantStorage} from "./abstract/RuleMaxTotalSupplyInvariantStorage.sol";
 import {IERC1404, IERC1404Extend} from "CMTAT/interfaces/tokenization/draft-IERC1404.sol";
+import {ITotalSupply} from "../interfaces/ITotalSupply.sol";
 import {
     IERC7943NonFungibleComplianceExtend
 } from "../interfaces/IERC7943NonFungibleCompliance.sol";
 import {IERC3643IComplianceContract} from "CMTAT/interfaces/tokenization/IERC3643Partial.sol";
 import {IRuleEngine} from "CMTAT/interfaces/engine/IRuleEngine.sol";
-
-interface ITotalSupply {
-    function totalSupply() external view returns (uint256);
-}
 
 /**
  * @title RuleMaxTotalSupply

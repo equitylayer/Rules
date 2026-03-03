@@ -3,7 +3,7 @@ pragma solidity ^0.8.20;
 
 import {AccessControl} from "OZ/access/AccessControl.sol";
 import {Context} from "OZ/utils/Context.sol";
-/* ==== Abtract contracts === */
+/* ==== Abstract contracts === */
 import {AccessControlModuleStandalone} from "../../modules/AccessControlModuleStandalone.sol";
 import {RuleWhitelistBase} from "./abstract/RuleWhitelistBase.sol";
 import {RuleAddressSet} from "./abstract/RuleAddressSet/RuleAddressSet.sol";
