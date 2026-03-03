@@ -3,9 +3,9 @@ pragma solidity ^0.8.20;
 
 import {AccessControl} from "OZ/access/AccessControl.sol";
 import {AccessControlModuleStandalone} from "../../modules/AccessControlModuleStandalone.sol";
-import {RuleValidateTransfer} from "./abstract/RuleValidateTransfer.sol";
-import {RuleIdentityRegistryInvariantStorage} from "./abstract/RuleIdentityRegistryInvariantStorage.sol";
 import {RuleNFTAdapter} from "./abstract/RuleNFTAdapter.sol";
+import {RuleIdentityRegistryInvariantStorage} from "./abstract/RuleIdentityRegistryInvariantStorage.sol";
+import {RuleValidateTransfer} from "./abstract/RuleValidateTransfer.sol";
 import {IERC1404, IERC1404Extend} from "CMTAT/interfaces/tokenization/draft-IERC1404.sol";
 import {IERC3643IComplianceContract} from "CMTAT/interfaces/tokenization/IERC3643Partial.sol";
 import {IRuleEngine} from "CMTAT/interfaces/engine/IRuleEngine.sol";
@@ -18,7 +18,6 @@ import {IIdentityRegistryVerified} from "../interfaces/IIdentityRegistry.sol";
  */
 contract RuleIdentityRegistry is
     AccessControlModuleStandalone,
-    RuleValidateTransfer,
     RuleNFTAdapter,
     RuleIdentityRegistryInvariantStorage
 {
@@ -43,10 +42,10 @@ contract RuleIdentityRegistry is
         emit IdentityRegistryUpdated(address(0));
     }
 
-    function detectTransferRestriction(address from, address to, uint256 /* value */)
-        public
+    function _detectTransferRestriction(address from, address to, uint256 /* value */)
+        internal
         view
-        override(IERC1404)
+        override
         returns (uint8)
     {
         if (address(identityRegistry) == address(0)) {
@@ -66,10 +65,10 @@ contract RuleIdentityRegistry is
         return uint8(IERC1404Extend.REJECTED_CODE_BASE.TRANSFER_OK);
     }
 
-    function detectTransferRestrictionFrom(address spender, address from, address to, uint256 value)
-        public
+    function _detectTransferRestrictionFrom(address spender, address from, address to, uint256 value)
+        internal
         view
-        override(IERC1404Extend)
+        override
         returns (uint8)
     {
         if (address(identityRegistry) == address(0)) {
@@ -82,7 +81,7 @@ contract RuleIdentityRegistry is
         if (spender != address(0) && !identityRegistry.isVerified(spender)) {
             return CODE_ADDRESS_SPENDER_NOT_VERIFIED;
         }
-        return detectTransferRestriction(from, to, value);
+        return _detectTransferRestriction(from, to, value);
     }
 
     // ERC-7943 tokenId overloads are provided by {RuleNFTAdapter}.
@@ -97,11 +96,7 @@ contract RuleIdentityRegistry is
         override(IERC3643IComplianceContract)
     {
         // Required by ERC-3643 ICompliance, even for read-only rules.
-        uint8 code = this.detectTransferRestriction(from, to, value);
-        require(
-            code == uint8(IERC1404Extend.REJECTED_CODE_BASE.TRANSFER_OK),
-            RuleIdentityRegistry_InvalidTransfer(address(this), from, to, value, code)
-        );
+        _transferred(from, to, value);
     }
 
     /**
@@ -114,7 +109,19 @@ contract RuleIdentityRegistry is
         override(IRuleEngine)
     {
         // Required by IRuleEngine, even for read-only rules.
-        uint8 code = this.detectTransferRestrictionFrom(spender, from, to, value);
+        _transferredFrom(spender, from, to, value);
+    }
+
+    function _transferred(address from, address to, uint256 value) internal view override {
+        uint8 code = _detectTransferRestriction(from, to, value);
+        require(
+            code == uint8(IERC1404Extend.REJECTED_CODE_BASE.TRANSFER_OK),
+            RuleIdentityRegistry_InvalidTransfer(address(this), from, to, value, code)
+        );
+    }
+
+    function _transferredFrom(address spender, address from, address to, uint256 value) internal view override {
+        uint8 code = _detectTransferRestrictionFrom(spender, from, to, value);
         require(
             code == uint8(IERC1404Extend.REJECTED_CODE_BASE.TRANSFER_OK),
             RuleIdentityRegistry_InvalidTransferFrom(address(this), spender, from, to, value, code)

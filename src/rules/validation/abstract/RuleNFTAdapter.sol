@@ -1,17 +1,28 @@
 // SPDX-License-Identifier: MPL-2.0
 pragma solidity ^0.8.20;
 
-import {IERC1404, IERC1404Extend} from "CMTAT/interfaces/tokenization/draft-IERC1404.sol";
-import {IERC3643IComplianceContract} from "CMTAT/interfaces/tokenization/IERC3643Partial.sol";
-import {IRuleEngine} from "CMTAT/interfaces/engine/IRuleEngine.sol";
-import {IERC7943NonFungibleComplianceExtend} from "../../interfaces/IERC7943NonFungibleCompliance.sol";
+import {IERC1404Extend} from "CMTAT/interfaces/tokenization/draft-IERC1404.sol";
+import {
+    IERC7943NonFungibleCompliance,
+    IERC7943NonFungibleComplianceExtend
+} from "../../interfaces/IERC7943NonFungibleCompliance.sol";
+import {RuleValidateTransfer} from "./RuleValidateTransfer.sol";
 
 /**
  * @title Rule NFT Adapter
- * @notice ERC-7943 tokenId overload adapter for rules that already implement value-based logic.
- * @dev Delegates tokenId overloads to the non-tokenId counterparts.
+ * @notice Provides ERC-7943 overloads for rules that already implement core transfer checks.
+ * @dev Delegates tokenId overloads to RuleValidateTransfer's internal hooks.
  */
-abstract contract RuleNFTAdapter is IERC7943NonFungibleComplianceExtend {
+abstract contract RuleNFTAdapter is RuleValidateTransfer, IERC7943NonFungibleComplianceExtend {
+    /**
+     * @notice Internal hook for post-transfer validation or state updates.
+     */
+    function _transferred(address from, address to, uint256 value) internal virtual;
+
+    /**
+     * @notice Internal hook for post-transfer validation or state updates (spender-aware).
+     */
+    function _transferredFrom(address spender, address from, address to, uint256 value) internal virtual;
     /**
      * @inheritdoc IERC7943NonFungibleComplianceExtend
      */
@@ -22,7 +33,7 @@ abstract contract RuleNFTAdapter is IERC7943NonFungibleComplianceExtend {
         override(IERC7943NonFungibleComplianceExtend)
         returns (uint8)
     {
-        return IERC1404(address(this)).detectTransferRestriction(from, to, value);
+        return _detectTransferRestriction(from, to, value);
     }
 
     /**
@@ -35,7 +46,33 @@ abstract contract RuleNFTAdapter is IERC7943NonFungibleComplianceExtend {
         uint256 /* tokenId */,
         uint256 value
     ) public view virtual override(IERC7943NonFungibleComplianceExtend) returns (uint8) {
-        return IERC1404Extend(address(this)).detectTransferRestrictionFrom(spender, from, to, value);
+        return _detectTransferRestrictionFrom(spender, from, to, value);
+    }
+
+    /**
+     * @inheritdoc IERC7943NonFungibleCompliance
+     */
+    function canTransfer(address from, address to, uint256 /* tokenId */, uint256 amount)
+        public
+        view
+        override(IERC7943NonFungibleCompliance)
+        returns (bool)
+    {
+        return _detectTransferRestriction(from, to, amount) == uint8(IERC1404Extend.REJECTED_CODE_BASE.TRANSFER_OK);
+    }
+
+    /**
+     * @inheritdoc IERC7943NonFungibleComplianceExtend
+     */
+    function canTransferFrom(address spender, address from, address to, uint256 /* tokenId */, uint256 value)
+        public
+        view
+        virtual
+        override(IERC7943NonFungibleComplianceExtend)
+        returns (bool)
+    {
+        return _detectTransferRestrictionFrom(spender, from, to, value)
+            == uint8(IERC1404Extend.REJECTED_CODE_BASE.TRANSFER_OK);
     }
 
     /**
@@ -46,7 +83,7 @@ abstract contract RuleNFTAdapter is IERC7943NonFungibleComplianceExtend {
         virtual
         override(IERC7943NonFungibleComplianceExtend)
     {
-        IERC3643IComplianceContract(address(this)).transferred(from, to, value);
+        _transferred(from, to, value);
     }
 
     /**
@@ -57,6 +94,6 @@ abstract contract RuleNFTAdapter is IERC7943NonFungibleComplianceExtend {
         virtual
         override(IERC7943NonFungibleComplianceExtend)
     {
-        IRuleEngine(address(this)).transferred(spender, from, to, value);
+        _transferredFrom(spender, from, to, value);
     }
 }

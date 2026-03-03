@@ -2,8 +2,8 @@
 pragma solidity ^0.8.20;
 
 import {RuleAddressSet} from "./RuleAddressSet/RuleAddressSet.sol";
-import {RuleValidateTransfer} from "./RuleValidateTransfer.sol";
 import {RuleNFTAdapter} from "./RuleNFTAdapter.sol";
+import {RuleValidateTransfer} from "./RuleValidateTransfer.sol";
 import {RuleBlacklistInvariantStorage} from "./RuleAddressSet/invariantStorage/RuleBlacklistInvariantStorage.sol";
 import {IERC1404, IERC1404Extend} from "CMTAT/interfaces/tokenization/draft-IERC1404.sol";
 import {IERC3643IComplianceContract} from "CMTAT/interfaces/tokenization/IERC3643Partial.sol";
@@ -14,35 +14,33 @@ import {IRule} from "RuleEngine/interfaces/IRule.sol";
  * @title RuleBlacklistBase
  * @notice Core blacklist logic without access-control policy.
  */
-abstract contract RuleBlacklistBase is RuleAddressSet, RuleValidateTransfer, RuleNFTAdapter, RuleBlacklistInvariantStorage {
+abstract contract RuleBlacklistBase is RuleAddressSet, RuleNFTAdapter, RuleBlacklistInvariantStorage {
     constructor(address forwarderIrrevocable) RuleAddressSet(forwarderIrrevocable) {}
 
-    function detectTransferRestriction(address from, address to, uint256 /* value */ )
-        public
+    function _detectTransferRestriction(address from, address to, uint256 /* value */ )
+        internal
         view
-        override(IERC1404)
+        override
         returns (uint8)
     {
         if (isAddressListed(from)) {
             return CODE_ADDRESS_FROM_IS_BLACKLISTED;
         } else if (isAddressListed(to)) {
             return CODE_ADDRESS_TO_IS_BLACKLISTED;
-        } else {
-            return uint8(IERC1404Extend.REJECTED_CODE_BASE.TRANSFER_OK);
         }
+        return uint8(IERC1404Extend.REJECTED_CODE_BASE.TRANSFER_OK);
     }
 
-    function detectTransferRestrictionFrom(address spender, address from, address to, uint256 value)
-        public
+    function _detectTransferRestrictionFrom(address spender, address from, address to, uint256 value)
+        internal
         view
-        override(IERC1404Extend)
+        override
         returns (uint8)
     {
         if (isAddressListed(spender)) {
             return CODE_ADDRESS_SPENDER_IS_BLACKLISTED;
-        } else {
-            return detectTransferRestriction(from, to, value);
         }
+        return _detectTransferRestriction(from, to, value);
     }
 
     function canReturnTransferRestrictionCode(uint8 restrictionCode)
@@ -88,11 +86,7 @@ abstract contract RuleBlacklistBase is RuleAddressSet, RuleValidateTransfer, Rul
         virtual
         override(IERC3643IComplianceContract)
     {
-        uint8 code = this.detectTransferRestriction(from, to, value);
-        require(
-            code == uint8(REJECTED_CODE_BASE.TRANSFER_OK),
-            RuleBlacklist_InvalidTransfer(address(this), from, to, value, code)
-        );
+        _transferred(from, to, value);
     }
 
     /**
@@ -105,11 +99,22 @@ abstract contract RuleBlacklistBase is RuleAddressSet, RuleValidateTransfer, Rul
         virtual
         override(IRuleEngine)
     {
-        uint8 code = this.detectTransferRestrictionFrom(spender, from, to, value);
+        _transferredFrom(spender, from, to, value);
+    }
+
+    function _transferred(address from, address to, uint256 value) internal view override {
+        uint8 code = _detectTransferRestriction(from, to, value);
+        require(
+            code == uint8(REJECTED_CODE_BASE.TRANSFER_OK),
+            RuleBlacklist_InvalidTransfer(address(this), from, to, value, code)
+        );
+    }
+
+    function _transferredFrom(address spender, address from, address to, uint256 value) internal view override {
+        uint8 code = _detectTransferRestrictionFrom(spender, from, to, value);
         require(
             code == uint8(REJECTED_CODE_BASE.TRANSFER_OK),
             RuleBlacklist_InvalidTransferFrom(address(this), spender, from, to, value, code)
         );
     }
-    // ERC-7943 tokenId overloads are provided by {RuleNFTAdapter}.
 }

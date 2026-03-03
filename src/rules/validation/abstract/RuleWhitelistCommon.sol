@@ -6,7 +6,6 @@ import {IERC3643IComplianceContract} from "CMTAT/interfaces/tokenization/IERC364
 import {IRuleEngine} from "CMTAT/interfaces/engine/IRuleEngine.sol";
 /* ==== Abstract contracts === */
 import {RuleWhitelistInvariantStorage} from "./RuleAddressSet/invariantStorage/RuleWhitelistInvariantStorage.sol";
-import {RuleValidateTransfer} from "./RuleValidateTransfer.sol";
 import {RuleNFTAdapter} from "./RuleNFTAdapter.sol";
 
 /**
@@ -17,7 +16,7 @@ import {RuleNFTAdapter} from "./RuleNFTAdapter.sol";
  * - Defines utility functions for restriction code validation and message mapping.
  * - Inherits restriction code constants and messages from {RuleWhitelistInvariantStorage}.
  */
-abstract contract RuleWhitelistCommon is RuleValidateTransfer, RuleNFTAdapter, RuleWhitelistInvariantStorage {
+abstract contract RuleWhitelistCommon is RuleNFTAdapter, RuleWhitelistInvariantStorage {
     /**
      * Indicate if the spender is verified or not
      */
@@ -74,11 +73,7 @@ abstract contract RuleWhitelistCommon is RuleValidateTransfer, RuleNFTAdapter, R
      * @param value The token amount being transferred.
      */
     function transferred(address from, address to, uint256 value) public view override(IERC3643IComplianceContract) {
-        uint8 code = this.detectTransferRestriction(from, to, value);
-        require(
-            code == uint8(REJECTED_CODE_BASE.TRANSFER_OK),
-            RuleWhitelist_InvalidTransfer(address(this), from, to, value, code)
-        );
+        _transferred(from, to, value);
     }
 
     /**
@@ -93,7 +88,24 @@ abstract contract RuleWhitelistCommon is RuleValidateTransfer, RuleNFTAdapter, R
      * @param value The token amount being transferred.
      */
     function transferred(address spender, address from, address to, uint256 value) public view override(IRuleEngine) {
-        uint8 code = this.detectTransferRestrictionFrom(spender, from, to, value);
+        _transferredFrom(spender, from, to, value);
+    }
+
+    function _transferred(address from, address to, uint256 value) internal view virtual override {
+        uint8 code = _detectTransferRestriction(from, to, value);
+        require(
+            code == uint8(REJECTED_CODE_BASE.TRANSFER_OK),
+            RuleWhitelist_InvalidTransfer(address(this), from, to, value, code)
+        );
+    }
+
+    function _transferredFrom(address spender, address from, address to, uint256 value)
+        internal
+        view
+        virtual
+        override
+    {
+        uint8 code = _detectTransferRestrictionFrom(spender, from, to, value);
         require(
             code == uint8(REJECTED_CODE_BASE.TRANSFER_OK),
             RuleWhitelist_InvalidTransferFrom(address(this), spender, from, to, value, code)

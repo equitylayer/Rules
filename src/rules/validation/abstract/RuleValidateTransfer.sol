@@ -3,36 +3,65 @@
 pragma solidity ^0.8.20;
 
 /* ==== CMTAT === */
-import {IERC1404Extend} from "CMTAT/interfaces/tokenization/draft-IERC1404.sol";
+import {IERC1404, IERC1404Extend} from "CMTAT/interfaces/tokenization/draft-IERC1404.sol";
 import {IERC3643ComplianceRead} from "CMTAT/interfaces/tokenization/IERC3643Partial.sol";
 import {IERC7551Compliance} from "CMTAT/interfaces/tokenization/draft-IERC7551.sol";
 /* ==== RuleEngine === */
 import {IRule} from "RuleEngine/interfaces/IRule.sol";
 import {RuleInterfaceId} from "RuleEngine/modules/library/RuleInterfaceId.sol";
-import {
-    IERC7943NonFungibleCompliance,
-    IERC7943NonFungibleComplianceExtend
-} from "../../interfaces/IERC7943NonFungibleCompliance.sol";
 
-abstract contract RuleValidateTransfer is IERC7943NonFungibleComplianceExtend, IRule {
+abstract contract RuleValidateTransfer is IERC1404Extend, IERC3643ComplianceRead, IERC7551Compliance, IRule {
     /**
-     * @notice Validate a transfer
+     * @notice Internal transfer restriction check.
      * @param from the origin address
      * @param to the destination address
-     * @param tokenId ERC-721 or ERC-1155 token Id
-     * @param amount to transfer, 1 for NFT
-     * @return isValid => true if the transfer is valid, false otherwise
-     *
+     * @param value amount to transfer
+     * @return restrictionCode The restriction code for this rule.
      */
-    function canTransfer(address from, address to, uint256 tokenId, uint256 amount)
+    function _detectTransferRestriction(address from, address to, uint256 value)
+        internal
+        view
+        virtual
+        returns (uint8 restrictionCode);
+
+    /**
+     * @notice Internal transfer restriction check for spender-initiated transfers.
+     * @param spender the caller executing the transfer
+     * @param from the origin address
+     * @param to the destination address
+     * @param value amount to transfer
+     * @return restrictionCode The restriction code for this rule.
+     */
+    function _detectTransferRestrictionFrom(address spender, address from, address to, uint256 value)
+        internal
+        view
+        virtual
+        returns (uint8 restrictionCode);
+
+    /**
+     * @inheritdoc IERC1404
+     */
+    function detectTransferRestriction(address from, address to, uint256 value)
         public
         view
-        override(IERC7943NonFungibleCompliance)
-        returns (bool isValid)
+        virtual
+        override(IERC1404)
+        returns (uint8)
     {
-        // does not work without `this` keyword => "Undeclared identifier"
-        return this.detectTransferRestriction(from, to, tokenId, amount)
-            == uint8(IERC1404Extend.REJECTED_CODE_BASE.TRANSFER_OK);
+        return _detectTransferRestriction(from, to, value);
+    }
+
+    /**
+     * @inheritdoc IERC1404Extend
+     */
+    function detectTransferRestrictionFrom(address spender, address from, address to, uint256 value)
+        public
+        view
+        virtual
+        override(IERC1404Extend)
+        returns (uint8)
+    {
+        return _detectTransferRestrictionFrom(spender, from, to, value);
     }
 
     /**
@@ -49,8 +78,7 @@ abstract contract RuleValidateTransfer is IERC7943NonFungibleComplianceExtend, I
         override(IERC3643ComplianceRead)
         returns (bool isValid)
     {
-        // does not work without `this` keyword => "Undeclared identifier"
-        return this.detectTransferRestriction(from, to, amount) == uint8(IERC1404Extend.REJECTED_CODE_BASE.TRANSFER_OK);
+        return _detectTransferRestriction(from, to, amount) == uint8(IERC1404Extend.REJECTED_CODE_BASE.TRANSFER_OK);
     }
 
     /**
@@ -63,21 +91,8 @@ abstract contract RuleValidateTransfer is IERC7943NonFungibleComplianceExtend, I
         override(IERC7551Compliance)
         returns (bool)
     {
-        return this.detectTransferRestrictionFrom(spender, from, to, value)
+        return _detectTransferRestrictionFrom(spender, from, to, value)
             == uint8(IERC1404Extend.REJECTED_CODE_BASE.TRANSFER_OK);
-    }
-
-    /**
-     * @inheritdoc IERC7943NonFungibleComplianceExtend
-     */
-    function canTransferFrom(address spender, address from, address to, uint256 /* tokenId */, uint256 value)
-        public
-        view
-        virtual
-        override(IERC7943NonFungibleComplianceExtend)
-        returns (bool)
-    {
-        return canTransferFrom(spender, from, to, value);
     }
 
     function supportsInterface(bytes4 interfaceId) public view virtual returns (bool) {

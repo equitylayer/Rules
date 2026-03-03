@@ -4,7 +4,7 @@ pragma solidity ^0.8.20;
 import {RuleAddressSet} from "./RuleAddressSet/RuleAddressSet.sol";
 import {RuleWhitelistCommon} from "./RuleWhitelistCommon.sol";
 import {RuleValidateTransfer} from "./RuleValidateTransfer.sol";
-import {IERC1404, IERC1404Extend} from "CMTAT/interfaces/tokenization/draft-IERC1404.sol";
+import {IERC1404Extend} from "CMTAT/interfaces/tokenization/draft-IERC1404.sol";
 import {IIdentityRegistryVerified} from "../../interfaces/IIdentityRegistry.sol";
 
 /**
@@ -16,36 +16,34 @@ abstract contract RuleWhitelistBase is RuleAddressSet, RuleWhitelistCommon, IIde
         checkSpender = checkSpender_;
     }
 
-    function detectTransferRestriction(address from, address to, uint256 /* value */ )
-        public
+    function _detectTransferRestriction(address from, address to, uint256 /* value */ )
+        internal
         view
         virtual
-        override(IERC1404)
+        override
         returns (uint8)
     {
         if (!isAddressListed(from)) {
             return CODE_ADDRESS_FROM_NOT_WHITELISTED;
         } else if (!isAddressListed(to)) {
             return CODE_ADDRESS_TO_NOT_WHITELISTED;
-        } else {
-            return uint8(REJECTED_CODE_BASE.TRANSFER_OK);
         }
+        return uint8(REJECTED_CODE_BASE.TRANSFER_OK);
     }
 
-    function detectTransferRestrictionFrom(address spender, address from, address to, uint256 value)
-        public
+    function _detectTransferRestrictionFrom(address spender, address from, address to, uint256 value)
+        internal
         view
         virtual
-        override(IERC1404Extend)
+        override
         returns (uint8)
     {
         if (checkSpender && !isAddressListed(spender)) {
             return CODE_ADDRESS_SPENDER_NOT_WHITELISTED;
         }
-        return detectTransferRestriction(from, to, value);
+        return _detectTransferRestriction(from, to, value);
     }
 
-    // ERC-7943 tokenId overloads are provided by {RuleNFTAdapter} via RuleWhitelistCommon.
 
     function isVerified(address targetAddress)
         public

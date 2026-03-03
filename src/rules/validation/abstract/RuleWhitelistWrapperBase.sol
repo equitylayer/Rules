@@ -45,18 +45,18 @@ abstract contract RuleWhitelistWrapperBase is
      * @return The restricion code or REJECTED_CODE_BASE.TRANSFER_OK
      *
      */
-    function detectTransferRestriction(address from, address to, uint256 /* value */)
-        public
+    function _detectTransferRestriction(address from, address to, uint256 /* value */)
+        internal
         view
         virtual
-        override(IERC1404)
+        override
         returns (uint8)
     {
         address[] memory targetAddress = new address[](2);
         targetAddress[0] = from;
         targetAddress[1] = to;
 
-        bool[] memory result = _detectTransferRestriction(targetAddress);
+        bool[] memory result = _detectTransferRestrictionForTargets(targetAddress);
         if (!result[0]) {
             return CODE_ADDRESS_FROM_NOT_WHITELISTED;
         } else if (!result[1]) {
@@ -66,15 +66,15 @@ abstract contract RuleWhitelistWrapperBase is
         }
     }
 
-    function detectTransferRestrictionFrom(address spender, address from, address to, uint256 value)
-        public
+    function _detectTransferRestrictionFrom(address spender, address from, address to, uint256 value)
+        internal
         view
         virtual
-        override(IERC1404Extend)
+        override
         returns (uint8)
     {
         if (!checkSpender) {
-            return detectTransferRestriction(from, to, value);
+            return _detectTransferRestriction(from, to, value);
         }
 
         address[] memory targetAddress = new address[](3);
@@ -82,7 +82,7 @@ abstract contract RuleWhitelistWrapperBase is
         targetAddress[1] = to;
         targetAddress[2] = spender;
 
-        bool[] memory result = _detectTransferRestriction(targetAddress);
+        bool[] memory result = _detectTransferRestrictionForTargets(targetAddress);
 
         if (!result[0]) {
             return CODE_ADDRESS_FROM_NOT_WHITELISTED;
@@ -122,6 +122,22 @@ abstract contract RuleWhitelistWrapperBase is
         emit CheckSpenderUpdated(value);
     }
 
+    function _transferred(address from, address to, uint256 value)
+        internal
+        view
+        override(RulesManagementModule, RuleWhitelistCommon)
+    {
+        RuleWhitelistCommon._transferred(from, to, value);
+    }
+
+    function _transferred(address spender, address from, address to, uint256 value)
+        internal
+        view
+        override(RulesManagementModule)
+    {
+        RuleWhitelistCommon._transferredFrom(spender, from, to, value);
+    }
+
     /*//////////////////////////////////////////////////////////////
                             INTERNAL/PRIVATE FUNCTIONS
     //////////////////////////////////////////////////////////////*/
@@ -131,7 +147,7 @@ abstract contract RuleWhitelistWrapperBase is
      * @param targetAddress Addresses to validate (from/to[/spender]).
      * @return result Boolean array aligned with targetAddress indicating if each address is listed.
      */
-    function _detectTransferRestriction(address[] memory targetAddress) internal view returns (bool[] memory) {
+    function _detectTransferRestrictionForTargets(address[] memory targetAddress) internal view returns (bool[] memory) {
         uint256 rulesLength = rulesCount();
         bool[] memory result = new bool[](targetAddress.length);
         for (uint256 i = 0; i < rulesLength; ++i) {
@@ -159,9 +175,6 @@ abstract contract RuleWhitelistWrapperBase is
         return result;
     }
 
-    /**
-     *  @dev Internal helper to update the `checkSpender` flag.
-     */
     /**
      * @notice Internal helper to update the `checkSpender` flag.
      * @param value New flag value.

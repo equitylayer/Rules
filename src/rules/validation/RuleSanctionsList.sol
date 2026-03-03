@@ -8,8 +8,8 @@ import {MetaTxModuleStandalone, ERC2771Context} from "../../modules/MetaTxModule
 import {Context} from "OZ/utils/Context.sol";
 import {AccessControlModuleStandalone} from "../../modules/AccessControlModuleStandalone.sol";
 import {RuleSanctionsListInvariantStorage} from "./abstract/RuleSanctionsListInvariantStorage.sol";
-import {RuleValidateTransfer} from "./abstract/RuleValidateTransfer.sol";
 import {RuleNFTAdapter} from "./abstract/RuleNFTAdapter.sol";
+import {RuleValidateTransfer} from "./abstract/RuleValidateTransfer.sol";
 /* ==== Interfaces === */
 import {ISanctionsList} from "../interfaces/ISanctionsList.sol";
 /* ==== CMTAT === */
@@ -41,7 +41,6 @@ import {IRule} from "RuleEngine/interfaces/IRule.sol";
 contract RuleSanctionsList is
     AccessControlModuleStandalone,
     MetaTxModuleStandalone,
-    RuleValidateTransfer,
     RuleNFTAdapter,
     RuleSanctionsListInvariantStorage
 {
@@ -72,10 +71,10 @@ contract RuleSanctionsList is
      * @return The restricion code or REJECTED_CODE_BASE.TRANSFER_OK
      *
      */
-    function detectTransferRestriction(address from, address to, uint256 /* value */)
-        public
+    function _detectTransferRestriction(address from, address to, uint256 /* value */)
+        internal
         view
-        override(IERC1404)
+        override
         returns (uint8)
     {
         if (address(sanctionsList) != address(0)) {
@@ -89,20 +88,20 @@ contract RuleSanctionsList is
     }
 
     /**
-     * @inheritdoc IERC1404Extend
+     * @dev Internal spender-aware restriction check.
      */
-    function detectTransferRestrictionFrom(address spender, address from, address to, uint256 value)
-        public
+    function _detectTransferRestrictionFrom(address spender, address from, address to, uint256 value)
+        internal
         view
         virtual
-        override(IERC1404Extend)
+        override
         returns (uint8)
     {
         if (address(sanctionsList) != address(0)) {
             if (sanctionsList.isSanctioned(spender)) {
                 return CODE_ADDRESS_SPENDER_IS_SANCTIONED;
             } else {
-                return detectTransferRestriction(from, to, value);
+                return _detectTransferRestriction(from, to, value);
             }
         }
         return uint8(REJECTED_CODE_BASE.TRANSFER_OK);
@@ -145,7 +144,13 @@ contract RuleSanctionsList is
         }
     }
 
-    function supportsInterface(bytes4 interfaceId) public view virtual override(AccessControl, RuleValidateTransfer) returns (bool) {
+    function supportsInterface(bytes4 interfaceId)
+        public
+        view
+        virtual
+        override(AccessControl, RuleValidateTransfer)
+        returns (bool)
+    {
         return AccessControl.supportsInterface(interfaceId) || RuleValidateTransfer.supportsInterface(interfaceId);
     }
 
@@ -180,11 +185,7 @@ contract RuleSanctionsList is
         override(IERC3643IComplianceContract)
     {
         // Validation only; does not modify state.
-        uint8 code = this.detectTransferRestriction(from, to, value);
-        require(
-            code == uint8(REJECTED_CODE_BASE.TRANSFER_OK),
-            RuleSanctionsList_InvalidTransfer(address(this), from, to, value, code)
-        );
+        _transferred(from, to, value);
     }
 
     
@@ -199,7 +200,19 @@ contract RuleSanctionsList is
         override(IRuleEngine)
     {
         // Validation only; does not modify state.
-        uint8 code = this.detectTransferRestrictionFrom(spender, from, to, value);
+        _transferredFrom(spender, from, to, value);
+    }
+
+    function _transferred(address from, address to, uint256 value) internal view override {
+        uint8 code = _detectTransferRestriction(from, to, value);
+        require(
+            code == uint8(REJECTED_CODE_BASE.TRANSFER_OK),
+            RuleSanctionsList_InvalidTransfer(address(this), from, to, value, code)
+        );
+    }
+
+    function _transferredFrom(address spender, address from, address to, uint256 value) internal view override {
+        uint8 code = _detectTransferRestrictionFrom(spender, from, to, value);
         require(
             code == uint8(REJECTED_CODE_BASE.TRANSFER_OK),
             RuleSanctionsList_InvalidTransferFrom(address(this), spender, from, to, value, code)
