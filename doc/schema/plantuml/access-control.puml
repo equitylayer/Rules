@@ -1,0 +1,58 @@
+@startuml
+!theme plain
+skinparam backgroundColor #ffffff
+skinparam shadowing false
+skinparam linetype ortho
+skinparam classAttributeIconSize 0
+
+class "DEFAULT_ADMIN_ROLE" as ADMIN {
+  +grantRole()
+  +revokeRole()
+  +setCheckSpender() [Whitelist/Wrapper]
+  +setMaxTotalSupply()
+  +setTokenContract()
+  +setIdentityRegistry()
+  +clearIdentityRegistry()
+}
+
+class "ADDRESS_LIST_ADD_ROLE" as ADD {
+  +addAddress()
+  +addAddresses()
+}
+
+class "ADDRESS_LIST_REMOVE_ROLE" as REMOVE {
+  +removeAddress()
+  +removeAddresses()
+}
+
+class "SANCTIONLIST_ROLE" as SANCTION {
+  +setSanctionListOracle()
+  +clearSanctionListOracle()
+}
+
+class "RULES_MANAGEMENT_ROLE" as RULES {
+  +setRules()
+  +clearRules()
+  +addRule()
+  +removeRule()
+}
+
+class "OPERATOR_ROLE" as OPERATOR {
+  +approveTransfer()
+  +cancelTransferApproval()
+}
+
+class "RULE_ENGINE_CONTRACT_ROLE" as EXECUTOR {
+  +transferred()
+}
+
+note right of ADMIN
+Applies across rules using AccessControlModuleStandalone.
+end note
+
+note right of EXECUTOR
+Used by RuleConditionalTransferLight
+transfer execution hooks.
+end note
+
+@enduml

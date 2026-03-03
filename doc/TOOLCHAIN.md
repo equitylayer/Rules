@@ -95,7 +95,7 @@ OR
 - RuleWhitelist
 
 ```bash
- npx surya graph  src/RuleWhitelist.sol | dot -Tpng > surya_graph_Whitelist.png
+ npx surya graph  src/rules/validation/deployment/RuleWhitelist.sol | dot -Tpng > surya_graph_Whitelist.png
 ```
 - RuleEngine
 
@@ -128,4 +128,3 @@ We use `Foundry` to perform code style guidelines
 ```bash
 forge fmt
 ```
-

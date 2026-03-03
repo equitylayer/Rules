@@ -1,0 +1,24 @@
+@startuml
+!theme plain
+skinparam backgroundColor #ffffff
+skinparam shadowing false
+skinparam linetype ortho
+
+actor "Token holder" as HOLDER
+component "Token (ERC-20)" as TOKEN
+component "RuleEngine" as ENGINE
+component "Rule (validation/operation)" as RULE
+
+HOLDER --> TOKEN : 1) transfer(to, value)
+TOKEN --> ENGINE : 2) canTransfer(from, to, value)
+ENGINE --> RULE : 3) canTransfer(...)\n(detectTransferRestriction)
+ENGINE --> TOKEN : 4) returns allowed/denied
+TOKEN --> ENGINE : 5) transferred(from, to, value)
+ENGINE --> RULE : 6) transferred(...)
+
+note right of RULE
+Validation rules: view-only
+Operation rules: may update state
+end note
+
+@enduml
