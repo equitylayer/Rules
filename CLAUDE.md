@@ -60,3 +60,4 @@ Foundry config: `foundry.toml` (solc 0.8.30, EVM prague, optimizer 200 runs).
 - Do not create git commits; provide commit messages only when requested.
 - Always run tests after modifying contracts.
 - `AGENTS.md` and `CLAUDE.md` are identical — always update both together.
+- Always update README.md with the latest change

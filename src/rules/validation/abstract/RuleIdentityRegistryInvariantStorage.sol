@@ -20,9 +20,9 @@ abstract contract RuleIdentityRegistryInvariantStorage is RuleCommonInvariantSto
     string constant TEXT_ADDRESS_SPENDER_NOT_VERIFIED = "The spender is not verified";
 
     // It is very important that each rule uses an unique code
-    uint8 public constant CODE_ADDRESS_FROM_NOT_VERIFIED = 90;
-    uint8 public constant CODE_ADDRESS_TO_NOT_VERIFIED = 91;
-    uint8 public constant CODE_ADDRESS_SPENDER_NOT_VERIFIED = 92;
+    uint8 public constant CODE_ADDRESS_FROM_NOT_VERIFIED = 55;
+    uint8 public constant CODE_ADDRESS_TO_NOT_VERIFIED = 56;
+    uint8 public constant CODE_ADDRESS_SPENDER_NOT_VERIFIED = 57;
 
     event IdentityRegistryUpdated(address indexed newRegistry);
 }

@@ -18,7 +18,7 @@ abstract contract RuleMaxTotalSupplyInvariantStorage is RuleCommonInvariantStora
     string constant TEXT_MAX_TOTAL_SUPPLY_EXCEEDED = "Max total supply exceeded";
 
     // It is very important that each rule uses an unique code
-    uint8 public constant CODE_MAX_TOTAL_SUPPLY_EXCEEDED = 80;
+    uint8 public constant CODE_MAX_TOTAL_SUPPLY_EXCEEDED = 50;
 
     event MaxTotalSupplyUpdated(uint256 newMaxTotalSupply);
     event TokenContractUpdated(address indexed newTokenContract);

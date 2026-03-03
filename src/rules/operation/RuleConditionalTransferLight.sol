@@ -9,6 +9,7 @@ import {IERC3643ComplianceRead, IERC3643IComplianceContract} from "CMTAT/interfa
 import {IERC7551Compliance} from "CMTAT/interfaces/tokenization/draft-IERC7551.sol";
 import {IRule} from "RuleEngine/interfaces/IRule.sol";
 import {RuleInterfaceId} from "RuleEngine/modules/library/RuleInterfaceId.sol";
+import {ITransferContext} from "../interfaces/ITransferContext.sol";
 
 import {
     RuleConditionalTransferLightInvariantStorage
@@ -22,7 +23,8 @@ import {
 contract RuleConditionalTransferLight is
     AccessControl,
     RuleConditionalTransferLightInvariantStorage,
-    IRule
+    IRule,
+    ITransferContext
 {
     // Mapping from transfer hash to approval count
     mapping(bytes32 => uint256) public approvalCounts;
@@ -178,6 +180,23 @@ contract RuleConditionalTransferLight is
     {
         return detectTransferRestrictionFrom(spender, from, to, value)
             == uint8(IERC1404Extend.REJECTED_CODE_BASE.TRANSFER_OK);
+    }
+
+    /**
+     * @inheritdoc ITransferContext
+     */
+    function transferred(TransferContext calldata ctx) external override {
+        if (ctx.selector == IRuleEngine.transferred.selector) {
+            transferred(ctx.sender, ctx.from, ctx.to, ctx.value);
+        } else if (ctx.selector == IERC3643IComplianceContract.transferred.selector) {
+            transferred(ctx.from, ctx.to, ctx.value);
+        } else if (ctx.selector == bytes4(keccak256("transferred(address,address,address,uint256,uint256)"))) {
+            transferred(ctx.sender, ctx.from, ctx.to, ctx.value);
+        } else if (ctx.selector == bytes4(keccak256("transferred(address,address,uint256,uint256)"))) {
+            transferred(ctx.from, ctx.to, ctx.value);
+        } else {
+            revert TransferContext_InvalidSelector(ctx.selector);
+        }
     }
 
     /*//////////////////////////////////////////////////////////////

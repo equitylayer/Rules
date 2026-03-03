@@ -2,18 +2,29 @@
 pragma solidity ^0.8.20;
 
 import {IERC1404Extend} from "CMTAT/interfaces/tokenization/draft-IERC1404.sol";
+import {IERC3643IComplianceContract} from "CMTAT/interfaces/tokenization/IERC3643Partial.sol";
+import {IRuleEngine} from "CMTAT/interfaces/engine/IRuleEngine.sol";
 import {
     IERC7943NonFungibleCompliance,
     IERC7943NonFungibleComplianceExtend
 } from "../../interfaces/IERC7943NonFungibleCompliance.sol";
 import {RuleValidateTransfer} from "./RuleValidateTransfer.sol";
+import {ITransferContext} from "../../interfaces/ITransferContext.sol";
 
 /**
  * @title Rule NFT Adapter
  * @notice Provides ERC-7943 overloads for rules that already implement core transfer checks.
  * @dev Delegates tokenId overloads to RuleValidateTransfer's internal hooks.
  */
-abstract contract RuleNFTAdapter is RuleValidateTransfer, IERC7943NonFungibleComplianceExtend {
+abstract contract RuleNFTAdapter is RuleValidateTransfer, IERC7943NonFungibleComplianceExtend, ITransferContext {
+    bytes4 internal constant TRANSFERRED_SELECTOR_ERC3643 =
+        IERC3643IComplianceContract.transferred.selector;
+    bytes4 internal constant TRANSFERRED_SELECTOR_RULE_ENGINE =
+        IRuleEngine.transferred.selector;
+    bytes4 internal constant TRANSFERRED_SELECTOR_ERC7943 =
+        bytes4(keccak256("transferred(address,address,uint256,uint256)"));
+    bytes4 internal constant TRANSFERRED_SELECTOR_ERC7943_FROM =
+        bytes4(keccak256("transferred(address,address,address,uint256,uint256)"));
     /**
      * @notice Internal hook for post-transfer validation or state updates.
      */
@@ -95,5 +106,22 @@ abstract contract RuleNFTAdapter is RuleValidateTransfer, IERC7943NonFungibleCom
         override(IERC7943NonFungibleComplianceExtend)
     {
         _transferredFrom(spender, from, to, value);
+    }
+
+    /**
+     * @inheritdoc ITransferContext
+     */
+    function transferred(TransferContext calldata ctx) external virtual override {
+        if (ctx.selector == TRANSFERRED_SELECTOR_RULE_ENGINE) {
+            _transferredFrom(ctx.sender, ctx.from, ctx.to, ctx.value);
+        } else if (ctx.selector == TRANSFERRED_SELECTOR_ERC3643) {
+            _transferred(ctx.from, ctx.to, ctx.value);
+        } else if (ctx.selector == TRANSFERRED_SELECTOR_ERC7943_FROM) {
+            _transferredFrom(ctx.sender, ctx.from, ctx.to, ctx.value);
+        } else if (ctx.selector == TRANSFERRED_SELECTOR_ERC7943) {
+            _transferred(ctx.from, ctx.to, ctx.value);
+        } else {
+            revert TransferContext_InvalidSelector(ctx.selector);
+        }
     }
 }

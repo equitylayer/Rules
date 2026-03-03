@@ -11,7 +11,7 @@ abstract contract RuleConditionalTransferLightInvariantStorage is RuleCommonInva
     /* ============ State variables ============ */
     string constant TEXT_TRANSFER_REQUEST_NOT_APPROVED = "ConditionalTransferLight: The request is not approved";
     // It is very important that each rule uses an unique code
-    uint8 public constant CODE_TRANSFER_REQUEST_NOT_APPROVED = 71;
+    uint8 public constant CODE_TRANSFER_REQUEST_NOT_APPROVED = 46;
 
     /* ============ Custom error ============ */
     error RuleConditionalTransferLight_AdminAddressZeroNotAllowed();

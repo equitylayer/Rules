@@ -99,21 +99,23 @@ Here the list of codes used by the different rules
 | RuleBlacklist           | CODE_ADDRESS_FROM_IS_BLACKLISTED     | 36    |
 |                         | CODE_ADDRESS_TO_IS_BLACKLISTED       | 37    |
 |                         | CODE_ADDRESS_SPENDER_IS_BLACKLISTED  | 38    |
-|                         | Reserved slot                        | 39-44 |
-| RuleConditionalTransferLight | CODE_TRANSFER_REQUEST_NOT_APPROVED   | 71    |
-|                         | Reserved slot                        | 72-79 |
-| RuleMaxTotalSupply      | CODE_MAX_TOTAL_SUPPLY_EXCEEDED       | 80    |
-|                         | Reserved slot                        | 81-89 |
-| RuleIdentityRegistry    | CODE_ADDRESS_FROM_NOT_VERIFIED       | 90    |
-|                         | CODE_ADDRESS_TO_NOT_VERIFIED         | 91    |
-|                         | CODE_ADDRESS_SPENDER_NOT_VERIFIED    | 92    |
-|                         | Reserved slot                        | 93-99 |
+|                         | Reserved slot                        | 39-45 |
+| RuleConditionalTransferLight | CODE_TRANSFER_REQUEST_NOT_APPROVED   | 46   |
+|                         | Reserved slot                        | 47-49 |
+| RuleMaxTotalSupply      | CODE_MAX_TOTAL_SUPPLY_EXCEEDED       | 50   |
+|                         | Reserved slot                        | 51-54 |
+| RuleIdentityRegistry    | CODE_ADDRESS_FROM_NOT_VERIFIED       | 55   |
+|                         | CODE_ADDRESS_TO_NOT_VERIFIED         | 56   |
+|                         | CODE_ADDRESS_SPENDER_NOT_VERIFIED    | 57   |
+|                         | Reserved slot                        | 58-60 |
 
 Note: 
 
 - The CMTAT already uses the code 0-6 and the code 7-12 should be left free to allow further additions in the CMTAT.
 - If you decide to create your own rules, we encourage you to use code > 100 to leave free the other restriction codes for future rules added in this project.
-- Reserved slots are intentionally left unused for future rule expansion.
+- Reserved slots are intentionally left unused for future rule expansion (maximum of 3 per rule).
+- New rule code blocks should start at codes ending in `1` or `6` (e.g., `21`, `26`), leaving the remaining codes in the previous block for that prior rule’s reserved slots.
+- Current allocations are legacy; new rules should follow the start-at-1-or-6 policy without changing existing codes.
 
 ### Rules as Standalone Compliance Contracts
 
@@ -125,6 +127,10 @@ function transferred(address spender, address from, address to, uint256 value)
 ```
 
 This makes rules directly pluggable into CMTAT without any intermediary RuleEngine.
+
+### Transfer Context Helper
+
+Rules also expose an optional unified entrypoint using `TransferContext` (see `ITransferContext`) to pass a single struct instead of multiple arguments. This is a helper API inspired by TokenF and does not replace the standard ERC-3643 / RuleEngine interfaces.
 
 ### Using Rules via RuleEngine
 
