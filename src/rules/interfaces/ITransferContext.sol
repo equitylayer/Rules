@@ -21,7 +21,17 @@ interface ITransferContext {
         uint256 tokenId;
     }
 
+    struct TransferContextFungible {
+        bytes4 selector;
+        address sender;
+        address from;
+        address to;
+        uint256 value;
+    }
+
     error TransferContext_InvalidSelector(bytes4 selector);
 
     function transferred(TransferContext calldata ctx) external;
+
+    function transferred(TransferContextFungible calldata ctx) external;
 }

@@ -112,16 +112,21 @@ abstract contract RuleNFTAdapter is RuleTransferValidation, IERC7943NonFungibleC
      * @inheritdoc ITransferContext
      */
     function transferred(TransferContext calldata ctx) external virtual override {
-        if (ctx.selector == TRANSFERRED_SELECTOR_RULE_ENGINE) {
+        if (ctx.sender != address(0)) {
             _transferredFrom(ctx.sender, ctx.from, ctx.to, ctx.value);
-        } else if (ctx.selector == TRANSFERRED_SELECTOR_ERC3643) {
-            _transferred(ctx.from, ctx.to, ctx.value);
-        } else if (ctx.selector == TRANSFERRED_SELECTOR_ERC7943_FROM) {
-            _transferredFrom(ctx.sender, ctx.from, ctx.to, ctx.value);
-        } else if (ctx.selector == TRANSFERRED_SELECTOR_ERC7943) {
-            _transferred(ctx.from, ctx.to, ctx.value);
         } else {
-            revert TransferContext_InvalidSelector(ctx.selector);
+            _transferred(ctx.from, ctx.to, ctx.value);
+        }
+    }
+
+    /**
+     * @inheritdoc ITransferContext
+     */
+    function transferred(TransferContextFungible calldata ctx) external virtual override {
+        if (ctx.sender != address(0)) {
+            _transferredFrom(ctx.sender, ctx.from, ctx.to, ctx.value);
+        } else {
+            _transferred(ctx.from, ctx.to, ctx.value);
         }
     }
 }

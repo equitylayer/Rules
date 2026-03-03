@@ -9,7 +9,7 @@ import {RuleWhitelistInvariantStorage} from "../RuleAddressSet/invariantStorage/
 import {RuleNFTAdapter} from "./RuleNFTAdapter.sol";
 
 /**
- * @title Rule Whitelist Common
+ * @title Rule Whitelist Shared
  * @notice Provides common logic for validating whitelist-based transfer restrictions.
  * @dev
  * - Implements ERC-3643–compatible `transferred` hooks to enforce whitelist checks.

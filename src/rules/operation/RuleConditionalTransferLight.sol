@@ -186,16 +186,21 @@ contract RuleConditionalTransferLight is
      * @inheritdoc ITransferContext
      */
     function transferred(TransferContext calldata ctx) external override {
-        if (ctx.selector == IRuleEngine.transferred.selector) {
+        if (ctx.sender != address(0)) {
             transferred(ctx.sender, ctx.from, ctx.to, ctx.value);
-        } else if (ctx.selector == IERC3643IComplianceContract.transferred.selector) {
-            transferred(ctx.from, ctx.to, ctx.value);
-        } else if (ctx.selector == bytes4(keccak256("transferred(address,address,address,uint256,uint256)"))) {
-            transferred(ctx.sender, ctx.from, ctx.to, ctx.value);
-        } else if (ctx.selector == bytes4(keccak256("transferred(address,address,uint256,uint256)"))) {
-            transferred(ctx.from, ctx.to, ctx.value);
         } else {
-            revert TransferContext_InvalidSelector(ctx.selector);
+            transferred(ctx.from, ctx.to, ctx.value);
+        }
+    }
+
+    /**
+     * @inheritdoc ITransferContext
+     */
+    function transferred(TransferContextFungible calldata ctx) external override {
+        if (ctx.sender != address(0)) {
+            transferred(ctx.sender, ctx.from, ctx.to, ctx.value);
+        } else {
+            transferred(ctx.from, ctx.to, ctx.value);
         }
     }
 
