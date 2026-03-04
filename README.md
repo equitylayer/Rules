@@ -309,6 +309,10 @@ Available operation rules: `RuleConditionalTransferLight`.
 3. Add rules to the RuleEngine, or set the rule directly on the CMTAT token.
 4. Verify the transfer flow end-to-end with a small test transfer before enabling production flows.
 
+Deployment scripts:
+- `script/DeployCMTATWithWhitelist.s.sol`
+- `script/DeployCMTATWithBlacklist.s.sol`
+
 ### Choosing a Rule Variant
 
 Several rules are available in multiple access-control variants. Use the simplest one that fits your needs:
@@ -473,11 +477,15 @@ See also [docs.openzeppelin.com - AccessControl](https://docs.openzeppelin.com/c
 
 ### Ownable2Step variants
 
-For simpler ownership-based control, some rules provide `Ownable2Step` variants (two-step ownership transfer):
+For simpler ownership-based control, `Ownable2Step` variants (two-step ownership transfer) are available:
 
 - `RuleWhitelistOwnable2Step`
 - `RuleBlacklistOwnable2Step`
 - `RuleWhitelistWrapperOwnable2Step`
+- `RuleSanctionsListOwnable2Step`
+- `RuleIdentityRegistryOwnable2Step`
+- `RuleMaxTotalSupplyOwnable2Step`
+- `RuleConditionalTransferLightOwnable2Step`
 
 ### Address List
 
@@ -636,7 +644,8 @@ $ anvil
 #### Deploy
 
 ```shell
-$ forge script script/Counter.s.sol:CounterScript --rpc-url <your_rpc_url> --private-key <your_private_key>
+$ forge script script/DeployCMTATWithWhitelist.s.sol --rpc-url <your_rpc_url> --private-key <your_private_key>
+$ forge script script/DeployCMTATWithBlacklist.s.sol --rpc-url <your_rpc_url> --private-key <your_private_key>
 ```
 
 #### Cast

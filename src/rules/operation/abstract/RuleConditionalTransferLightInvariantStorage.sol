@@ -15,6 +15,8 @@ abstract contract RuleConditionalTransferLightInvariantStorage is RuleCommonInva
 
     /* ============ Custom error ============ */
     error RuleConditionalTransferLight_AdminAddressZeroNotAllowed();
+    error RuleConditionalTransferLight_TransferApproverUnauthorized(address account);
+    error RuleConditionalTransferLight_TransferExecutorUnauthorized(address account);
     error TransferNotApproved();
     error TransferApprovalNotFound();
 

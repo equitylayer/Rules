@@ -1,148 +1,27 @@
 // SPDX-License-Identifier: MPL-2.0
-
 pragma solidity ^0.8.20;
 
 import {AccessControl} from "OZ/access/AccessControl.sol";
-/* ==== Abstract contracts === */
-import {MetaTxModuleStandalone, ERC2771Context} from "../../../modules/MetaTxModuleStandalone.sol";
 import {Context} from "OZ/utils/Context.sol";
 import {AccessControlModuleStandalone} from "../../../modules/AccessControlModuleStandalone.sol";
-import {RuleSanctionsListInvariantStorage} from "../abstract/invariant/RuleSanctionsListInvariantStorage.sol";
-import {RuleNFTAdapter} from "../abstract/core/RuleNFTAdapter.sol";
+import {MetaTxModuleStandalone, ERC2771Context} from "../../../modules/MetaTxModuleStandalone.sol";
+import {RuleSanctionsListBase} from "../abstract/base/RuleSanctionsListBase.sol";
 import {RuleTransferValidation} from "../abstract/core/RuleTransferValidation.sol";
-/* ==== Interfaces === */
 import {ISanctionsList} from "../../interfaces/ISanctionsList.sol";
-/* ==== CMTAT === */
-import {IERC1404, IERC1404Extend} from "CMTAT/interfaces/tokenization/draft-IERC1404.sol";
-import {IERC3643IComplianceContract} from "CMTAT/interfaces/tokenization/IERC3643Partial.sol";
-import {IRuleEngine} from "CMTAT/interfaces/engine/IRuleEngine.sol";
-/* ==== IRuleEngine === */
-import {IRule} from "RuleEngine/interfaces/IRule.sol";
-
 
 /**
  * @title RuleSanctionsList
  * @notice Compliance rule enforcing sanctions-screening for token transfers.
- * @dev
- *  This rule integrates a sanctions-oracle (e.g., Chainalysis) and blocks
- *  transfers when:
- *    - the sender is sanctioned,
- *    - the recipient is sanctioned,
- *    - or the spender/operator is sanctioned.
- *
- *  Features:
- *    - Supports ERC-1404, ERC-3643 (transferred) and ERC-7943 non-fungible compliance flows.
- *    - Oracle address can be updated by accounts holding `SANCTIONLIST_ROLE`.
- *    - Oracle can be explicitly cleared to disable sanctions checks.
- *
- *  The rule is designed for RuleEngine or for direct integration with
- *  CMTAT / ERC-3643 compliant tokens.
  */
-contract RuleSanctionsList is
-    AccessControlModuleStandalone,
-    MetaTxModuleStandalone,
-    RuleNFTAdapter,
-    RuleSanctionsListInvariantStorage
-{
-    ISanctionsList public sanctionsList;
-
-    /*//////////////////////////////////////////////////////////////
-                              CONSTRUCTOR
-    //////////////////////////////////////////////////////////////*/
+contract RuleSanctionsList is AccessControlModuleStandalone, RuleSanctionsListBase {
     /**
      * @param admin Address of the contract (Access Control)
      * @param forwarderIrrevocable Address of the forwarder, required for the gasless support
      */
     constructor(address admin, address forwarderIrrevocable, ISanctionsList sanctionContractOracle_)
-        MetaTxModuleStandalone(forwarderIrrevocable)
         AccessControlModuleStandalone(admin)
-    {
-        if (address(sanctionContractOracle_) != address(0)) {
-            _setSanctionListOracle(sanctionContractOracle_);
-        }
-    }
-
-    /* ============  View Functions ============ */
-
-    /**
-     * @notice Check if an address is in the SanctionsList or not
-     * @param from the origin address
-     * @param to the destination address
-     * @return The restricion code or REJECTED_CODE_BASE.TRANSFER_OK
-     *
-     */
-    function _detectTransferRestriction(address from, address to, uint256 /* value */)
-        internal
-        view
-        override
-        returns (uint8)
-    {
-        if (address(sanctionsList) != address(0)) {
-            if (sanctionsList.isSanctioned(from)) {
-                return CODE_ADDRESS_FROM_IS_SANCTIONED;
-            } else if (sanctionsList.isSanctioned(to)) {
-                return CODE_ADDRESS_TO_IS_SANCTIONED;
-            }
-        }
-        return uint8(REJECTED_CODE_BASE.TRANSFER_OK);
-    }
-
-    /**
-     * @dev Internal spender-aware restriction check.
-     */
-    function _detectTransferRestrictionFrom(address spender, address from, address to, uint256 value)
-        internal
-        view
-        virtual
-        override
-        returns (uint8)
-    {
-        if (address(sanctionsList) != address(0)) {
-            if (sanctionsList.isSanctioned(spender)) {
-                return CODE_ADDRESS_SPENDER_IS_SANCTIONED;
-            } else {
-                return _detectTransferRestriction(from, to, value);
-            }
-        }
-        return uint8(REJECTED_CODE_BASE.TRANSFER_OK);
-    }
-
-    // ERC-7943 tokenId overloads are provided by {RuleNFTAdapter}.
-
-    /**
-     * @notice To know if the restriction code is valid for this rule or not.
-     * @param restrictionCode The target restriction code
-     * @return true if the restriction code is known, false otherwise
-     *
-     */
-    function canReturnTransferRestrictionCode(uint8 restrictionCode) external pure override(IRule) returns (bool) {
-        return restrictionCode == CODE_ADDRESS_FROM_IS_SANCTIONED || restrictionCode == CODE_ADDRESS_TO_IS_SANCTIONED
-            || restrictionCode == CODE_ADDRESS_SPENDER_IS_SANCTIONED;
-    }
-
-    /**
-     * @notice Return the corresponding message
-     * @param restrictionCode The target restriction code
-     * @return true if the transfer is valid, false otherwise
-     *
-     */
-    function messageForTransferRestriction(uint8 restrictionCode)
-        public
-        pure
-        virtual
-        override(IERC1404)
-        returns (string memory)
-    {
-        if (restrictionCode == CODE_ADDRESS_FROM_IS_SANCTIONED) {
-            return TEXT_ADDRESS_FROM_IS_SANCTIONED;
-        } else if (restrictionCode == CODE_ADDRESS_TO_IS_SANCTIONED) {
-            return TEXT_ADDRESS_TO_IS_SANCTIONED;
-        } else if (restrictionCode == CODE_ADDRESS_SPENDER_IS_SANCTIONED) {
-            return TEXT_ADDRESS_SPENDER_IS_SANCTIONED;
-        } else {
-            return TEXT_CODE_NOT_FOUND;
-        }
-    }
+        RuleSanctionsListBase(forwarderIrrevocable, sanctionContractOracle_)
+    {}
 
     function supportsInterface(bytes4 interfaceId)
         public
@@ -154,87 +33,11 @@ contract RuleSanctionsList is
         return AccessControl.supportsInterface(interfaceId) || RuleTransferValidation.supportsInterface(interfaceId);
     }
 
-    /* ============  State Functions ============ */
-    /**
-     * @notice Set the oracle contract
-     * @param sanctionContractOracle_ address of your oracle contract
-     * @dev Reverts if the oracle is the zero address. Use {clearSanctionListOracle} to disable checks.
-     */
-    function setSanctionListOracle(ISanctionsList sanctionContractOracle_) public virtual onlySanctionListManager {
-        require(address(sanctionContractOracle_) != address(0), RuleSanctionsList_OracleAddressZeroNotAllowed());
-        _setSanctionListOracle(sanctionContractOracle_);
-    }
-
-    /**
-     * @notice Clear the oracle contract to disable sanctions checks.
-     */
-    function clearSanctionListOracle() public virtual onlySanctionListManager {
-        _setSanctionListOracle(ISanctionsList(address(0)));
-    }
-
-    /**
-     * @inheritdoc IERC3643IComplianceContract
-     * @dev Validation only; does not modify state.
-     */
-    function transferred(address from, address to, uint256 value)
-        public
-        view
-        virtual
-        override(IERC3643IComplianceContract)
-    {
-        // Validation only; does not modify state.
-        _transferred(from, to, value);
-    }
-
-    
-    /**
-     * @inheritdoc IRuleEngine
-     * @dev Validation only; does not modify state.
-     */
-    function transferred(address spender, address from, address to, uint256 value)
-        public
-        view
-        virtual
-        override(IRuleEngine)
-    {
-        // Validation only; does not modify state.
-        _transferredFrom(spender, from, to, value);
-    }
-
-    function _transferred(address from, address to, uint256 value) internal view override {
-        uint8 code = _detectTransferRestriction(from, to, value);
-        require(
-            code == uint8(REJECTED_CODE_BASE.TRANSFER_OK),
-            RuleSanctionsList_InvalidTransfer(address(this), from, to, value, code)
-        );
-    }
-
-    function _transferredFrom(address spender, address from, address to, uint256 value) internal view override {
-        uint8 code = _detectTransferRestrictionFrom(spender, from, to, value);
-        require(
-            code == uint8(REJECTED_CODE_BASE.TRANSFER_OK),
-            RuleSanctionsList_InvalidTransferFrom(address(this), spender, from, to, value, code)
-        );
-    }
-    /*//////////////////////////////////////////////////////////////
-                            INTERNAL FUNCTIONS
-    //////////////////////////////////////////////////////////////*/
-
-    function _setSanctionListOracle(ISanctionsList sanctionContractOracle_) internal {
-        sanctionsList = sanctionContractOracle_;
-        emit SetSanctionListOracle(sanctionContractOracle_);
-    }
-
     /*//////////////////////////////////////////////////////////////
                             ACCESS CONTROL
     //////////////////////////////////////////////////////////////*/
 
-    modifier onlySanctionListManager() {
-        _authorizeSanctionListManager();
-        _;
-    }
-
-    function _authorizeSanctionListManager() internal virtual {
+    function _authorizeSanctionListManager() internal view override {
         _checkRole(SANCTIONLIST_ROLE, _msgSender());
     }
 
@@ -242,23 +45,14 @@ contract RuleSanctionsList is
                            ERC-2771
     //////////////////////////////////////////////////////////////*/
 
-    /**
-     * @dev This surcharge is not necessary if you do not use the MetaTxModule
-     */
     function _msgSender() internal view override(ERC2771Context, Context) returns (address sender) {
         return ERC2771Context._msgSender();
     }
 
-    /**
-     * @dev This surcharge is not necessary if you do not use the MetaTxModule
-     */
     function _msgData() internal view override(ERC2771Context, Context) returns (bytes calldata) {
         return ERC2771Context._msgData();
     }
 
-    /**
-     * @dev This surcharge is not necessary if you do not use the MetaTxModule
-     */
     function _contextSuffixLength() internal view override(ERC2771Context, Context) returns (uint256) {
         return ERC2771Context._contextSuffixLength();
     }
