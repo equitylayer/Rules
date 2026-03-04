@@ -4,16 +4,16 @@ pragma solidity ^0.8.20;
 import {Ownable} from "OZ/access/Ownable.sol";
 import {Ownable2Step} from "OZ/access/Ownable2Step.sol";
 import {Context} from "OZ/utils/Context.sol";
-import {RuleBlacklistBase} from "../abstract/base/RuleBlacklistBase.sol";
+import {RuleWhitelistBase} from "../abstract/base/RuleWhitelistBase.sol";
 import {RuleAddressSet} from "../abstract/RuleAddressSet/RuleAddressSet.sol";
 
 /**
- * @title RuleBlacklistOwnable
- * @notice Ownable variant of RuleBlacklist with owner-based authorization hooks.
+ * @title RuleWhitelistOwnable2Step
+ * @notice Ownable2Step variant of RuleWhitelist with owner-based authorization hooks.
  */
-contract RuleBlacklistOwnable is RuleBlacklistBase, Ownable2Step {
-    constructor(address owner, address forwarderIrrevocable)
-        RuleBlacklistBase(forwarderIrrevocable)
+contract RuleWhitelistOwnable2Step is RuleWhitelistBase, Ownable2Step {
+    constructor(address owner, address forwarderIrrevocable, bool checkSpender_)
+        RuleWhitelistBase(forwarderIrrevocable, checkSpender_)
         Ownable(owner)
     {}
 
@@ -22,6 +22,10 @@ contract RuleBlacklistOwnable is RuleBlacklistBase, Ownable2Step {
     }
 
     function _authorizeAddressListRemove() internal view override {
+        _checkOwner();
+    }
+
+    function _authorizeCheckSpenderManager() internal view override {
         _checkOwner();
     }
 
