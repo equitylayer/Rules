@@ -7,6 +7,7 @@ import {IERC3643ComplianceRead, IERC3643IComplianceContract} from "CMTAT/interfa
 import {IERC7551Compliance} from "CMTAT/interfaces/tokenization/draft-IERC7551.sol";
 import {IRule} from "RuleEngine/interfaces/IRule.sol";
 import {ITransferContext} from "../../interfaces/ITransferContext.sol";
+import {IERC20} from "OZ/token/ERC20/IERC20.sol";
 import {
     RuleConditionalTransferLightInvariantStorage
 } from "./RuleConditionalTransferLightInvariantStorage.sol";
@@ -16,7 +17,7 @@ import {
  * @dev Requires operator approval for each transfer. Same transfer (from, to, value)
  *      can be approved multiple times to allow repeated transfers.
  */
-abstract contract RuleConditionalTransferLightBase is RuleConditionalTransferLightInvariantStorage, IRule, ITransferContext {
+abstract contract RuleConditionalTransferLightBase is RuleConditionalTransferLightInvariantStorage, IRule {
     // Mapping from transfer hash to approval count
     mapping(bytes32 => uint256) public approvalCounts;
 
@@ -32,6 +33,30 @@ abstract contract RuleConditionalTransferLightBase is RuleConditionalTransferLig
         require(count != 0, TransferApprovalNotFound());
         approvalCounts[transferHash] = count - 1;
         emit TransferApprovalCancelled(from, to, value, approvalCounts[transferHash]);
+    }
+
+    /**
+     * @notice Approves and performs a transferFrom using this rule as spender.
+     * @dev Requires `from` to have approved this contract on the token.
+     */
+    function approveAndTransferIfAllowed(address token, address from, address to, uint256 value)
+        public
+        onlyTransferApprover
+        returns (bool)
+    {
+        require(token != address(0), RuleConditionalTransferLight_TokenAddressZeroNotAllowed());
+
+        approveTransfer(from, to, value);
+
+        uint256 allowed = IERC20(token).allowance(from, address(this));
+        require(
+            allowed >= value,
+            RuleConditionalTransferLight_InsufficientAllowance(token, from, allowed, value)
+        );
+
+        bool success = IERC20(token).transferFrom(from, to, value);
+        require(success, RuleConditionalTransferLight_TransferFailed());
+        return true;
     }
 
     function approvedCount(address from, address to, uint256 value) public view returns (uint256) {
@@ -118,18 +143,7 @@ abstract contract RuleConditionalTransferLightBase is RuleConditionalTransferLig
         return TEXT_CODE_NOT_FOUND;
     }
 
-    function transferred(ITransferContext.TransferContext calldata ctx) external override(ITransferContext) {
-        if (ctx.sender != address(0)) {
-            transferred(ctx.sender, ctx.from, ctx.to, ctx.value);
-        } else {
-            transferred(ctx.from, ctx.to, ctx.value);
-        }
-    }
-
-    function transferred(ITransferContext.TransferContextFungible calldata ctx)
-        external
-        override(ITransferContext)
-    {
+    function transferred(ITransferContext.TransferContextFungible calldata ctx) external {
         if (ctx.sender != address(0)) {
             transferred(ctx.sender, ctx.from, ctx.to, ctx.value);
         } else {

@@ -1,18 +1,18 @@
 // SPDX-License-Identifier: MPL-2.0
 pragma solidity ^0.8.20;
 
-import {RuleNFTAdapter} from "../core/RuleNFTAdapter.sol";
 import {RuleMaxTotalSupplyInvariantStorage} from "../invariant/RuleMaxTotalSupplyInvariantStorage.sol";
 import {IERC1404, IERC1404Extend} from "CMTAT/interfaces/tokenization/draft-IERC1404.sol";
 import {ITotalSupply} from "../../../interfaces/ITotalSupply.sol";
 import {IERC3643IComplianceContract} from "CMTAT/interfaces/tokenization/IERC3643Partial.sol";
 import {IRuleEngine} from "CMTAT/interfaces/engine/IRuleEngine.sol";
+import {RuleTransferValidation} from "../core/RuleTransferValidation.sol";
 
 /**
  * @title RuleMaxTotalSupplyBase
  * @notice Restricts minting so that total supply never exceeds a maximum value.
  */
-abstract contract RuleMaxTotalSupplyBase is RuleNFTAdapter, RuleMaxTotalSupplyInvariantStorage {
+abstract contract RuleMaxTotalSupplyBase is RuleTransferValidation, RuleMaxTotalSupplyInvariantStorage {
     /// @dev tokenContract is trusted to return a correct totalSupply.
     ITotalSupply public tokenContract;
     uint256 public maxTotalSupply;
@@ -74,7 +74,7 @@ abstract contract RuleMaxTotalSupplyBase is RuleNFTAdapter, RuleMaxTotalSupplyIn
         _transferredFrom(spender, from, to, value);
     }
 
-    function _transferred(address from, address to, uint256 value) internal view override {
+    function _transferred(address from, address to, uint256 value) internal view {
         uint8 code = _detectTransferRestriction(from, to, value);
         require(
             code == uint8(IERC1404Extend.REJECTED_CODE_BASE.TRANSFER_OK),
@@ -82,7 +82,7 @@ abstract contract RuleMaxTotalSupplyBase is RuleNFTAdapter, RuleMaxTotalSupplyIn
         );
     }
 
-    function _transferredFrom(address spender, address from, address to, uint256 value) internal view override {
+    function _transferredFrom(address spender, address from, address to, uint256 value) internal view {
         uint8 code = _detectTransferRestrictionFrom(spender, from, to, value);
         require(
             code == uint8(IERC1404Extend.REJECTED_CODE_BASE.TRANSFER_OK),

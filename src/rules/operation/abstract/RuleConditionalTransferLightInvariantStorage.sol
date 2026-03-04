@@ -17,6 +17,9 @@ abstract contract RuleConditionalTransferLightInvariantStorage is RuleCommonInva
     error RuleConditionalTransferLight_AdminAddressZeroNotAllowed();
     error RuleConditionalTransferLight_TransferApproverUnauthorized(address account);
     error RuleConditionalTransferLight_TransferExecutorUnauthorized(address account);
+    error RuleConditionalTransferLight_TokenAddressZeroNotAllowed();
+    error RuleConditionalTransferLight_InsufficientAllowance(address token, address owner, uint256 allowance, uint256 required);
+    error RuleConditionalTransferLight_TransferFailed();
     error TransferNotApproved();
     error TransferApprovalNotFound();
 

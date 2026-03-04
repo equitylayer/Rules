@@ -90,9 +90,9 @@ The alternative to use a Rule with an ERC-3643 token is trough the RuleEngine, w
 
 ### ERC-721/ERC-1155
 
-To improve compatibility with [ERC-721](https://eips.ethereum.org/EIPS/eip-721) and [ERC-1155](https://eips.ethereum.org/EIPS/eip-1155), the rule implements the interface `IERC7943NonFungibleComplianceExtend` which includes compliance functions with the `tokenId` argument.
+To improve compatibility with [ERC-721](https://eips.ethereum.org/EIPS/eip-721) and [ERC-1155](https://eips.ethereum.org/EIPS/eip-1155), most validation rules implement the interface `IERC7943NonFungibleComplianceExtend` which includes compliance functions with the `tokenId` argument. Operation rules (such as `RuleConditionalTransferLight`) are ERC-20 only and do not expose the ERC-721/1155 interfaces. `RuleMaxTotalSupply` is ERC-20 only as well and does not expose ERC-721/1155 interfaces.
 
-While no rules currently apply restriction on the token id, this interface can be used to implement flexible restriction on ERC-721 or ERC-1155 tokens.
+While no rules currently apply restriction on the token id, the validation interfaces can be used to implement flexible restriction on ERC-721 or ERC-1155 tokens.
 
 ```solidity
 // IERC7943NonFungibleCompliance interface
@@ -184,7 +184,7 @@ This makes rules directly pluggable into CMTAT without any intermediary RuleEngi
 
 ### Transfer Context Helper
 
-Rules also expose an optional unified entrypoint using `TransferContext` (see `ITransferContext`) to pass a single struct instead of multiple arguments. This is a helper API inspired by TokenF and does not replace the standard ERC-3643 / RuleEngine interfaces.
+Rules also expose an optional unified entrypoint using `TransferContext` (see `ITransferContext`) to pass a single struct instead of multiple arguments. This is a helper API inspired by TokenF and does not replace the standard ERC-3643 / RuleEngine interfaces. Validation rules generally expose both the non-fungible and fungible variants; `RuleConditionalTransferLight` and `RuleMaxTotalSupply` expose only the fungible variant.
 
 Two struct variants are available:
 
@@ -340,15 +340,15 @@ Several rules are available in multiple access-control variants. Use the simples
 
 ### Summary tab
 
-| Rule                                                         | Type <br />[ready-only / read-write] | Security Audit planned in the roadmap | Description                                                  |
-| ------------------------------------------------------------ | ------------------------------------ | ------------------------------------- | ------------------------------------------------------------ |
-| RuleWhitelist                                                | Ready-only                           | ☑                                     | This rule can be used to restrict transfers from/to only addresses inside a whitelist. |
-| RuleWhitelistWrapper                                         | Ready-only                           | ☑                                     | This rule can be used to restrict transfers from/to only addresses inside a group of whitelist rules managed by different operators. |
-| RuleBlacklist                                                | Ready-only                           | ☑                                     | This rule can be used to forbid transfer from/to addresses in the blacklist |
-| RuleSanctionList                                             | Ready-only                           | ☑                                     | The purpose of this contract is to use the oracle contract from [Chainalysis](https://go.chainalysis.com/chainalysis-oracle-docs.html) to forbid transfer from/to an address included in a sanctions designation (US, EU, or UN). |
-| RuleMaxTotalSupply                                           | Ready-only                           | ☑                                     | This rule limits minting so that the total supply never exceeds a configured maximum. |
-| RuleIdentityRegistry                                         | Ready-only                           | ☑                                     | This rule checks the ERC-3643 Identity Registry for transfer participants when configured. |
-| RuleConditionalTransferLight                                | Ready-Write                          | ☒<br /> (experimental rule)           | This rule requires that transfers have to be approved by an operator before being executed. Each approval is consumed once and the same transfer can be approved multiple times. |
+| Rule                                                         | Type <br />[ready-only / read-write] | Token standards                                  | Security Audit planned in the roadmap | Description                                                  |
+| ------------------------------------------------------------ | ------------------------------------ | ------------------------------------------------ | ------------------------------------- | ------------------------------------------------------------ |
+| RuleWhitelist                                                | Ready-only                           | ERC-20 / CMTAT / ERC-3643<br />ERC-721 / ERC-1155 | ☑                                     | This rule can be used to restrict transfers from/to only addresses inside a whitelist. |
+| RuleWhitelistWrapper                                         | Ready-only                           | ERC-20 / CMTAT / ERC-3643<br />ERC-721 / ERC-1155 | ☑                                     | This rule can be used to restrict transfers from/to only addresses inside a group of whitelist rules managed by different operators. |
+| RuleBlacklist                                                | Ready-only                           | ERC-20 / CMTAT / ERC-3643<br />ERC-721 / ERC-1155 | ☑                                     | This rule can be used to forbid transfer from/to addresses in the blacklist |
+| RuleSanctionList                                             | Ready-only                           | ERC-20 / CMTAT / ERC-3643<br />ERC-721 / ERC-1155 | ☑                                     | The purpose of this contract is to use the oracle contract from [Chainalysis](https://go.chainalysis.com/chainalysis-oracle-docs.html) to forbid transfer from/to an address included in a sanctions designation (US, EU, or UN). |
+| RuleMaxTotalSupply                                           | Ready-only                           | ERC-20 / CMTAT / ERC-3643                         | ☑                                     | This rule limits minting so that the total supply never exceeds a configured maximum. |
+| RuleIdentityRegistry                                         | Ready-only                           | ERC-20 / CMTAT / ERC-3643<br />ERC-721 / ERC-1155 | ☑                                     | This rule checks the ERC-3643 Identity Registry for transfer participants when configured. |
+| RuleConditionalTransferLight                                | Ready-Write                          | ERC-20 / CMTAT / ERC-3643                         | ☒<br /> (experimental rule)           | This rule requires that transfers have to be approved by an operator before being executed. Each approval is consumed once and the same transfer can be approved multiple times. |
 
 ### Operational Notes
 
@@ -361,6 +361,7 @@ Several rules are available in multiple access-control variants. Use the simples
 - `RuleWhitelistWrapper` requires child rules that implement `IAddressList`. Gas cost grows with the number of rules, and a wrapper with zero rules will reject all transfers.
 - Read-only rules still implement `transferred()` to comply with ERC-3643 and RuleEngine interfaces, but they do not change state.
 - `RuleConditionalTransferLight` approvals are keyed by `(from, to, value)` and are not nonce-based.
+- `RuleConditionalTransferLight` provides `approveAndTransferIfAllowed` to approve and immediately execute `transferFrom` when this rule has allowance.
 - `forwarderIrrevocable` is accepted as-is (including `address(0)`), and is not validated against ERC-165 because some forwarders do not implement it.
 
 ### Read-only (validation) rule
@@ -1110,7 +1111,7 @@ If the address does not exist in the whitelist, there is no change for this addr
 
 ### IERC7943NonFungibleCompliance
 
-Compliance interface for ERC-721 / ERC-1155–style non-fungible assets.
+Compliance interface for ERC-721 / ERC-1155–style non-fungible assets. This is implemented by validation rules only. `RuleConditionalTransferLight` and `RuleMaxTotalSupply` are ERC-20 only and do not implement this interface.
  For ERC-721, `amount` must always be `1`.
 
 ------
@@ -1163,7 +1164,7 @@ Verifies whether a token transfer is permitted according to the rule-based compl
 
 ### IERC7943NonFungibleComplianceExtend
 
-Extended compliance interface for ERC-721 / ERC-1155 non-fungible assets.
+Extended compliance interface for ERC-721 / ERC-1155 non-fungible assets. This is implemented by validation rules only. `RuleConditionalTransferLight` and `RuleMaxTotalSupply` are ERC-20 only and do not implement this interface.
  Adds restriction-code reporting, spender-aware checks, and a post-transfer hook.
 
 For ERC-721, `amount` / `value` must always be `1`.
