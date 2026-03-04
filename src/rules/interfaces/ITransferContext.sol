@@ -19,6 +19,7 @@ interface ITransferContext {
         address to;
         uint256 value;
         uint256 tokenId;
+        bytes data;
     }
 
     struct FungibleTransferContext {
@@ -27,6 +28,7 @@ interface ITransferContext {
         address from;
         address to;
         uint256 value;
+        bytes data;
     }
 
     error TransferContext_InvalidSelector(bytes4 selector);

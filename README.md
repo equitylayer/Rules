@@ -184,7 +184,7 @@ This makes rules directly pluggable into CMTAT without any intermediary RuleEngi
 
 ### Transfer Context Helper
 
-Rules also expose an optional unified entrypoint using `MultiTokenTransferContext` / `FungibleTransferContext` (see `ITransferContext`) to pass a single struct instead of multiple arguments. This is a helper API inspired by TokenF and does not replace the standard ERC-3643 / RuleEngine interfaces. Validation rules generally expose both the non-fungible and fungible variants; `RuleConditionalTransferLight` and `RuleMaxTotalSupply` expose only the fungible variant.
+Rules also expose an optional unified entrypoint using `MultiTokenTransferContext` / `FungibleTransferContext` (see `ITransferContext`) to pass a single struct instead of multiple arguments. This is a helper API inspired by [TokenF](https://github.com/dl-tokenf/contracts) and does not replace the standard ERC-3643 / RuleEngine interfaces. Validation rules generally expose both the non-fungible and fungible variants; `RuleConditionalTransferLight` and `RuleMaxTotalSupply` expose only the fungible variant.
 
 Two struct variants are available:
 
@@ -197,6 +197,7 @@ struct MultiTokenTransferContext {
     address to;        // token recipient
     uint256 value;     // amount transferred
     uint256 tokenId;   // token id (non-fungible)
+    bytes data; // The transaction data
 }
 
 // For ERC-20 (no tokenId)
@@ -206,6 +207,7 @@ struct FungibleTransferContext {
     address from;      // token sender
     address to;        // token recipient
     uint256 value;     // amount transferred
+    bytes data; // The transaction data
 }
 ```
 

@@ -104,7 +104,8 @@ contract MockERC20WithTransferContext {
                     sender: sender,
                     from: from,
                     to: to,
-                    value: value
+                    value: value,
+                    data: ""
                 });
             rule.transferred(ctx);
         } else {
@@ -117,7 +118,8 @@ contract MockERC20WithTransferContext {
                     from: from,
                     to: to,
                     value: value,
-                    tokenId: tokenId
+                    tokenId: tokenId,
+                    data: ""
                 });
             rule.transferred(ctx);
         }
