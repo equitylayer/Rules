@@ -111,7 +111,7 @@ abstract contract RuleNFTAdapter is RuleTransferValidation, IERC7943NonFungibleC
     /**
      * @inheritdoc ITransferContext
      */
-    function transferred(TransferContext calldata ctx) external virtual override {
+    function transferred(MultiTokenTransferContext calldata ctx) external virtual override {
         if (ctx.sender != address(0)) {
             _transferredFrom(ctx.sender, ctx.from, ctx.to, ctx.value);
         } else {
@@ -122,7 +122,7 @@ abstract contract RuleNFTAdapter is RuleTransferValidation, IERC7943NonFungibleC
     /**
      * @inheritdoc ITransferContext
      */
-    function transferred(TransferContextFungible calldata ctx) external virtual override {
+    function transferred(FungibleTransferContext calldata ctx) external virtual override {
         if (ctx.sender != address(0)) {
             _transferredFrom(ctx.sender, ctx.from, ctx.to, ctx.value);
         } else {

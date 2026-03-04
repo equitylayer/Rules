@@ -12,7 +12,7 @@ interface ITransferContext {
      * @param value Amount transferred (fungible).
      * @param tokenId Token id (non-fungible).
      */
-    struct TransferContext {
+    struct MultiTokenTransferContext {
         bytes4 selector;
         address sender;
         address from;
@@ -21,7 +21,7 @@ interface ITransferContext {
         uint256 tokenId;
     }
 
-    struct TransferContextFungible {
+    struct FungibleTransferContext {
         bytes4 selector;
         address sender;
         address from;
@@ -31,7 +31,7 @@ interface ITransferContext {
 
     error TransferContext_InvalidSelector(bytes4 selector);
 
-    function transferred(TransferContext calldata ctx) external;
+    function transferred(MultiTokenTransferContext calldata ctx) external;
 
-    function transferred(TransferContextFungible calldata ctx) external;
+    function transferred(FungibleTransferContext calldata ctx) external;
 }

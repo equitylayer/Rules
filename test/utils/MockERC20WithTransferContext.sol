@@ -96,8 +96,8 @@ contract MockERC20WithTransferContext {
         }
 
         if (useFungibleContext) {
-            ITransferContext.TransferContextFungible memory ctx =
-                ITransferContext.TransferContextFungible({
+            ITransferContext.FungibleTransferContext memory ctx =
+                ITransferContext.FungibleTransferContext({
                     selector: sender == address(0)
                         ? bytes4(keccak256("transferred(address,address,uint256)"))
                         : bytes4(keccak256("transferred(address,address,address,uint256)")),
@@ -108,8 +108,8 @@ contract MockERC20WithTransferContext {
                 });
             rule.transferred(ctx);
         } else {
-            ITransferContext.TransferContext memory ctx =
-                ITransferContext.TransferContext({
+            ITransferContext.MultiTokenTransferContext memory ctx =
+                ITransferContext.MultiTokenTransferContext({
                     selector: sender == address(0)
                         ? bytes4(keccak256("transferred(address,address,uint256)"))
                         : bytes4(keccak256("transferred(address,address,address,uint256)")),

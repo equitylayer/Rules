@@ -143,7 +143,7 @@ abstract contract RuleConditionalTransferLightBase is RuleConditionalTransferLig
         return TEXT_CODE_NOT_FOUND;
     }
 
-    function transferred(ITransferContext.TransferContextFungible calldata ctx) external {
+    function transferred(ITransferContext.FungibleTransferContext calldata ctx) external {
         if (ctx.sender != address(0)) {
             transferred(ctx.sender, ctx.from, ctx.to, ctx.value);
         } else {

@@ -184,13 +184,13 @@ This makes rules directly pluggable into CMTAT without any intermediary RuleEngi
 
 ### Transfer Context Helper
 
-Rules also expose an optional unified entrypoint using `TransferContext` (see `ITransferContext`) to pass a single struct instead of multiple arguments. This is a helper API inspired by TokenF and does not replace the standard ERC-3643 / RuleEngine interfaces. Validation rules generally expose both the non-fungible and fungible variants; `RuleConditionalTransferLight` and `RuleMaxTotalSupply` expose only the fungible variant.
+Rules also expose an optional unified entrypoint using `MultiTokenTransferContext` / `FungibleTransferContext` (see `ITransferContext`) to pass a single struct instead of multiple arguments. This is a helper API inspired by TokenF and does not replace the standard ERC-3643 / RuleEngine interfaces. Validation rules generally expose both the non-fungible and fungible variants; `RuleConditionalTransferLight` and `RuleMaxTotalSupply` expose only the fungible variant.
 
 Two struct variants are available:
 
 ```solidity
 // For ERC-721 / ERC-1155 (includes tokenId)
-struct TransferContext {
+struct MultiTokenTransferContext {
     bytes4 selector;   // function selector of the original call
     address sender;    // operator/spender (address(0) for direct transfers)
     address from;      // token sender
@@ -200,7 +200,7 @@ struct TransferContext {
 }
 
 // For ERC-20 (no tokenId)
-struct TransferContextFungible {
+struct FungibleTransferContext {
     bytes4 selector;   // function selector of the original call
     address sender;    // operator/spender (address(0) for direct transfers)
     address from;      // token sender
@@ -209,7 +209,7 @@ struct TransferContextFungible {
 }
 ```
 
-Both structs are passed to `transferred(TransferContext calldata ctx)` or `transferred(TransferContextFungible calldata ctx)`. If `ctx.sender` is non-zero, the spender-aware path is used internally; otherwise the standard two-party path is used.
+Both structs are passed to `transferred(MultiTokenTransferContext calldata ctx)` or `transferred(FungibleTransferContext calldata ctx)`. If `ctx.sender` is non-zero, the spender-aware path is used internally; otherwise the standard two-party path is used.
 
 ### Using Rules via RuleEngine
 
