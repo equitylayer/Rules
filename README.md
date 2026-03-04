@@ -9,7 +9,9 @@ Each rule can be used **standalone**, directly plugged into a CMTAT token, **or*
 ## Table of Contents
 
 - [Overview](#overview)
+- [Quick Start](#quick-start)
 - [Compatibility](#compatibility)
+- [Specifications](#specifications)
 - [Architecture](#architecture)
 - [Types of Rules](#types-of-rules)
 - [Deployment Guide](#deployment-guide)
@@ -37,6 +39,26 @@ Rules are modular validator contracts that the `RuleEngine` or `CMTAT` compatibl
   - Conditional approvals
   - Arbitrary compliance logic
 
+## Quick Start
+
+```bash
+# 1. Clone the repository
+git clone <repo-url>
+cd Rules
+
+# 2. Install Foundry (if not already installed)
+# https://book.getfoundry.sh/getting-started/installation
+
+# 3. Install submodule dependencies
+forge install
+
+# 4. Compile
+forge build
+
+# 5. Run tests
+forge test
+```
+
 ## Compatibility
 
 | Component        | Compatible Versions                       |
@@ -46,6 +68,12 @@ Rules are modular validator contracts that the `RuleEngine` or `CMTAT` compatibl
 Each Rule implements the interface `IRuleEngine` defined in CMTAT.
 
 This interface declares the ERC-3643 functions `transferred`(read-write) and `canTransfer`(ready-only) with several other functions related to [ERC-1404](https://github.com/ethereum/eips/issues/1404), [ERC-7551](https://ethereum-magicians.org/t/erc-7551-crypto-security-token-smart-contract-interface-ewpg-reworked/25477) and [ERC-3643](https://eips.ethereum.org/EIPS/eip-3643).
+
+## Specifications
+
+Draft ERC specifications maintained in this repository:
+
+- `ERCSpecification/erc-XXXX-transfer-context.md` - transfer context hook (fungible and non-fungible).
 
 ### ERC-3643
 
@@ -92,19 +120,18 @@ function transferred(address spender, address from, address to, uint256 tokenId,
 - `*InvariantStorage` contracts group constants, custom errors, and events.
 - `*Common` contracts provide shared helper logic across variants (legacy naming retained for compatibility).
 
-### Directory Layout (Validation Rules)
+### Directory Layout
 
+- `src/modules/`: reusable modules shared across rules (`AccessControlModuleStandalone`, `MetaTxModuleStandalone`).
+- `src/rules/interfaces/`: shared interfaces (`IAddressList`, `IIdentityRegistry`, `ISanctionsList`, `ITransferContext`).
 - `src/rules/validation/abstract/`: shared base contracts and invariant storage.
 - `src/rules/validation/abstract/base/`: base contracts with core rule logic (no access control).
 - `src/rules/validation/abstract/core/`: shared adapters/validation helpers.
 - `src/rules/validation/abstract/invariant/`: invariant storage contracts (constants, errors, events).
 - `src/rules/validation/deployment/`: deployable validation rules (concrete contracts).
-
-### Diagrams
-
-
-
-
+- `src/rules/operation/`: read-write (operation) rules that modify state on transfer.
+- `test/`: Foundry tests, one folder per rule.
+- `script/`: deployment scripts.
 
 ### Rule - Code list
 
@@ -158,6 +185,31 @@ This makes rules directly pluggable into CMTAT without any intermediary RuleEngi
 ### Transfer Context Helper
 
 Rules also expose an optional unified entrypoint using `TransferContext` (see `ITransferContext`) to pass a single struct instead of multiple arguments. This is a helper API inspired by TokenF and does not replace the standard ERC-3643 / RuleEngine interfaces.
+
+Two struct variants are available:
+
+```solidity
+// For ERC-721 / ERC-1155 (includes tokenId)
+struct TransferContext {
+    bytes4 selector;   // function selector of the original call
+    address sender;    // operator/spender (address(0) for direct transfers)
+    address from;      // token sender
+    address to;        // token recipient
+    uint256 value;     // amount transferred
+    uint256 tokenId;   // token id (non-fungible)
+}
+
+// For ERC-20 (no tokenId)
+struct TransferContextFungible {
+    bytes4 selector;   // function selector of the original call
+    address sender;    // operator/spender (address(0) for direct transfers)
+    address from;      // token sender
+    address to;        // token recipient
+    uint256 value;     // amount transferred
+}
+```
+
+Both structs are passed to `transferred(TransferContext calldata ctx)` or `transferred(TransferContextFungible calldata ctx)`. If `ctx.sender` is non-zero, the spender-aware path is used internally; otherwise the standard two-party path is used.
 
 ### Using Rules via RuleEngine
 
@@ -234,7 +286,21 @@ interface IRule is IRuleEngine {
 
 ## Types of Rules
 
-There are two categories of rules: validation rules (Read-only) and operation rules (read-write).
+There are two categories of rules: validation rules (read-only) and operation rules (read-write).
+
+### Validation Rules (Read-Only)
+
+Validation rules only read blockchain state — they never modify it during a transfer. They implement `transferred()` as a `view` function: it re-runs the same restriction check and reverts if the transfer would be blocked, but writes nothing to storage.
+
+All validation rules implement `IRuleEngine` to be usable both standalone (plugged directly into CMTAT) and via the RuleEngine.
+
+Available validation rules: `RuleWhitelist`, `RuleWhitelistWrapper`, `RuleBlacklist`, `RuleSanctionsList`, `RuleMaxTotalSupply`, `RuleIdentityRegistry`.
+
+### Operation Rules (Read-Write)
+
+Operation rules modify blockchain state during transfer execution. Their `transferred()` function is state-mutating: it consumes or updates stored data as part of the transfer flow.
+
+Available operation rules: `RuleConditionalTransferLight`.
 
 ## Deployment Guide
 
@@ -242,6 +308,13 @@ There are two categories of rules: validation rules (Read-only) and operation ru
 2. Configure the rule state and roles, including whitelist/blacklist entries and oracle or registry addresses.
 3. Add rules to the RuleEngine, or set the rule directly on the CMTAT token.
 4. Verify the transfer flow end-to-end with a small test transfer before enabling production flows.
+
+### Choosing a Rule Variant
+
+Several rules are available in multiple access-control variants. Use the simplest one that fits your needs:
+
+- `AccessControl` variants: use when you need multi-operator roles or delegated administration.
+- `Ownable2Step` variants: use when you want a safer two-step ownership transfer.
 
 ### Validation Rules (Read-Only)
 
@@ -284,6 +357,7 @@ There are two categories of rules: validation rules (Read-only) and operation ru
 - `RuleWhitelistWrapper` requires child rules that implement `IAddressList`. Gas cost grows with the number of rules, and a wrapper with zero rules will reject all transfers.
 - Read-only rules still implement `transferred()` to comply with ERC-3643 and RuleEngine interfaces, but they do not change state.
 - `RuleConditionalTransferLight` approvals are keyed by `(from, to, value)` and are not nonce-based.
+- `forwarderIrrevocable` is accepted as-is (including `address(0)`), and is not validated against ERC-165 because some forwarders do not implement it.
 
 ### Read-only (validation) rule
 
@@ -401,8 +475,8 @@ See also [docs.openzeppelin.com - AccessControl](https://docs.openzeppelin.com/c
 
 For simpler ownership-based control, some rules provide `Ownable2Step` variants (two-step ownership transfer):
 
-- `RuleWhitelistOwnable`
-- `RuleBlacklistOwnable`
+- `RuleWhitelistOwnable2Step`
+- `RuleBlacklistOwnable2Step`
 - `RuleWhitelistWrapperOwnable2Step`
 
 ### Address List
@@ -413,8 +487,6 @@ These roles are listed above in the Role Summary table.
 
 
 ## Toolchains and Usage
-
-*Explain how it works.*
 
 ### Configuration
 
@@ -467,17 +539,6 @@ forge update
 ```
 
 See also the command's [documentation](https://book.getfoundry.sh/reference/forge/forge-update).
-
-#### CMTAT
-
-You also have to install OpenZeppelin inside CMTAT repository (submodule)
-
-```bash
-cd CMTAT
-npm install
-```
-
-
 
 ### Compilation
 
@@ -598,7 +659,10 @@ $ cast --help
 
 ### IRuleEngine
 
-> Only rules that need a post-transfer hook implement `IRuleEngine` (e.g., operation rules). Validation-only rules do not.
+All rules implement `IRuleEngine`. The behaviour of `transferred()` differs by rule type:
+
+- **Validation rules** implement `transferred()` as `view`: it re-runs the restriction check and reverts if the transfer would be blocked, but does not modify state.
+- **Operation rules** implement `transferred()` as a state-mutating function: it updates storage as part of the transfer (e.g. consuming an approval in `RuleConditionalTransferLight`).
 
 #### transferred
 
@@ -607,8 +671,7 @@ function transferred(address spender, address from, address to, uint256 value)
     external;
 ```
 
-Called by a token or RuleEngine after a transfer.
- Used by stateful rules to update internal state or enforce operation-based restrictions.
+Called by a token or RuleEngine after a transfer. For validation rules, enforces the restriction check. For operation rules, mutates internal state.
 
 ##### Parameters
 
@@ -827,7 +890,7 @@ Adds multiple addresses to the internal address set.
 
 - Does **not** revert if one or more addresses are already listed.
 - Restricted by the rule's access control policy (role- or owner-based).
-- Emits `AddAddresses` and `AddressesBatchAdded`.
+- Emits `AddAddresses`. Skipped/added counts are not emitted to keep gas cost minimal.
 
 ##### Parameters
 
@@ -853,7 +916,7 @@ Removes multiple addresses from the internal set.
 
 - Does **not** revert if an address is not currently listed.
 - Restricted by the rule's access control policy (role- or owner-based).
-- Emits `RemoveAddresses` and `AddressesBatchRemoved`.
+- Emits `RemoveAddresses`. Skipped/removed counts are not emitted to keep gas cost minimal.
 
 ##### Parameters
 

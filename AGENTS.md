@@ -17,9 +17,9 @@ Modular compliance-rule library for CMTAT / ERC-3643 security tokens. Each rule 
 ## Main Contracts
 | Contract | Role |
 |---|---|
-| `RuleWhitelist` / `RuleWhitelistOwnable` | Allow transfers only between whitelisted addresses |
+| `RuleWhitelist` / `RuleWhitelistOwnable2Step` | Allow transfers only between whitelisted addresses |
 | `RuleWhitelistWrapper` / `Ownable2Step` | Aggregate multiple whitelist rules (OR logic) |
-| `RuleBlacklist` / `RuleBlacklistOwnable` | Block transfers involving blacklisted addresses |
+| `RuleBlacklist` / `RuleBlacklistOwnable2Step` | Block transfers involving blacklisted addresses |
 | `RuleSanctionsList` | Block sanctioned addresses via Chainalysis oracle |
 | `RuleMaxTotalSupply` | Cap minting so total supply never exceeds a maximum |
 | `RuleIdentityRegistry` | Check ERC-3643 identity registry for participant verification |
@@ -41,7 +41,7 @@ forge build          # compile
 forge test           # run all tests
 forge test -vvv      # verbose output
 ```
-Foundry config: `foundry.toml` (solc 0.8.30, EVM prague, optimizer 200 runs).
+Foundry config: `foundry.toml` (solc 0.8.34, EVM prague, optimizer 200 runs).
 
 ## Restriction Code Ranges
 | Rule | Codes |
@@ -49,9 +49,9 @@ Foundry config: `foundry.toml` (solc 0.8.30, EVM prague, optimizer 200 runs).
 | RuleWhitelist | 21–23 |
 | RuleSanctionsList | 30–32 |
 | RuleBlacklist | 36–38 |
-| RuleConditionalTransferLight | 71 |
-| RuleMaxTotalSupply | 80 |
-| RuleIdentityRegistry | 90–92 |
+| RuleConditionalTransferLight | 46 |
+| RuleMaxTotalSupply | 50 |
+| RuleIdentityRegistry | 55–57 |
 
 ## Conventions
 - Each rule has an `InvariantStorage` abstract contract holding its constants, custom errors, and events.
@@ -59,5 +59,6 @@ Foundry config: `foundry.toml` (solc 0.8.30, EVM prague, optimizer 200 runs).
 - Batch add/remove operations are non-reverting (skip duplicates); single-item operations revert on invalid input.
 - Do not create git commits; provide commit messages only when requested.
 - Always run tests after modifying contracts.
+- Use `require(condition, CustomError(...))` for custom errors; avoid direct `revert CustomError(...)`.
 - `AGENTS.md` and `CLAUDE.md` are identical — always update both together.
 - Always update README.md with the latest change
