@@ -161,9 +161,7 @@ contract RuleSanctionsList is
      * @dev Reverts if the oracle is the zero address. Use {clearSanctionListOracle} to disable checks.
      */
     function setSanctionListOracle(ISanctionsList sanctionContractOracle_) public virtual onlySanctionListManager {
-        if (address(sanctionContractOracle_) == address(0)) {
-            revert RuleSanctionsList_OracleAddressZeroNotAllowed();
-        }
+        require(address(sanctionContractOracle_) != address(0), RuleSanctionsList_OracleAddressZeroNotAllowed());
         _setSanctionListOracle(sanctionContractOracle_);
     }
 

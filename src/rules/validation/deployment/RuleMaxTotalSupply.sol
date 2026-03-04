@@ -30,9 +30,7 @@ contract RuleMaxTotalSupply is
      * @param maxTotalSupply_ Initial maximum supply.
      */
     constructor(address admin, address tokenContract_, uint256 maxTotalSupply_) AccessControlModuleStandalone(admin) {
-        if (tokenContract_ == address(0)) {
-            revert RuleMaxTotalSupply_TokenAddressZeroNotAllowed();
-        }
+        require(tokenContract_ != address(0), RuleMaxTotalSupply_TokenAddressZeroNotAllowed());
         tokenContract = ITotalSupply(tokenContract_);
         maxTotalSupply = maxTotalSupply_;
     }
@@ -43,9 +41,7 @@ contract RuleMaxTotalSupply is
     }
 
     function setTokenContract(address newTokenContract) public onlyMaxTotalSupplyManager {
-        if (newTokenContract == address(0)) {
-            revert RuleMaxTotalSupply_TokenAddressZeroNotAllowed();
-        }
+        require(newTokenContract != address(0), RuleMaxTotalSupply_TokenAddressZeroNotAllowed());
         // The admin is responsible for pointing to a compliant totalSupply implementation.
         tokenContract = ITotalSupply(newTokenContract);
         emit TokenContractUpdated(newTokenContract);

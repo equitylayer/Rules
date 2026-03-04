@@ -30,9 +30,7 @@ contract RuleIdentityRegistry is
     }
 
     function setIdentityRegistry(address newRegistry) public onlyIdentityRegistryManager {
-        if (newRegistry == address(0)) {
-            revert RuleIdentityRegistry_RegistryAddressZeroNotAllowed();
-        }
+        require(newRegistry != address(0), RuleIdentityRegistry_RegistryAddressZeroNotAllowed());
         identityRegistry = IIdentityRegistryVerified(newRegistry);
         emit IdentityRegistryUpdated(newRegistry);
     }

@@ -30,9 +30,7 @@ contract RuleConditionalTransferLight is
     mapping(bytes32 => uint256) public approvalCounts;
 
     constructor(address admin, IRuleEngine ruleEngineContract) {
-        if (admin == address(0)) {
-            revert RuleConditionalTransferLight_AdminAddressZeroNotAllowed();
-        }
+        require(admin != address(0), RuleConditionalTransferLight_AdminAddressZeroNotAllowed());
 
         _grantRole(DEFAULT_ADMIN_ROLE, admin);
         _grantRole(OPERATOR_ROLE, admin);
@@ -67,9 +65,7 @@ contract RuleConditionalTransferLight is
     function cancelTransferApproval(address from, address to, uint256 value) public onlyTransferApprover {
         bytes32 transferHash = _transferHash(from, to, value);
         uint256 count = approvalCounts[transferHash];
-        if (count == 0) {
-            revert TransferApprovalNotFound();
-        }
+        require(count != 0, TransferApprovalNotFound());
         approvalCounts[transferHash] = count - 1;
         emit TransferApprovalCancelled(from, to, value, approvalCounts[transferHash]);
     }
@@ -94,9 +90,7 @@ contract RuleConditionalTransferLight is
         bytes32 transferHash = _transferHash(from, to, value);
         uint256 count = approvalCounts[transferHash];
 
-        if (count == 0) {
-            revert TransferNotApproved();
-        }
+        require(count != 0, TransferNotApproved());
 
         approvalCounts[transferHash] = count - 1;
         emit TransferExecuted(from, to, value, approvalCounts[transferHash]);

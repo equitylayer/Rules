@@ -46,13 +46,11 @@ abstract contract RuleAddressSet is
      * @dev
      * - Does not revert if an address is already listed.
      * - Accessible only by accounts with the `ADDRESS_LIST_ADD_ROLE`.
-     * - Emits {AddressesBatchAdded} with summary counts.
      * @param targetAddresses Array of addresses to be added.
      */
     function addAddresses(address[] calldata targetAddresses) public onlyAddressListAdd {
-        (uint256 added, uint256 skipped) = _addAddresses(targetAddresses);
+        _addAddresses(targetAddresses);
         emit AddAddresses(targetAddresses);
-        emit AddressesBatchAdded(added, skipped);
     }
 
     /**
@@ -60,13 +58,11 @@ abstract contract RuleAddressSet is
      * @dev
      * - Does not revert if an address is not listed.
      * - Accessible only by accounts with the `ADDRESS_LIST_REMOVE_ROLE`.
-     * - Emits {AddressesBatchRemoved} with summary counts.
      * @param targetAddresses Array of addresses to remove.
      */
     function removeAddresses(address[] calldata targetAddresses) public onlyAddressListRemove {
-        (uint256 removed, uint256 skipped) = _removeAddresses(targetAddresses);
+        _removeAddresses(targetAddresses);
         emit RemoveAddresses(targetAddresses);
-        emit AddressesBatchRemoved(removed, skipped);
     }
 
     /**
@@ -77,9 +73,7 @@ abstract contract RuleAddressSet is
      * @param targetAddress The address to be added.
      */
     function addAddress(address targetAddress) public onlyAddressListAdd {
-        if (_isAddressListed(targetAddress)) {
-            revert RuleAddressSet_AddressAlreadyListed();
-        }
+        require(!_isAddressListed(targetAddress), RuleAddressSet_AddressAlreadyListed());
         _addAddress(targetAddress);
         emit AddAddress(targetAddress);
     }
@@ -92,9 +86,7 @@ abstract contract RuleAddressSet is
      * @param targetAddress The address to be removed.
      */
     function removeAddress(address targetAddress) public onlyAddressListRemove {
-        if (!_isAddressListed(targetAddress)) {
-            revert RuleAddressSet_AddressNotFound();
-        }
+        require(_isAddressListed(targetAddress), RuleAddressSet_AddressNotFound());
         _removeAddress(targetAddress);
         emit RemoveAddress(targetAddress);
     }

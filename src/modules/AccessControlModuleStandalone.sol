@@ -20,9 +20,7 @@ abstract contract AccessControlModuleStandalone is AccessControl {
      */
 
     constructor(address admin) {
-        if (admin == address(0)) {
-            revert AccessControlModuleStandalone_AddressZeroNotAllowed();
-        }
+        require(admin != address(0), AccessControlModuleStandalone_AddressZeroNotAllowed());
         // we don't check the return value
         // _grantRole attempts to grant `role` to `account` and returns a boolean indicating if `role` was granted.
         // return false only if the admin has already the role
