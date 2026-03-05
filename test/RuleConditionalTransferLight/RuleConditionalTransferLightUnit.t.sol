@@ -4,14 +4,14 @@ pragma solidity ^0.8.20;
 import {Test} from "forge-std/Test.sol";
 import {HelperContract} from "../HelperContract.sol";
 import {RuleConditionalTransferLight} from "src/rules/operation/RuleConditionalTransferLight.sol";
-import {IRuleEngine} from "CMTAT/interfaces/engine/IRuleEngine.sol";
 
 contract RuleConditionalTransferLightUnit is Test, HelperContract {
     RuleConditionalTransferLight private rule;
 
     function setUp() public {
         vm.prank(DEFAULT_ADMIN_ADDRESS);
-        rule = new RuleConditionalTransferLight(DEFAULT_ADMIN_ADDRESS, IRuleEngine(ADDRESS3));
+        rule = new RuleConditionalTransferLight(DEFAULT_ADMIN_ADDRESS);
+        rule.bindToken(ADDRESS3);
     }
 
     function testApproveTransfer_OnlyOperator() public {
@@ -33,7 +33,7 @@ contract RuleConditionalTransferLightUnit is Test, HelperContract {
         rule.cancelTransferApproval(ADDRESS1, ADDRESS2, 10);
     }
 
-    function testTransferred_OnlyRuleEngineRole() public {
+    function testTransferred_OnlyBoundToken() public {
         vm.prank(DEFAULT_ADMIN_ADDRESS);
         rule.approveTransfer(ADDRESS1, ADDRESS2, 10);
 

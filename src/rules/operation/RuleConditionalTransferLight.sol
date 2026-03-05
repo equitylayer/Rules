@@ -3,10 +3,10 @@ pragma solidity ^0.8.20;
 
 import {AccessControlEnumerable} from "OZ/access/extensions/AccessControlEnumerable.sol";
 import {IERC165} from "OZ/utils/introspection/IERC165.sol";
-import {IRuleEngine} from "CMTAT/interfaces/engine/IRuleEngine.sol";
 import {IRule} from "RuleEngine/interfaces/IRule.sol";
 import {RuleInterfaceId} from "RuleEngine/modules/library/RuleInterfaceId.sol";
 import {AccessControlModuleStandalone} from "../../modules/AccessControlModuleStandalone.sol";
+import {ERC3643ComplianceModule} from "RuleEngine/modules/ERC3643ComplianceModule.sol";
 import {RuleConditionalTransferLightBase} from "./abstract/RuleConditionalTransferLightBase.sol";
 
 /**
@@ -14,17 +14,17 @@ import {RuleConditionalTransferLightBase} from "./abstract/RuleConditionalTransf
  * @dev Requires operator approval for each transfer. Same transfer (from, to, value)
  *      can be approved multiple times to allow repeated transfers.
  */
-contract RuleConditionalTransferLight is AccessControlModuleStandalone, RuleConditionalTransferLightBase {
+contract RuleConditionalTransferLight is
+    AccessControlModuleStandalone,
+    ERC3643ComplianceModule,
+    RuleConditionalTransferLightBase
+{
     /**
      * @param admin Address of the contract admin.
-     * @param ruleEngineContract Rule engine address. If zero, RULE_ENGINE_CONTRACT_ROLE must be granted before use.
      */
-    constructor(address admin, IRuleEngine ruleEngineContract) AccessControlModuleStandalone(admin) {
+    constructor(address admin) AccessControlModuleStandalone(admin) {
         require(admin != address(0), RuleConditionalTransferLight_AdminAddressZeroNotAllowed());
 
-        if (address(ruleEngineContract) != address(0)) {
-            _grantRole(RULE_ENGINE_CONTRACT_ROLE, address(ruleEngineContract));
-        }
     }
 
     function supportsInterface(bytes4 interfaceId)
@@ -38,7 +38,18 @@ contract RuleConditionalTransferLight is AccessControlModuleStandalone, RuleCond
             || AccessControlEnumerable.supportsInterface(interfaceId);
     }
 
+    function created(address /* to */, uint256 /* value */) external onlyBoundToken {}
+
+    function destroyed(address /* from */, uint256 /* value */) external onlyBoundToken {}
+
     function _authorizeTransferApproval() internal view virtual override onlyRole(OPERATOR_ROLE) {}
 
-    function _authorizeTransferExecution() internal view virtual override onlyRole(RULE_ENGINE_CONTRACT_ROLE) {}
+    function _authorizeTransferExecution() internal view virtual override {
+        require(
+            isTokenBound(_msgSender()),
+            RuleConditionalTransferLight_TransferExecutorUnauthorized(_msgSender())
+        );
+    }
+
+    function _onlyComplianceManager() internal virtual override onlyRole(COMPLIANCE_MANAGER_ROLE) {}
 }

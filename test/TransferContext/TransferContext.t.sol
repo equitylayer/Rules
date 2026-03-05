@@ -6,7 +6,6 @@ import {HelperContract} from "../HelperContract.sol";
 import {RuleWhitelist} from "src/rules/validation/deployment/RuleWhitelist.sol";
 import {RuleConditionalTransferLight} from "src/rules/operation/RuleConditionalTransferLight.sol";
 import {MockERC20WithTransferContext} from "../utils/MockERC20WithTransferContext.sol";
-import {IRuleEngine} from "CMTAT/interfaces/engine/IRuleEngine.sol";
 
 contract TransferContextTest is Test, HelperContract {
     MockERC20WithTransferContext private token;
@@ -45,11 +44,8 @@ contract TransferContextTest is Test, HelperContract {
 
     function testTransferContextFungibleConditionalTransferLight() public {
         vm.startPrank(DEFAULT_ADMIN_ADDRESS);
-        ruleConditionalTransferLight = new RuleConditionalTransferLight(DEFAULT_ADMIN_ADDRESS, IRuleEngine(address(0)));
-        ruleConditionalTransferLight.grantRole(
-            ruleConditionalTransferLight.RULE_ENGINE_CONTRACT_ROLE(),
-            address(token)
-        );
+        ruleConditionalTransferLight = new RuleConditionalTransferLight(DEFAULT_ADMIN_ADDRESS);
+        ruleConditionalTransferLight.bindToken(address(token));
         ruleConditionalTransferLight.approveTransfer(ADDRESS1, ADDRESS2, 10);
         vm.stopPrank();
 
@@ -62,11 +58,8 @@ contract TransferContextTest is Test, HelperContract {
 
     function testTransferContextFungibleConditionalTransferLightTransferFrom() public {
         vm.startPrank(DEFAULT_ADMIN_ADDRESS);
-        ruleConditionalTransferLight = new RuleConditionalTransferLight(DEFAULT_ADMIN_ADDRESS, IRuleEngine(address(0)));
-        ruleConditionalTransferLight.grantRole(
-            ruleConditionalTransferLight.RULE_ENGINE_CONTRACT_ROLE(),
-            address(token)
-        );
+        ruleConditionalTransferLight = new RuleConditionalTransferLight(DEFAULT_ADMIN_ADDRESS);
+        ruleConditionalTransferLight.bindToken(address(token));
         ruleConditionalTransferLight.approveTransfer(ADDRESS1, ADDRESS2, 10);
         vm.stopPrank();
 

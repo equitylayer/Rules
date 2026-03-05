@@ -357,6 +357,7 @@ All rules are compatible with CMTAT, as noted earlier in this README.
 - Read-only rules still implement `transferred()` to comply with ERC-3643 and RuleEngine interfaces, but they do not change state.
 - `RuleConditionalTransferLight` approvals are keyed by `(from, to, value)` and are not nonce-based.
 - `RuleConditionalTransferLight` provides `approveAndTransferIfAllowed` to approve and immediately execute `transferFrom` when this rule has allowance; it assumes the token calls back `transferred()` during the transfer.
+- `RuleConditionalTransferLight` restricts `transferred()` to tokens bound via `bindToken` (ERC3643ComplianceModule).
 - AccessControl variants use `onlyRole(ROLE)` in `_authorize*()` and internal helpers are marked `virtual`.
 - AccessControl variants use `AccessControlEnumerable`, so role members can be enumerated with `getRoleMember` / `getRoleMemberCount`. The default admin is treated as having all roles via `hasRole`, but may not appear in role member lists unless explicitly granted.
 - `forwarderIrrevocable` is accepted as-is (including `address(0)`), and is not validated against ERC-165 because some forwarders do not implement it.
@@ -471,7 +472,7 @@ This rule requires that transfers must be approved by an operator before being e
 
 **Usage scenario**
 
-An operator calls `approveTransfer(from, to, value)`. The token calls `detectTransferRestriction` (passes) and later `transferred` to consume the approval. Without approval, `detectTransferRestriction` returns code 46 and the transfer is rejected. The operator can revoke with `cancelTransferApproval`.
+An operator calls `approveTransfer(from, to, value)`. The compliance manager binds the token with `bindToken(token)`. The token calls `detectTransferRestriction` (passes) and later `transferred` to consume the approval. Without approval, `detectTransferRestriction` returns code 46 and the transfer is rejected. The operator can revoke with `cancelTransferApproval`.
 
 ![surya_inheritance_RuleConditionalTransferLight.sol](./doc/surya/surya_inheritance/surya_inheritance_RuleConditionalTransferLight.sol.png)
 
@@ -499,7 +500,7 @@ See also [docs.openzeppelin.com - AccessControl](https://docs.openzeppelin.com/c
 | `SANCTIONLIST_ROLE` | `0x30842281ac34bdc7d568c7ab276f84ba6fc1a1de1ae858b0afd35e716fb0650d` | `setSanctionListOracle`, `clearSanctionListOracle` (RuleSanctionsList) |
 | `RULES_MANAGEMENT_ROLE` | `0xea5f4eb72290e50c32abd6c23e45de3d8300b3286e1cbc2e293114b92e034e5e` | `setRules`, `clearRules`, `addRule`, `removeRule` (RuleWhitelistWrapper) |
 | `OPERATOR_ROLE` | `0x97667070c54ef182b0f5858b034beac1b6f3089aa2d3188bb1e8929f4fa9b929` | `approveTransfer`, `cancelTransferApproval` (RuleConditionalTransferLight) |
-| `RULE_ENGINE_CONTRACT_ROLE` | `0x5007339590b47d4786f4ab2ef7ffa0ec54bc5fe7244dd97bc6efa6ab3799807b` | `transferred` (RuleConditionalTransferLight transfer execution) |
+| `COMPLIANCE_MANAGER_ROLE` | `0xe5c50d0927e06141e032cb9a67e1d7092dc85c0b0825191f7e1cede600028568` | `bindToken`, `unbindToken` (RuleConditionalTransferLight) |
 
 ### Ownable2Step variants
 
@@ -1443,6 +1444,26 @@ Sets the token contract used to read `totalSupply()`.
 Operation rule requiring explicit approval before a transfer executes.
 
 ------
+
+#### bindToken
+
+```solidity
+function bindToken(address token)
+    public
+    onlyRole(COMPLIANCE_MANAGER_ROLE)
+```
+
+Binds a token so it may call `transferred()`.
+
+#### unbindToken
+
+```solidity
+function unbindToken(address token)
+    public
+    onlyRole(COMPLIANCE_MANAGER_ROLE)
+```
+
+Revokes the token binding.
 
 #### approveTransfer
 

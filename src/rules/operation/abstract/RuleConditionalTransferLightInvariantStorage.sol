@@ -5,7 +5,6 @@ import {RuleCommonInvariantStorage} from "../../validation/abstract/invariant/Ru
 
 abstract contract RuleConditionalTransferLightInvariantStorage is RuleCommonInvariantStorage {
     /* ============ Role ============ */
-    bytes32 public constant RULE_ENGINE_CONTRACT_ROLE = keccak256("RULE_ENGINE_CONTRACT_ROLE");
     bytes32 public constant OPERATOR_ROLE = keccak256("OPERATOR_ROLE");
 
     /* ============ State variables ============ */

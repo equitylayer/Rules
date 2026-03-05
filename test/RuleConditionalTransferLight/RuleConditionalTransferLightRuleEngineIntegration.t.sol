@@ -16,7 +16,10 @@ contract RuleConditionalTransferLightRuleEngineIntegration is Test, HelperContra
 
         vm.prank(DEFAULT_ADMIN_ADDRESS);
         ruleConditionalTransferLight =
-            new RuleConditionalTransferLight(CONDITIONAL_TRANSFER_OPERATOR_ADDRESS, ruleEngineMock);
+            new RuleConditionalTransferLight(CONDITIONAL_TRANSFER_OPERATOR_ADDRESS);
+
+        vm.prank(CONDITIONAL_TRANSFER_OPERATOR_ADDRESS);
+        ruleConditionalTransferLight.bindToken(address(ruleEngineMock));
 
         vm.prank(DEFAULT_ADMIN_ADDRESS);
         ruleEngineMock.addRule(ruleConditionalTransferLight);
