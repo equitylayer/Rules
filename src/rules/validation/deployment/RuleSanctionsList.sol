@@ -37,7 +37,7 @@ contract RuleSanctionsList is AccessControlModuleStandalone, RuleSanctionsListBa
                             ACCESS CONTROL
     //////////////////////////////////////////////////////////////*/
 
-    function _authorizeSanctionListManager() internal view override {
+    function _authorizeSanctionListManager() internal view virtual override {
         _checkRole(SANCTIONLIST_ROLE, _msgSender());
     }
 
@@ -45,15 +45,15 @@ contract RuleSanctionsList is AccessControlModuleStandalone, RuleSanctionsListBa
                            ERC-2771
     //////////////////////////////////////////////////////////////*/
 
-    function _msgSender() internal view override(ERC2771Context, Context) returns (address sender) {
+    function _msgSender() internal view virtual override(ERC2771Context, Context) returns (address sender) {
         return ERC2771Context._msgSender();
     }
 
-    function _msgData() internal view override(ERC2771Context, Context) returns (bytes calldata) {
+    function _msgData() internal view virtual override(ERC2771Context, Context) returns (bytes calldata) {
         return ERC2771Context._msgData();
     }
 
-    function _contextSuffixLength() internal view override(ERC2771Context, Context) returns (uint256) {
+    function _contextSuffixLength() internal view virtual override(ERC2771Context, Context) returns (uint256) {
         return ERC2771Context._contextSuffixLength();
     }
 }

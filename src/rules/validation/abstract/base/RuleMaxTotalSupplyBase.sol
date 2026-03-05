@@ -74,7 +74,7 @@ abstract contract RuleMaxTotalSupplyBase is RuleTransferValidation, RuleMaxTotal
         _transferredFrom(spender, from, to, value);
     }
 
-    function _transferred(address from, address to, uint256 value) internal view {
+    function _transferred(address from, address to, uint256 value) internal view virtual {
         uint8 code = _detectTransferRestriction(from, to, value);
         require(
             code == uint8(IERC1404Extend.REJECTED_CODE_BASE.TRANSFER_OK),
@@ -82,7 +82,7 @@ abstract contract RuleMaxTotalSupplyBase is RuleTransferValidation, RuleMaxTotal
         );
     }
 
-    function _transferredFrom(address spender, address from, address to, uint256 value) internal view {
+    function _transferredFrom(address spender, address from, address to, uint256 value) internal view virtual {
         uint8 code = _detectTransferRestrictionFrom(spender, from, to, value);
         require(
             code == uint8(IERC1404Extend.REJECTED_CODE_BASE.TRANSFER_OK),

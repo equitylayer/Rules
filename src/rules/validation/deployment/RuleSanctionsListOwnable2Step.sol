@@ -18,17 +18,17 @@ contract RuleSanctionsListOwnable2Step is RuleSanctionsListBase, Ownable2Step {
         Ownable(owner)
     {}
 
-    function _authorizeSanctionListManager() internal view override onlyOwner {}
+    function _authorizeSanctionListManager() internal view virtual override onlyOwner {}
 
-    function _msgSender() internal view override(ERC2771Context, Context) returns (address sender) {
+    function _msgSender() internal view virtual override(ERC2771Context, Context) returns (address sender) {
         return ERC2771Context._msgSender();
     }
 
-    function _msgData() internal view override(ERC2771Context, Context) returns (bytes calldata) {
+    function _msgData() internal view virtual override(ERC2771Context, Context) returns (bytes calldata) {
         return ERC2771Context._msgData();
     }
 
-    function _contextSuffixLength() internal view override(ERC2771Context, Context) returns (uint256) {
+    function _contextSuffixLength() internal view virtual override(ERC2771Context, Context) returns (uint256) {
         return ERC2771Context._contextSuffixLength();
     }
 }

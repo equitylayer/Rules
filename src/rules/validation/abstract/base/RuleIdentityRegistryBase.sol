@@ -89,7 +89,7 @@ abstract contract RuleIdentityRegistryBase is RuleNFTAdapter, RuleIdentityRegist
         _transferredFrom(spender, from, to, value);
     }
 
-    function _transferred(address from, address to, uint256 value) internal view override {
+    function _transferred(address from, address to, uint256 value) internal view virtual override {
         uint8 code = _detectTransferRestriction(from, to, value);
         require(
             code == uint8(IERC1404Extend.REJECTED_CODE_BASE.TRANSFER_OK),
@@ -97,7 +97,12 @@ abstract contract RuleIdentityRegistryBase is RuleNFTAdapter, RuleIdentityRegist
         );
     }
 
-    function _transferredFrom(address spender, address from, address to, uint256 value) internal view override {
+    function _transferredFrom(address spender, address from, address to, uint256 value)
+        internal
+        view
+        virtual
+        override
+    {
         uint8 code = _detectTransferRestrictionFrom(spender, from, to, value);
         require(
             code == uint8(IERC1404Extend.REJECTED_CODE_BASE.TRANSFER_OK),

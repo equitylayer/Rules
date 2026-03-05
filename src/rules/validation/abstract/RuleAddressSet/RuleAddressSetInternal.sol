@@ -74,7 +74,7 @@ abstract contract RuleAddressSetInternal {
      * @notice Adds a single address to the set.
      * @param targetAddress The address to add.
      */
-    function _addAddress(address targetAddress) internal {
+    function _addAddress(address targetAddress) internal virtual {
         _listedAddresses.add(targetAddress);
     }
 
@@ -82,7 +82,7 @@ abstract contract RuleAddressSetInternal {
      * @notice Removes a single address from the set.
      * @param targetAddress The address to remove.
      */
-    function _removeAddress(address targetAddress) internal {
+    function _removeAddress(address targetAddress) internal virtual {
         _listedAddresses.remove(targetAddress);
     }
 
@@ -90,7 +90,7 @@ abstract contract RuleAddressSetInternal {
      * @notice Returns the total number of listed addresses.
      * @return count The number of listed addresses.
      */
-    function _listedAddressCount() internal view returns (uint256 count) {
+    function _listedAddressCount() internal view virtual returns (uint256 count) {
         count = _listedAddresses.length();
     }
 
@@ -99,7 +99,7 @@ abstract contract RuleAddressSetInternal {
      * @param targetAddress The address to check.
      * @return isListed True if the address is listed, false otherwise.
      */
-    function _isAddressListed(address targetAddress) internal view returns (bool isListed) {
+    function _isAddressListed(address targetAddress) internal view virtual returns (bool isListed) {
         isListed = _listedAddresses.contains(targetAddress);
     }
 }

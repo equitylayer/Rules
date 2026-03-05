@@ -31,7 +31,7 @@ contract RuleIdentityRegistry is AccessControlModuleStandalone, RuleIdentityRegi
                             ACCESS CONTROL
     //////////////////////////////////////////////////////////////*/
 
-    function _authorizeIdentityRegistryManager() internal view override {
+    function _authorizeIdentityRegistryManager() internal view virtual override {
         _checkRole(DEFAULT_ADMIN_ROLE, _msgSender());
     }
 }

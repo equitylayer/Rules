@@ -17,21 +17,21 @@ contract RuleWhitelistOwnable2Step is RuleWhitelistBase, Ownable2Step {
         Ownable(owner)
     {}
 
-    function _authorizeAddressListAdd() internal view override onlyOwner {}
+    function _authorizeAddressListAdd() internal view virtual override onlyOwner {}
 
-    function _authorizeAddressListRemove() internal view override onlyOwner {}
+    function _authorizeAddressListRemove() internal view virtual override onlyOwner {}
 
-    function _authorizeCheckSpenderManager() internal view override onlyOwner {}
+    function _authorizeCheckSpenderManager() internal view virtual override onlyOwner {}
 
-    function _msgSender() internal view override(Context, RuleAddressSet) returns (address sender) {
+    function _msgSender() internal view virtual override(Context, RuleAddressSet) returns (address sender) {
         return super._msgSender();
     }
 
-    function _msgData() internal view override(Context, RuleAddressSet) returns (bytes calldata) {
+    function _msgData() internal view virtual override(Context, RuleAddressSet) returns (bytes calldata) {
         return super._msgData();
     }
 
-    function _contextSuffixLength() internal view override(Context, RuleAddressSet) returns (uint256) {
+    function _contextSuffixLength() internal view virtual override(Context, RuleAddressSet) returns (uint256) {
         return super._contextSuffixLength();
     }
 }

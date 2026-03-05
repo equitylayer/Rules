@@ -125,6 +125,7 @@ abstract contract RuleWhitelistWrapperBase is
     function _transferred(address from, address to, uint256 value)
         internal
         view
+        virtual
         override(RulesManagementModule, RuleWhitelistShared)
     {
         RuleWhitelistShared._transferred(from, to, value);
@@ -133,6 +134,7 @@ abstract contract RuleWhitelistWrapperBase is
     function _transferred(address spender, address from, address to, uint256 value)
         internal
         view
+        virtual
         override(RulesManagementModule)
     {
         RuleWhitelistShared._transferredFrom(spender, from, to, value);
@@ -147,7 +149,12 @@ abstract contract RuleWhitelistWrapperBase is
      * @param targetAddress Addresses to validate (from/to[/spender]).
      * @return result Boolean array aligned with targetAddress indicating if each address is listed.
      */
-    function _detectTransferRestrictionForTargets(address[] memory targetAddress) internal view returns (bool[] memory) {
+    function _detectTransferRestrictionForTargets(address[] memory targetAddress)
+        internal
+        view
+        virtual
+        returns (bool[] memory)
+    {
         uint256 rulesLength = rulesCount();
         bool[] memory result = new bool[](targetAddress.length);
         for (uint256 i = 0; i < rulesLength; ++i) {
@@ -179,7 +186,7 @@ abstract contract RuleWhitelistWrapperBase is
      * @notice Internal helper to update the `checkSpender` flag.
      * @param value New flag value.
      */
-    function _setCheckSpender(bool value) internal {
+    function _setCheckSpender(bool value) internal virtual {
         checkSpender = value;
     }
 

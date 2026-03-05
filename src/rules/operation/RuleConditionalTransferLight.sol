@@ -39,11 +39,11 @@ contract RuleConditionalTransferLight is AccessControl, RuleConditionalTransferL
             || AccessControl.supportsInterface(interfaceId);
     }
 
-    function _authorizeTransferApproval() internal view override {
+    function _authorizeTransferApproval() internal view virtual override {
         _checkRole(OPERATOR_ROLE, _msgSender());
     }
 
-    function _authorizeTransferExecution() internal view override {
+    function _authorizeTransferExecution() internal view virtual override {
         _checkRole(RULE_ENGINE_CONTRACT_ROLE, _msgSender());
     }
 }

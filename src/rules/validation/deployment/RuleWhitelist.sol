@@ -65,15 +65,15 @@ contract RuleWhitelist is RuleWhitelistBase, AccessControlModuleStandalone {
         _checkRole(ADDRESS_LIST_REMOVE_ROLE, _msgSender());
     }
 
-    function _msgSender() internal view override(Context, RuleAddressSet) returns (address sender) {
+    function _msgSender() internal view virtual override(Context, RuleAddressSet) returns (address sender) {
         return super._msgSender();
     }
 
-    function _msgData() internal view override(Context, RuleAddressSet) returns (bytes calldata) {
+    function _msgData() internal view virtual override(Context, RuleAddressSet) returns (bytes calldata) {
         return super._msgData();
     }
 
-    function _contextSuffixLength() internal view override(Context, RuleAddressSet) returns (uint256) {
+    function _contextSuffixLength() internal view virtual override(Context, RuleAddressSet) returns (uint256) {
         return super._contextSuffixLength();
     }
 }

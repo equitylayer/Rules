@@ -23,7 +23,7 @@ contract RuleConditionalTransferLightOwnable2Step is
             || interfaceId == type(IRule).interfaceId;
     }
 
-    function _authorizeTransferApproval() internal view override onlyOwner {}
+    function _authorizeTransferApproval() internal view virtual override onlyOwner {}
 
-    function _authorizeTransferExecution() internal view override onlyOwner {}
+    function _authorizeTransferExecution() internal view virtual override onlyOwner {}
 }

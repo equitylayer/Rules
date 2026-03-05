@@ -71,13 +71,7 @@ abstract contract RuleConditionalTransferLightBase is RuleConditionalTransferLig
         override(IERC3643IComplianceContract)
         onlyTransferExecutor
     {
-        bytes32 transferHash = _transferHash(from, to, value);
-        uint256 count = approvalCounts[transferHash];
-
-        require(count != 0, TransferNotApproved());
-
-        approvalCounts[transferHash] = count - 1;
-        emit TransferExecuted(from, to, value, approvalCounts[transferHash]);
+        _transferred(from, to, value);
     }
 
     function transferred(address /* spender */, address from, address to, uint256 value)
@@ -85,7 +79,7 @@ abstract contract RuleConditionalTransferLightBase is RuleConditionalTransferLig
         override(IRuleEngine)
         onlyTransferExecutor
     {
-        transferred(from, to, value);
+        _transferred(from, to, value);
     }
 
     function detectTransferRestriction(address from, address to, uint256 value)
@@ -146,14 +140,24 @@ abstract contract RuleConditionalTransferLightBase is RuleConditionalTransferLig
     }
 
     function transferred(ITransferContext.FungibleTransferContext calldata ctx) external onlyTransferExecutor {
-        if (ctx.sender != address(0)) {
-            transferred(ctx.sender, ctx.from, ctx.to, ctx.value);
-        } else {
-            transferred(ctx.from, ctx.to, ctx.value);
-        }
+        _transferredFromContext(ctx);
     }
 
-    function _transferHash(address from, address to, uint256 value) internal pure returns (bytes32 hash) {
+    function _transferredFromContext(ITransferContext.FungibleTransferContext calldata ctx) internal virtual {
+        _transferred(ctx.from, ctx.to, ctx.value);
+    }
+
+    function _transferred(address from, address to, uint256 value) internal virtual {
+        bytes32 transferHash = _transferHash(from, to, value);
+        uint256 count = approvalCounts[transferHash];
+
+        require(count != 0, TransferNotApproved());
+
+        approvalCounts[transferHash] = count - 1;
+        emit TransferExecuted(from, to, value, approvalCounts[transferHash]);
+    }
+
+    function _transferHash(address from, address to, uint256 value) internal pure virtual returns (bytes32 hash) {
         return keccak256(abi.encodePacked(from, to, value));
     }
 

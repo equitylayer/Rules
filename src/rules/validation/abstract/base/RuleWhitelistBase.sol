@@ -60,7 +60,7 @@ abstract contract RuleWhitelistBase is RuleAddressSet, RuleWhitelistShared, IIde
         emit CheckSpenderUpdated(value);
     }
 
-    function _setCheckSpender(bool value) internal {
+    function _setCheckSpender(bool value) internal virtual {
         checkSpender = value;
     }
 
