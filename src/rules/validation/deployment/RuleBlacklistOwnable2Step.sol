@@ -17,13 +17,9 @@ contract RuleBlacklistOwnable2Step is RuleBlacklistBase, Ownable2Step {
         Ownable(owner)
     {}
 
-    function _authorizeAddressListAdd() internal view override {
-        _checkOwner();
-    }
+    function _authorizeAddressListAdd() internal view override onlyOwner {}
 
-    function _authorizeAddressListRemove() internal view override {
-        _checkOwner();
-    }
+    function _authorizeAddressListRemove() internal view override onlyOwner {}
 
     function _msgSender() internal view override(Context, RuleAddressSet) returns (address sender) {
         return super._msgSender();

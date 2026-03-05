@@ -15,7 +15,5 @@ contract RuleMaxTotalSupplyOwnable2Step is RuleMaxTotalSupplyBase, Ownable2Step 
         Ownable(owner)
     {}
 
-    function _authorizeMaxTotalSupplyManager() internal view override {
-        _checkOwner();
-    }
+    function _authorizeMaxTotalSupplyManager() internal view override onlyOwner {}
 }

@@ -13,10 +13,11 @@ import {RuleConditionalTransferLightBase} from "./abstract/RuleConditionalTransf
  * @dev Requires operator approval for each transfer. Same transfer (from, to, value)
  *      can be approved multiple times to allow repeated transfers.
  */
-contract RuleConditionalTransferLight is
-    AccessControl,
-    RuleConditionalTransferLightBase
-{
+contract RuleConditionalTransferLight is AccessControl, RuleConditionalTransferLightBase {
+    /**
+     * @param admin Address of the contract admin.
+     * @param ruleEngineContract Rule engine address. If zero, RULE_ENGINE_CONTRACT_ROLE must be granted before use.
+     */
     constructor(address admin, IRuleEngine ruleEngineContract) {
         require(admin != address(0), RuleConditionalTransferLight_AdminAddressZeroNotAllowed());
 

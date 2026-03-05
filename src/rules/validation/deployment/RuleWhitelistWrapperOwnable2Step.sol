@@ -25,16 +25,12 @@ contract RuleWhitelistWrapperOwnable2Step is RuleWhitelistWrapperBase, Ownable2S
         Ownable(owner)
     {}
 
-    function _authorizeCheckSpenderManager() internal view override {
-        _checkOwner();
-    }
+    function _authorizeCheckSpenderManager() internal view override onlyOwner {}
 
     /**
      * @dev Restrict rules management to the owner.
      */
-    function _onlyRulesManager() internal view override {
-        _checkOwner();
-    }
+    function _onlyRulesManager() internal view override onlyOwner {}
 
     /*//////////////////////////////////////////////////////////////
                            ERC-2771

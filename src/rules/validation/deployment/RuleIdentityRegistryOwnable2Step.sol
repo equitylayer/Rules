@@ -12,7 +12,5 @@ import {RuleIdentityRegistryBase} from "../abstract/base/RuleIdentityRegistryBas
 contract RuleIdentityRegistryOwnable2Step is RuleIdentityRegistryBase, Ownable2Step {
     constructor(address owner, address identityRegistry_) RuleIdentityRegistryBase(identityRegistry_) Ownable(owner) {}
 
-    function _authorizeIdentityRegistryManager() internal view override {
-        _checkOwner();
-    }
+    function _authorizeIdentityRegistryManager() internal view override onlyOwner {}
 }

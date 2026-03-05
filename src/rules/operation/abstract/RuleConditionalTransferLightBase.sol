@@ -38,6 +38,8 @@ abstract contract RuleConditionalTransferLightBase is RuleConditionalTransferLig
     /**
      * @notice Approves and performs a transferFrom using this rule as spender.
      * @dev Requires `from` to have approved this contract on the token.
+     * @dev This function is only safe for tokens that call back `transferred()` during transfer.
+     * @dev CEI is intentionally inverted so the approval exists for the callback.
      */
     function approveAndTransferIfAllowed(address token, address from, address to, uint256 value)
         public
@@ -143,7 +145,7 @@ abstract contract RuleConditionalTransferLightBase is RuleConditionalTransferLig
         return TEXT_CODE_NOT_FOUND;
     }
 
-    function transferred(ITransferContext.FungibleTransferContext calldata ctx) external {
+    function transferred(ITransferContext.FungibleTransferContext calldata ctx) external onlyTransferExecutor {
         if (ctx.sender != address(0)) {
             transferred(ctx.sender, ctx.from, ctx.to, ctx.value);
         } else {

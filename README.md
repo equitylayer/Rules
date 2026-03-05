@@ -197,7 +197,7 @@ struct MultiTokenTransferContext {
     address to;        // token recipient
     uint256 value;     // amount transferred
     uint256 tokenId;   // token id (non-fungible)
-    bytes data; // The transaction data
+    bytes data; // Optional token-provided metadata for rules
 }
 
 // For ERC-20 (no tokenId)
@@ -207,11 +207,11 @@ struct FungibleTransferContext {
     address from;      // token sender
     address to;        // token recipient
     uint256 value;     // amount transferred
-    bytes data; // The transaction data
+    bytes data; // Optional token-provided metadata for rules
 }
 ```
 
-Both structs are passed to `transferred(MultiTokenTransferContext calldata ctx)` or `transferred(FungibleTransferContext calldata ctx)`. If `ctx.sender` is non-zero, the spender-aware path is used internally; otherwise the standard two-party path is used.
+Both structs are passed to `transferred(MultiTokenTransferContext calldata ctx)` or `transferred(FungibleTransferContext calldata ctx)`. If `ctx.sender` is non-zero, the spender-aware path is used internally; otherwise the standard two-party path is used. The `data` field is reserved for optional token-provided metadata that rules can interpret.
 
 ### Using Rules via RuleEngine
 
@@ -363,7 +363,7 @@ Several rules are available in multiple access-control variants. Use the simples
 - `RuleWhitelistWrapper` requires child rules that implement `IAddressList`. Gas cost grows with the number of rules, and a wrapper with zero rules will reject all transfers.
 - Read-only rules still implement `transferred()` to comply with ERC-3643 and RuleEngine interfaces, but they do not change state.
 - `RuleConditionalTransferLight` approvals are keyed by `(from, to, value)` and are not nonce-based.
-- `RuleConditionalTransferLight` provides `approveAndTransferIfAllowed` to approve and immediately execute `transferFrom` when this rule has allowance.
+- `RuleConditionalTransferLight` provides `approveAndTransferIfAllowed` to approve and immediately execute `transferFrom` when this rule has allowance; it assumes the token calls back `transferred()` during the transfer.
 - `forwarderIrrevocable` is accepted as-is (including `address(0)`), and is not validated against ERC-165 because some forwarders do not implement it.
 
 ### Read-only (validation) rule
@@ -489,6 +489,9 @@ For simpler ownership-based control, `Ownable2Step` variants (two-step ownership
 - `RuleIdentityRegistryOwnable2Step`
 - `RuleMaxTotalSupplyOwnable2Step`
 - `RuleConditionalTransferLightOwnable2Step`
+
+`RuleConditionalTransferLightOwnable2Step` now grants approval and execution permissions exclusively to the owner.
+All `Ownable2Step` variants enforce access using OpenZeppelin's `onlyOwner` modifier.
 
 ### Address List
 

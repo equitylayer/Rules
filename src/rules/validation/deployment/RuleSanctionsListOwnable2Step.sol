@@ -18,9 +18,7 @@ contract RuleSanctionsListOwnable2Step is RuleSanctionsListBase, Ownable2Step {
         Ownable(owner)
     {}
 
-    function _authorizeSanctionListManager() internal view override {
-        _checkOwner();
-    }
+    function _authorizeSanctionListManager() internal view override onlyOwner {}
 
     function _msgSender() internal view override(ERC2771Context, Context) returns (address sender) {
         return ERC2771Context._msgSender();
