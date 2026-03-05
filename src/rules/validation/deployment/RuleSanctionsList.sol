@@ -37,9 +37,7 @@ contract RuleSanctionsList is AccessControlModuleStandalone, RuleSanctionsListBa
                             ACCESS CONTROL
     //////////////////////////////////////////////////////////////*/
 
-    function _authorizeSanctionListManager() internal view virtual override {
-        _checkRole(SANCTIONLIST_ROLE, _msgSender());
-    }
+    function _authorizeSanctionListManager() internal view virtual override onlyRole(SANCTIONLIST_ROLE) {}
 
     /*//////////////////////////////////////////////////////////////
                            ERC-2771

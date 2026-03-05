@@ -35,7 +35,5 @@ contract RuleMaxTotalSupply is AccessControlModuleStandalone, RuleMaxTotalSupply
                             ACCESS CONTROL
     //////////////////////////////////////////////////////////////*/
 
-    function _authorizeMaxTotalSupplyManager() internal view virtual override {
-        _checkRole(DEFAULT_ADMIN_ROLE, _msgSender());
-    }
+    function _authorizeMaxTotalSupplyManager() internal view virtual override onlyRole(DEFAULT_ADMIN_ROLE) {}
 }

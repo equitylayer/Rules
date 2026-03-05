@@ -43,9 +43,7 @@ contract RuleWhitelistWrapper is
         return AccessControlModuleStandalone.hasRole(role, account);
     }
 
-    function _authorizeCheckSpenderManager() internal virtual override {
-        _checkRole(DEFAULT_ADMIN_ROLE, _msgSender());
-    }
+    function _authorizeCheckSpenderManager() internal virtual override onlyRole(DEFAULT_ADMIN_ROLE) {}
 
     /**
      * @dev Restrict rules management to the dedicated role.
