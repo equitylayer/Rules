@@ -24,11 +24,14 @@ Commit: `TBD`
 Main changes since v0.1.0:
 
 - Updated Solidity toolchain to 0.8.34 (Foundry/Hardhat).
-- Introduced `TransferContext` struct API and unified transfer hooks.
+- Introduced transfer-context struct API and unified transfer hooks, now using `MultiTokenTransferContext` / `FungibleTransferContext` with an extra `data` field.
 - Refactored validation flow to internal hooks (no `this.` calls) via `RuleTransferValidation` and `RuleNFTAdapter`.
 - Added explicit sanctions oracle clearing (`clearSanctionListOracle`) and tightened oracle zero‑address handling.
-- Added batch summary events for address list updates.
+- Address list batch updates emit only add/remove events for gas efficiency (no summary events).
 - Added deployable rules: `RuleIdentityRegistry`, `RuleMaxTotalSupply`, `RuleConditionalTransferLight`.
+- Added Ownable2Step variants and reduced code duplication via shared base contracts.
+- Added CMTAT deployment scripts for whitelist and blacklist configurations with tests.
+- `RuleConditionalTransferLight` and `RuleMaxTotalSupply` are ERC-20 only; ERC-721/1155 compliance interfaces are limited to validation rules.
 - Reorganized validation contracts into `abstract/base`, `abstract/core`, `abstract/invariant`, and `deployment` folders.
 - Updated documentation: access‑control role table with hashes, rule‑engine flow diagrams, API accuracy, directory layout notes.
 

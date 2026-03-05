@@ -24,6 +24,7 @@ Modular compliance-rule library for CMTAT / ERC-3643 security tokens. Each rule 
 | `RuleMaxTotalSupply` | Cap minting so total supply never exceeds a maximum |
 | `RuleIdentityRegistry` | Check ERC-3643 identity registry for participant verification |
 | `RuleConditionalTransferLight` | Require operator approval before each transfer |
+| `RuleConditionalTransferLightOwnable2Step` | Owner-only approval and execution for conditional transfers |
 | `AccessControlModuleStandalone` | Base RBAC module; admin implicitly holds all roles |
 | `MetaTxModuleStandalone` | ERC-2771 meta-transaction support |
 
@@ -56,7 +57,9 @@ Foundry config: `foundry.toml` (solc 0.8.34, EVM prague, optimizer 200 runs).
 ## Conventions
 - Each rule has an `InvariantStorage` abstract contract holding its constants, custom errors, and events.
 - Access control is implemented via an abstract `_authorize*()` method overridden by concrete subclasses (template method pattern).
+- AccessControl variants must use `onlyRole(ROLE)` in `_authorize*()` methods (avoid direct `_checkRole`).
 - Batch add/remove operations are non-reverting (skip duplicates); single-item operations revert on invalid input.
+- All `internal` functions should be marked `virtual`.
 - Do not create git commits; provide commit messages only when requested.
 - Always run tests after modifying contracts.
 - Use `require(condition, CustomError(...))` for custom errors; avoid direct `revert CustomError(...)`.
