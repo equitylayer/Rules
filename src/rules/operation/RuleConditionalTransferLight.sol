@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MPL-2.0
 pragma solidity ^0.8.20;
 
-import {AccessControl} from "OZ/access/AccessControl.sol";
+import {AccessControlEnumerable} from "OZ/access/extensions/AccessControlEnumerable.sol";
 import {IERC165} from "OZ/utils/introspection/IERC165.sol";
 import {IRuleEngine} from "CMTAT/interfaces/engine/IRuleEngine.sol";
 import {IRule} from "RuleEngine/interfaces/IRule.sol";
@@ -13,7 +13,7 @@ import {RuleConditionalTransferLightBase} from "./abstract/RuleConditionalTransf
  * @dev Requires operator approval for each transfer. Same transfer (from, to, value)
  *      can be approved multiple times to allow repeated transfers.
  */
-contract RuleConditionalTransferLight is AccessControl, RuleConditionalTransferLightBase {
+contract RuleConditionalTransferLight is AccessControlEnumerable, RuleConditionalTransferLightBase {
     /**
      * @param admin Address of the contract admin.
      * @param ruleEngineContract Rule engine address. If zero, RULE_ENGINE_CONTRACT_ROLE must be granted before use.
@@ -32,11 +32,11 @@ contract RuleConditionalTransferLight is AccessControl, RuleConditionalTransferL
         public
         view
         virtual
-        override(AccessControl, IERC165)
+        override(AccessControlEnumerable, IERC165)
         returns (bool)
     {
         return interfaceId == RuleInterfaceId.IRULE_INTERFACE_ID || interfaceId == type(IRule).interfaceId
-            || AccessControl.supportsInterface(interfaceId);
+            || AccessControlEnumerable.supportsInterface(interfaceId);
     }
 
     function _authorizeTransferApproval() internal view virtual override onlyRole(OPERATOR_ROLE) {}

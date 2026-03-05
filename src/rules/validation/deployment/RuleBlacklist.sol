@@ -2,7 +2,7 @@
 
 pragma solidity ^0.8.20;
 
-import {AccessControl} from "OZ/access/AccessControl.sol";
+import {AccessControlEnumerable} from "OZ/access/extensions/AccessControlEnumerable.sol";
 import {Context} from "OZ/utils/Context.sol";
 import {AccessControlModuleStandalone} from "../../../modules/AccessControlModuleStandalone.sol";
 /* ==== Abstract contracts === */
@@ -29,10 +29,10 @@ contract RuleBlacklist is RuleBlacklistBase, AccessControlModuleStandalone {
         public
         view
         virtual
-        override(AccessControl, RuleBlacklistBase)
+        override(AccessControlEnumerable, RuleBlacklistBase)
         returns (bool)
     {
-        return AccessControl.supportsInterface(interfaceId) || RuleBlacklistBase.supportsInterface(interfaceId);
+        return AccessControlEnumerable.supportsInterface(interfaceId) || RuleBlacklistBase.supportsInterface(interfaceId);
     }
 
     function _authorizeAddressListAdd() internal view virtual override onlyRole(ADDRESS_LIST_ADD_ROLE) {}

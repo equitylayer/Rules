@@ -4,6 +4,7 @@ pragma solidity ^0.8.20;
 
 /* ==== OpenZeppelin === */
 import {AccessControl} from "OZ/access/AccessControl.sol";
+import {AccessControlEnumerable} from "OZ/access/extensions/AccessControlEnumerable.sol";
 import {Context} from "OZ/utils/Context.sol";
 /* ==== Abstract contracts === */
 import {AccessControlModuleStandalone} from "../../../modules/AccessControlModuleStandalone.sol";
@@ -70,9 +71,28 @@ contract RuleWhitelistWrapper is
         public
         view
         virtual
-        override(AccessControl, RuleWhitelistWrapperBase)
+        override(AccessControlEnumerable, RuleWhitelistWrapperBase)
         returns (bool)
     {
-        return RuleWhitelistWrapperBase.supportsInterface(interfaceId);
+        return RuleWhitelistWrapperBase.supportsInterface(interfaceId)
+            || AccessControlEnumerable.supportsInterface(interfaceId);
+    }
+
+    function _grantRole(bytes32 role, address account)
+        internal
+        virtual
+        override(AccessControl, AccessControlEnumerable)
+        returns (bool)
+    {
+        return AccessControlEnumerable._grantRole(role, account);
+    }
+
+    function _revokeRole(bytes32 role, address account)
+        internal
+        virtual
+        override(AccessControl, AccessControlEnumerable)
+        returns (bool)
+    {
+        return AccessControlEnumerable._revokeRole(role, account);
     }
 }

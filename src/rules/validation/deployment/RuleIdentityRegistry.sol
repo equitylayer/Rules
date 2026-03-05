@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MPL-2.0
 pragma solidity ^0.8.20;
 
-import {AccessControl} from "OZ/access/AccessControl.sol";
+import {AccessControlEnumerable} from "OZ/access/extensions/AccessControlEnumerable.sol";
 import {AccessControlModuleStandalone} from "../../../modules/AccessControlModuleStandalone.sol";
 import {RuleIdentityRegistryBase} from "../abstract/base/RuleIdentityRegistryBase.sol";
 import {RuleTransferValidation} from "../abstract/core/RuleTransferValidation.sol";
@@ -21,10 +21,11 @@ contract RuleIdentityRegistry is AccessControlModuleStandalone, RuleIdentityRegi
         public
         view
         virtual
-        override(AccessControl, RuleTransferValidation)
+        override(AccessControlEnumerable, RuleTransferValidation)
         returns (bool)
     {
-        return AccessControl.supportsInterface(interfaceId) || RuleTransferValidation.supportsInterface(interfaceId);
+        return AccessControlEnumerable.supportsInterface(interfaceId)
+            || RuleTransferValidation.supportsInterface(interfaceId);
     }
 
     /*//////////////////////////////////////////////////////////////

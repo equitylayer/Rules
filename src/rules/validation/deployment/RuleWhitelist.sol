@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MPL-2.0
 pragma solidity ^0.8.20;
 
-import {AccessControl} from "OZ/access/AccessControl.sol";
+import {AccessControlEnumerable} from "OZ/access/extensions/AccessControlEnumerable.sol";
 import {Context} from "OZ/utils/Context.sol";
 /* ==== Abstract contracts === */
 import {AccessControlModuleStandalone} from "../../../modules/AccessControlModuleStandalone.sol";
@@ -43,10 +43,10 @@ contract RuleWhitelist is RuleWhitelistBase, AccessControlModuleStandalone {
         public
         view
         virtual
-        override(AccessControl, RuleWhitelistBase)
+        override(AccessControlEnumerable, RuleWhitelistBase)
         returns (bool)
     {
-        return AccessControl.supportsInterface(interfaceId) || RuleWhitelistBase.supportsInterface(interfaceId);
+        return AccessControlEnumerable.supportsInterface(interfaceId) || RuleWhitelistBase.supportsInterface(interfaceId);
     }
 
     /*//////////////////////////////////////////////////////////////
