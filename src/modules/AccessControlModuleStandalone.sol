@@ -42,6 +42,7 @@ abstract contract AccessControlModuleStandalone is AccessControlEnumerable {
         override(AccessControl, IAccessControl)
         returns (bool)
     {
+        // Dev note: default admin is treated as having all roles but may not appear in enumerable role members.
         // The Default Admin has all roles
         if (AccessControl.hasRole(DEFAULT_ADMIN_ROLE, account)) {
             return true;

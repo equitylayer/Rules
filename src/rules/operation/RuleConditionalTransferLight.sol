@@ -6,6 +6,7 @@ import {IERC165} from "OZ/utils/introspection/IERC165.sol";
 import {IRuleEngine} from "CMTAT/interfaces/engine/IRuleEngine.sol";
 import {IRule} from "RuleEngine/interfaces/IRule.sol";
 import {RuleInterfaceId} from "RuleEngine/modules/library/RuleInterfaceId.sol";
+import {AccessControlModuleStandalone} from "../../modules/AccessControlModuleStandalone.sol";
 import {RuleConditionalTransferLightBase} from "./abstract/RuleConditionalTransferLightBase.sol";
 
 /**
@@ -13,16 +14,14 @@ import {RuleConditionalTransferLightBase} from "./abstract/RuleConditionalTransf
  * @dev Requires operator approval for each transfer. Same transfer (from, to, value)
  *      can be approved multiple times to allow repeated transfers.
  */
-contract RuleConditionalTransferLight is AccessControlEnumerable, RuleConditionalTransferLightBase {
+contract RuleConditionalTransferLight is AccessControlModuleStandalone, RuleConditionalTransferLightBase {
     /**
      * @param admin Address of the contract admin.
      * @param ruleEngineContract Rule engine address. If zero, RULE_ENGINE_CONTRACT_ROLE must be granted before use.
      */
-    constructor(address admin, IRuleEngine ruleEngineContract) {
+    constructor(address admin, IRuleEngine ruleEngineContract) AccessControlModuleStandalone(admin) {
         require(admin != address(0), RuleConditionalTransferLight_AdminAddressZeroNotAllowed());
 
-        _grantRole(DEFAULT_ADMIN_ROLE, admin);
-        _grantRole(OPERATOR_ROLE, admin);
         if (address(ruleEngineContract) != address(0)) {
             _grantRole(RULE_ENGINE_CONTRACT_ROLE, address(ruleEngineContract));
         }

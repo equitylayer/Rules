@@ -8,18 +8,9 @@ Each rule can be used **standalone**, directly plugged into a CMTAT token, **or*
 
 ## Table of Contents
 
-- [Overview](#overview)
-- [Quick Start](#quick-start)
-- [Compatibility](#compatibility)
-- [Specifications](#specifications)
-- [Architecture](#architecture)
-- [Types of Rules](#types-of-rules)
-- [Deployment Guide](#deployment-guide)
-- [Rules details](#rules-details)
-- [Access Control](#access-control)
-- [Toolchains and Usage](#toolchains-and-usage)
-- [API](#api)
-- [Intellectual property](#intellectual-property)
+[TOC]
+
+
 
 ## Overview
 
@@ -342,15 +333,17 @@ Several rules are available in multiple access-control variants. Use the simples
 
 ### Summary tab
 
-| Rule                                                         | Type <br />[ready-only / read-write] | Token standards                                  | Security Audit planned in the roadmap | Description                                                  |
-| ------------------------------------------------------------ | ------------------------------------ | ------------------------------------------------ | ------------------------------------- | ------------------------------------------------------------ |
-| RuleWhitelist                                                | Ready-only                           | ERC-20 / CMTAT / ERC-3643<br />ERC-721 / ERC-1155 | ☑                                     | This rule can be used to restrict transfers from/to only addresses inside a whitelist. |
-| RuleWhitelistWrapper                                         | Ready-only                           | ERC-20 / CMTAT / ERC-3643<br />ERC-721 / ERC-1155 | ☑                                     | This rule can be used to restrict transfers from/to only addresses inside a group of whitelist rules managed by different operators. |
-| RuleBlacklist                                                | Ready-only                           | ERC-20 / CMTAT / ERC-3643<br />ERC-721 / ERC-1155 | ☑                                     | This rule can be used to forbid transfer from/to addresses in the blacklist |
-| RuleSanctionList                                             | Ready-only                           | ERC-20 / CMTAT / ERC-3643<br />ERC-721 / ERC-1155 | ☑                                     | The purpose of this contract is to use the oracle contract from [Chainalysis](https://go.chainalysis.com/chainalysis-oracle-docs.html) to forbid transfer from/to an address included in a sanctions designation (US, EU, or UN). |
-| RuleMaxTotalSupply                                           | Ready-only                           | ERC-20 / CMTAT / ERC-3643                         | ☑                                     | This rule limits minting so that the total supply never exceeds a configured maximum. |
-| RuleIdentityRegistry                                         | Ready-only                           | ERC-20 / CMTAT / ERC-3643<br />ERC-721 / ERC-1155 | ☑                                     | This rule checks the ERC-3643 Identity Registry for transfer participants when configured. |
-| RuleConditionalTransferLight                                | Ready-Write                          | ERC-20 / CMTAT / ERC-3643                         | ☒<br /> (experimental rule)           | This rule requires that transfers have to be approved by an operator before being executed. Each approval is consumed once and the same transfer can be approved multiple times. |
+| Rule                                                         | Type <br />[ready-only / read-write] | ERC-721 / ERC-1155 | ERC-3643 | Security Audit planned in the roadmap | Description                                                  |
+| ------------------------------------------------------------ | ------------------------------------ | ------------------ | -------- | ------------------------------------- | ------------------------------------------------------------ |
+| RuleWhitelist                                                | Ready-only                           | ☑                  | ☑        | ☑                                     | This rule can be used to restrict transfers from/to only addresses inside a whitelist. |
+| RuleWhitelistWrapper                                         | Ready-only                           | ☑                  | ☑        | ☑                                     | This rule can be used to restrict transfers from/to only addresses inside a group of whitelist rules managed by different operators. |
+| RuleBlacklist                                                | Ready-only                           | ☑                  | ☑        | ☑                                     | This rule can be used to forbid transfer from/to addresses in the blacklist |
+| RuleSanctionList                                             | Ready-only                           | ☑                  | ☑        | ☑                                     | The purpose of this contract is to use the oracle contract from [Chainalysis](https://go.chainalysis.com/chainalysis-oracle-docs.html) to forbid transfer from/to an address included in a sanctions designation (US, EU, or UN). |
+| RuleMaxTotalSupply                                           | Ready-only                           | —                  | ☑        | ☑                                     | This rule limits minting so that the total supply never exceeds a configured maximum. |
+| RuleIdentityRegistry                                         | Ready-only                           | ☑                  | ☑        | ☑                                     | This rule checks the ERC-3643 Identity Registry for transfer participants when configured. |
+| RuleConditionalTransferLight                                | Ready-Write                          | —                  | ☑        | ☒<br /> (experimental rule)           | This rule requires that transfers have to be approved by an operator before being executed. Each approval is consumed once and the same transfer can be approved multiple times. |
+
+All rules are compatible with CMTAT, as noted earlier in this README.
 
 ### Operational Notes
 
@@ -364,6 +357,8 @@ Several rules are available in multiple access-control variants. Use the simples
 - Read-only rules still implement `transferred()` to comply with ERC-3643 and RuleEngine interfaces, but they do not change state.
 - `RuleConditionalTransferLight` approvals are keyed by `(from, to, value)` and are not nonce-based.
 - `RuleConditionalTransferLight` provides `approveAndTransferIfAllowed` to approve and immediately execute `transferFrom` when this rule has allowance; it assumes the token calls back `transferred()` during the transfer.
+- AccessControl variants use `onlyRole(ROLE)` in `_authorize*()` and internal helpers are marked `virtual`.
+- AccessControl variants use `AccessControlEnumerable`, so role members can be enumerated with `getRoleMember` / `getRoleMemberCount`. The default admin is treated as having all roles via `hasRole`, but may not appear in role member lists unless explicitly granted.
 - `forwarderIrrevocable` is accepted as-is (including `address(0)`), and is not validated against ERC-165 because some forwarders do not implement it.
 
 ### Read-only (validation) rule
@@ -384,6 +379,10 @@ The rule is read-only: it only checks stored state.
 
 During a transfer, this rule, called by the RuleEngine, will check if the address concerned is in the list, applying a read operation on the blockchain.
 
+**Usage scenario**
+
+An operator configures CMTAT to use `RuleWhitelist`. The issuer tries to mint to Alice via `mint`/`transfer` and the token calls `detectTransferRestriction`/`transferred`; Alice is not listed so the call reverts. The operator calls `addAddress(Alice)`. The issuer retries the mint and it succeeds.
+
 ![surya_inheritance_RuleWhitelist.sol](./doc/surya/surya_inheritance/surya_inheritance_RuleWhitelist.sol.png)
 
 #### Whitelist wrapper
@@ -393,6 +392,10 @@ Allows independent whitelist groups managed by different operators.
 - Each operator manages a dedicated whitelist.
 - A transfer is allowed only if both addresses belong to *at least one* operator-managed list.
 - Enables multi-party compliance
+
+**Usage scenario**
+
+Two operators maintain separate whitelists using `addRule`/`setRules` and each child rule’s `addAddress`. A transfer between Alice and Bob is allowed if at least one child whitelist returns `true` for both via `areAddressesListed`; otherwise `detectTransferRestriction` rejects it.
 
 
 
@@ -412,6 +415,10 @@ Opposite of whitelist:
 
 - Transfer fails if **either** address is blacklisted.
 
+**Usage scenario**
+
+The operator sets `RuleBlacklist` on the token. The issuer tries to transfer to Bob; `detectTransferRestriction` passes. The operator calls `addAddress(Bob)`. A subsequent transfer to Bob is rejected until `removeAddress(Bob)` is called.
+
 ![surya_inheritance_RuleWhitelistWrapper.sol](./doc/surya/surya_inheritance/surya_inheritance_RuleBlacklist.sol.png)
 
 #### Sanction list with Chainalysis
@@ -428,17 +435,29 @@ Documentation and the contracts addresses are available here: [Chainalysis oracl
 
 During a transfer, if either address (from or to) is in the sanction list of the Oracle, the rule will return false, and the transfer will be rejected by the CMTAT.
 
+**Usage scenario**
+
+The operator sets the Chainalysis oracle with `setSanctionListOracle`. The token’s transfer path calls `detectTransferRestriction`; if the oracle flags `from` or `to`, the transfer is rejected. Calling `clearSanctionListOracle` disables checks.
+
 ![surya_inheritance_RuleSanctionsList.sol](./doc/surya/surya_inheritance/surya_inheritance_RuleSanctionsList.sol.png)
 
 #### Max total supply
 
 Limits minting so that total supply never exceeds a configured maximum. Transfers and burns are not affected; only mints (`from == address(0)`) are checked.
 
+**Usage scenario**
+
+The operator deploys `RuleMaxTotalSupply` with `setMaxTotalSupply(1_000_000)` and sets the token with `setTokenContract`. When the issuer mints and `totalSupply + amount` exceeds the limit, `detectTransferRestriction` rejects the mint. Transfers between holders still pass.
+
 ![surya_inheritance_RuleMaxTotalSupply.sol](./doc/surya/surya_inheritance/surya_inheritance_RuleMaxTotalSupply.sol.png)
 
 #### Identity registry
 
 If an identity registry address is set, this rule checks `isVerified` for the sender, recipient, and spender (for `transferFrom`). Zero addresses are ignored, and burns (`to == address(0)`) are always allowed so non‑verified holders can burn.
+
+**Usage scenario**
+
+The operator calls `setIdentityRegistry(registry)`. The issuer attempts a transfer to Alice; `detectTransferRestriction` consults `isVerified` and rejects if Alice is unverified. After the registry marks Alice verified, the transfer succeeds. Calling `clearIdentityRegistry` disables checks.
 
 ![surya_inheritance_RuleIdentityRegistry.sol](./doc/surya/surya_inheritance/surya_inheritance_RuleIdentityRegistry.sol.png)
 
@@ -449,6 +468,10 @@ For the moment, there is only one operation rule available: ConditionalTransferL
 #### Conditional transfer (light)
 
 This rule requires that transfers must be approved by an operator before being executed. It hashes `(from, to, value)` to track approvals and allows the same transfer to be approved multiple times. Each successful transfer consumes one approval, applying a write operation on the blockchain.
+
+**Usage scenario**
+
+An operator calls `approveTransfer(from, to, value)`. The token calls `detectTransferRestriction` (passes) and later `transferred` to consume the approval. Without approval, `detectTransferRestriction` returns code 46 and the transfer is rejected. The operator can revoke with `cancelTransferApproval`.
 
 ![surya_inheritance_RuleConditionalTransferLight.sol](./doc/surya/surya_inheritance/surya_inheritance_RuleConditionalTransferLight.sol.png)
 
@@ -1378,6 +1401,90 @@ Updates the sanctions-oracle contract reference.
 | Event                            | Description                                           |
 | -------------------------------- | ----------------------------------------------------- |
 | `SetSanctionListOracle(address)` | Emitted when the sanctions-oracle address is updated. |
+
+### RuleMaxTotalSupply
+
+Compliance rule that caps total token supply; only mints (`from == address(0)`) are restricted.
+
+------
+
+#### Constructor
+
+```solidity
+constructor(address admin, address tokenContract_, uint256 maxTotalSupply_)
+```
+
+Initializes access control, the token contract, and the max supply.
+
+#### setMaxTotalSupply
+
+```solidity
+function setMaxTotalSupply(uint256 newMaxTotalSupply)
+    public
+    virtual
+    onlyRole(DEFAULT_ADMIN_ROLE)
+```
+
+Updates the configured maximum supply.
+
+#### setTokenContract
+
+```solidity
+function setTokenContract(address tokenContract_)
+    public
+    virtual
+    onlyRole(DEFAULT_ADMIN_ROLE)
+```
+
+Sets the token contract used to read `totalSupply()`.
+
+### RuleConditionalTransferLight
+
+Operation rule requiring explicit approval before a transfer executes.
+
+------
+
+#### approveTransfer
+
+```solidity
+function approveTransfer(address from, address to, uint256 value)
+    public
+    onlyTransferApprover
+```
+
+Approves one transfer (consumed on execution).
+
+#### cancelTransferApproval
+
+```solidity
+function cancelTransferApproval(address from, address to, uint256 value)
+    public
+    onlyTransferApprover
+```
+
+Removes one approval for the transfer.
+
+#### approveAndTransferIfAllowed
+
+```solidity
+function approveAndTransferIfAllowed(address token, address from, address to, uint256 value)
+    public
+    onlyTransferApprover
+    returns (bool)
+```
+
+Approves then calls `transferFrom` using this rule as spender.
+
+#### approvedCount
+
+```solidity
+function approvedCount(address from, address to, uint256 value)
+    public
+    view
+    returns (uint256)
+```
+
+Returns the number of approvals for the transfer hash.
 
 
 

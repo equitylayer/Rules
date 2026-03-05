@@ -20,7 +20,7 @@ contract RuleConditionalTransferLightAccessControlRoleMembers is AccessControlEn
         singleRuleEngine[0] = ADDRESS3;
 
         _assertRoleMembers(DEFAULT_ADMIN_ROLE, singleAdmin);
-        _assertRoleMembers(OPERATOR_ROLE, singleAdmin);
+        _assertRoleMembers(OPERATOR_ROLE, new address[](0));
         _assertRoleMembers(RULE_ENGINE_CONTRACT_ROLE, singleRuleEngine);
     }
 }
