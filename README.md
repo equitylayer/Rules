@@ -715,7 +715,6 @@ Foundry consists of:
 
 https://book.getfoundry.sh/
 
-Project communication templates: see [email.md](email.md).
 
 #### Format
 
