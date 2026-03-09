@@ -282,5 +282,32 @@ contract CMTATIntegrationWhitelistWrapper is Test, HelperContract {
         ruleWhitelistWrapper.transferred(ADDRESS3, ADDRESS1, ADDRESS2, 0, 20);
     }
 
-    
+    /*//////////////////////////////////////////////////////////////
+                          IS VERIFIED
+    //////////////////////////////////////////////////////////////*/
+
+    function testIsVerifiedListedInOneChildRule() public {
+        vm.prank(WHITELIST_OPERATOR_ADDRESS);
+        ruleWhitelist.addAddress(ADDRESS1);
+
+        // Listed in ruleWhitelist → verified via wrapper
+        assertTrue(ruleWhitelistWrapper.isVerified(ADDRESS1));
+    }
+
+    function testIsVerifiedListedInSecondChildRule() public {
+        vm.prank(WHITELIST_OPERATOR_ADDRESS);
+        ruleWhitelist2.addAddress(ADDRESS1);
+
+        assertTrue(ruleWhitelistWrapper.isVerified(ADDRESS1));
+    }
+
+    function testIsVerifiedNotListedInAnyRule() public view {
+        assertFalse(ruleWhitelistWrapper.isVerified(ADDRESS1));
+    }
+
+    function testIsVerifiedWithNoChildRules() public {
+        RuleWhitelistWrapper emptyWrapper =
+            new RuleWhitelistWrapper(WHITELIST_OPERATOR_ADDRESS, ZERO_ADDRESS, true);
+        assertFalse(emptyWrapper.isVerified(ADDRESS1));
+    }
 }

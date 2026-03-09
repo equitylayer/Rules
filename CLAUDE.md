@@ -54,6 +54,7 @@ Foundry config: `foundry.toml` (solc 0.8.34, EVM prague, optimizer 200 runs).
 | RuleConditionalTransferLight | 46 |
 | RuleMaxTotalSupply | 50 |
 | RuleIdentityRegistry | 55–57 |
+| RuleERC2980 | 60–63 |
 
 ## Conventions
 - Each rule has an `InvariantStorage` abstract contract holding its constants, custom errors, and events.

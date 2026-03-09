@@ -15,6 +15,7 @@ import {RulesManagementModule} from "RuleEngine/modules/RulesManagementModule.so
 import {IERC1404, IERC1404Extend} from "CMTAT/interfaces/tokenization/draft-IERC1404.sol";
 /* ==== Interfaces === */
 import {IAddressList} from "../../../interfaces/IAddressList.sol";
+import {IIdentityRegistryVerified} from "../../../interfaces/IIdentityRegistry.sol";
 
 /**
  * @title Wrapper to call several different whitelist rules (base)
@@ -23,7 +24,8 @@ import {IAddressList} from "../../../interfaces/IAddressList.sol";
 abstract contract RuleWhitelistWrapperBase is
     RulesManagementModule,
     MetaTxModuleStandalone,
-    RuleWhitelistShared
+    RuleWhitelistShared,
+    IIdentityRegistryVerified
 {
     /*//////////////////////////////////////////////////////////////
                               CONSTRUCTOR
@@ -105,6 +107,23 @@ abstract contract RuleWhitelistWrapperBase is
         returns (bool)
     {
         return AccessControl.supportsInterface(interfaceId) || RuleTransferValidation.supportsInterface(interfaceId);
+    }
+
+    /**
+     * @notice Returns true if the address is listed in at least one child whitelist rule.
+     * @dev Delegates to the same child-rule scan used by transfer restriction checks.
+     */
+    function isVerified(address targetAddress)
+        public
+        view
+        virtual
+        override(IIdentityRegistryVerified)
+        returns (bool)
+    {
+        address[] memory targets = new address[](1);
+        targets[0] = targetAddress;
+        bool[] memory result = _detectTransferRestrictionForTargets(targets);
+        return result[0];
     }
 
     /* ============  Access control ============ */

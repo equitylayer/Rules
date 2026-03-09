@@ -8,6 +8,7 @@ import {RuleNFTAdapter} from "../core/RuleNFTAdapter.sol";
 import {RuleTransferValidation} from "../core/RuleTransferValidation.sol";
 /* ==== Interfaces === */
 import {IERC2980} from "../../../interfaces/IERC2980.sol";
+import {IIdentityRegistryVerified} from "../../../interfaces/IIdentityRegistry.sol";
 import {IERC1404, IERC1404Extend} from "CMTAT/interfaces/tokenization/draft-IERC1404.sol";
 import {IERC3643IComplianceContract} from "CMTAT/interfaces/tokenization/IERC3643Partial.sol";
 import {IRuleEngine} from "CMTAT/interfaces/engine/IRuleEngine.sol";
@@ -30,7 +31,8 @@ abstract contract RuleERC2980Base is
     RuleERC2980Internal,
     RuleERC2980InvariantStorage,
     RuleNFTAdapter,
-    IERC2980
+    IERC2980,
+    IIdentityRegistryVerified
 {
     /*//////////////////////////////////////////////////////////////
                               CONSTRUCTOR
@@ -223,6 +225,21 @@ abstract contract RuleERC2980Base is
      */
     function whitelist(address _operator) public view virtual override(IERC2980) returns (bool) {
         return _isWhitelisted(_operator);
+    }
+
+    /**
+     * @notice Returns true if the address is whitelisted (identity-verified).
+     * @dev Reflects whitelist membership only. Frozen status is intentionally excluded:
+     * freezing is a temporary enforcement action and does not revoke identity verification.
+     */
+    function isVerified(address targetAddress)
+        public
+        view
+        virtual
+        override(IIdentityRegistryVerified)
+        returns (bool)
+    {
+        return _isWhitelisted(targetAddress);
     }
 
     /**

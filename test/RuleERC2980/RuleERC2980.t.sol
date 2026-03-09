@@ -227,6 +227,29 @@ contract RuleERC2980Test is Test, HelperContract {
     }
 
     /*//////////////////////////////////////////////////////////////
+                          IS VERIFIED
+    //////////////////////////////////////////////////////////////*/
+
+    function testIsVerifiedWhitelisted() public view {
+        // ADDRESS2 is whitelisted in setUp
+        assertTrue(ruleERC2980.isVerified(ADDRESS2));
+    }
+
+    function testIsVerifiedNotWhitelisted() public view {
+        assertFalse(ruleERC2980.isVerified(ADDRESS1));
+    }
+
+    function testIsVerifiedWhitelistedButFrozenStillVerified() public {
+        // Frozen status must NOT affect isVerified — whitelist membership is the identity check
+        vm.prank(DEFAULT_ADMIN_ADDRESS);
+        ruleERC2980.addFrozenlistAddress(ADDRESS2);
+
+        assertTrue(ruleERC2980.whitelist(ADDRESS2));
+        assertTrue(ruleERC2980.frozenlist(ADDRESS2));
+        assertTrue(ruleERC2980.isVerified(ADDRESS2));
+    }
+
+    /*//////////////////////////////////////////////////////////////
                          ERC-2980 GETTERS
     //////////////////////////////////////////////////////////////*/
 
