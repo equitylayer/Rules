@@ -359,6 +359,21 @@ Several rules are available in multiple access-control variants. Use the simples
 
 All rules are compatible with CMTAT, as noted earlier in this README.
 
+### Technical documentation
+
+Detailed technical documentation for each rule is available in [`doc/technical/`](doc/technical/):
+
+| Rule | Document |
+| ---- | -------- |
+| RuleWhitelist | [RuleWhitelist.md](doc/technical/RuleWhitelist.md) |
+| RuleWhitelistWrapper | [RuleWhitelistWrapper.md](doc/technical/RuleWhitelistWrapper.md) |
+| RuleBlacklist | [RuleBlacklist.md](doc/technical/RuleBlacklist.md) |
+| RuleSanctionsList | [RuleSanctionList.md](doc/technical/RuleSanctionList.md) |
+| RuleMaxTotalSupply | [RuleMaxTotalSupply.md](doc/technical/RuleMaxTotalSupply.md) |
+| RuleIdentityRegistry | [RuleIdentityRegistry.md](doc/technical/RuleIdentityRegistry.md) |
+| RuleERC2980 | [RuleERC2980.md](doc/technical/RuleERC2980.md) |
+| RuleConditionalTransferLight | [RuleConditionalTransferLight.md](doc/technical/RuleConditionalTransferLight.md) |
+
 ### Operational Notes
 
 - `RuleIdentityRegistry` allows burns (`to == address(0)`) even if the sender is not verified. This matters only if the token allows self-burn.
