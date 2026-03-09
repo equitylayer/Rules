@@ -41,8 +41,6 @@ interface ITransferContext {
         bytes data;
     }
 
-    error TransferContext_InvalidSelector(bytes4 selector);
-
     function transferred(MultiTokenTransferContext calldata ctx) external;
 
     function transferred(FungibleTransferContext calldata ctx) external;

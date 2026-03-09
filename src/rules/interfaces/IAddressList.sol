@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.20;
 
 import {IIdentityRegistryContains} from "./IIdentityRegistry.sol";
 
@@ -17,11 +17,11 @@ interface IAddressList is IIdentityRegistryContains {
 
     /// @notice Emitted when a single address is added.
     /// @param targetAddress The added address.
-    event AddAddress(address targetAddress);
+    event AddAddress(address indexed targetAddress);
 
     /// @notice Emitted when a single address is removed.
     /// @param targetAddress The removed address.
-    event RemoveAddress(address targetAddress);
+    event RemoveAddress(address indexed targetAddress);
 
     /* ============ Write ============ */
     /**
