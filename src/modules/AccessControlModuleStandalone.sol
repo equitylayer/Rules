@@ -4,8 +4,10 @@ pragma solidity ^0.8.20;
 
 /* ==== OpenZeppelin === */
 import {AccessControl} from "OZ/access/AccessControl.sol";
+import {IAccessControl} from "OZ/access/IAccessControl.sol";
+import {AccessControlEnumerable} from "OZ/access/extensions/AccessControlEnumerable.sol";
 
-abstract contract AccessControlModuleStandalone is AccessControl {
+abstract contract AccessControlModuleStandalone is AccessControlEnumerable {
     error AccessControlModuleStandalone_AddressZeroNotAllowed();
     /* ============ Constructor ============ */
     /**
@@ -20,9 +22,7 @@ abstract contract AccessControlModuleStandalone is AccessControl {
      */
 
     constructor(address admin) {
-        if (admin == address(0)) {
-            revert AccessControlModuleStandalone_AddressZeroNotAllowed();
-        }
+        require(admin != address(0), AccessControlModuleStandalone_AddressZeroNotAllowed());
         // we don't check the return value
         // _grantRole attempts to grant `role` to `account` and returns a boolean indicating if `role` was granted.
         // return false only if the admin has already the role
@@ -35,7 +35,14 @@ abstract contract AccessControlModuleStandalone is AccessControl {
     /**
      * @dev Returns `true` if `account` has been granted `role`.
      */
-    function hasRole(bytes32 role, address account) public view virtual override(AccessControl) returns (bool) {
+    function hasRole(bytes32 role, address account)
+        public
+        view
+        virtual
+        override(AccessControl, IAccessControl)
+        returns (bool)
+    {
+        // Dev note: default admin is treated as having all roles but may not appear in enumerable role members.
         // The Default Admin has all roles
         if (AccessControl.hasRole(DEFAULT_ADMIN_ROLE, account)) {
             return true;

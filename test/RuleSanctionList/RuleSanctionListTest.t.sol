@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MPL-2.0
 pragma solidity ^0.8.20;
 
-import "forge-std/Test.sol";
-import "../HelperContract.sol";
-import "../utils/SanctionListOracle.sol";
-import {RuleSanctionsList, ISanctionsList} from "src/rules/validation/RuleSanctionsList.sol";
+import {Test} from "forge-std/Test.sol";
+import {HelperContract} from "../HelperContract.sol";
+import {SanctionListOracle} from "../utils/SanctionListOracle.sol";
+import {RuleSanctionsList, ISanctionsList} from "src/rules/validation/deployment/RuleSanctionsList.sol";
 /**
  * @title General functions of the ruleSanctionList
  */
@@ -279,5 +279,16 @@ contract RuleSanctionlistTest is Test, HelperContract {
         resBool = ruleSanctionList.canTransferFrom(ADDRESS2, ADDRESS1, ATTACKER, 0, 20);
         // Assert
         assertFalse(resBool);
+    }
+
+    function testClearOracleDisablesChecks() public {
+        vm.prank(SANCTIONLIST_OPERATOR_ADDRESS);
+        ruleSanctionList.clearSanctionListOracle();
+
+        resUint8 = ruleSanctionList.detectTransferRestriction(ATTACKER, ADDRESS2, 20);
+        assertEq(resUint8, NO_ERROR);
+
+        resBool = ruleSanctionList.canTransfer(ATTACKER, ADDRESS2, 20);
+        assertEq(resBool, true);
     }
 }

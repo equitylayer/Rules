@@ -5,7 +5,7 @@
 
 |  File Name  |  SHA-1 Hash  |
 |-------------|--------------|
-| ./rules/validation/RuleBlacklist.sol | bc23ad3743afc27239d05d7787f6f48840373e20 |
+| ./rules/validation/RuleBlacklist.sol | f768a65fe6046d94db83c9f82920d9d710abb41c |
 
 
 ### Contracts Description Table
@@ -15,11 +15,14 @@
 |:----------:|:-------------------:|:----------------:|:----------------:|:---------------:|
 |     └      |  **Function Name**  |  **Visibility**  |  **Mutability**  |  **Modifiers**  |
 ||||||
-| **RuleBlacklist** | Implementation | RuleValidateTransfer, RuleAddressList, RuleBlacklistInvariantStorage |||
-| └ | <Constructor> | Public ❗️ | 🛑  | RuleAddressList |
-| └ | detectTransferRestriction | Public ❗️ |   |NO❗️ |
-| └ | canReturnTransferRestrictionCode | External ❗️ |   |NO❗️ |
-| └ | messageForTransferRestriction | External ❗️ |   |NO❗️ |
+| **RuleBlacklist** | Implementation | RuleBlacklistBase, AccessControlModuleStandalone |||
+| └ | <Constructor> | Public ❗️ | 🛑  | RuleBlacklistBase AccessControlModuleStandalone |
+| └ | supportsInterface | Public ❗️ |   |NO❗️ |
+| └ | _authorizeAddressListAdd | Internal 🔒 |   | |
+| └ | _authorizeAddressListRemove | Internal 🔒 |   | |
+| └ | _msgSender | Internal 🔒 |   | |
+| └ | _msgData | Internal 🔒 |   | |
+| └ | _contextSuffixLength | Internal 🔒 |   | |
 
 
 ### Legend

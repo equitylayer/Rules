@@ -5,7 +5,7 @@
 
 |  File Name  |  SHA-1 Hash  |
 |-------------|--------------|
-| ./rules/validation/RuleWhitelist.sol | c2fba89995e430d0f0965b24bf853772f3a51184 |
+| ./rules/validation/RuleWhitelist.sol | 6ffe0e4ea3ee426d6af1ac82c2bc470942be2023 |
 
 
 ### Contracts Description Table
@@ -15,9 +15,15 @@
 |:----------:|:-------------------:|:----------------:|:----------------:|:---------------:|
 |     └      |  **Function Name**  |  **Visibility**  |  **Mutability**  |  **Modifiers**  |
 ||||||
-| **RuleWhitelist** | Implementation | RuleAddressList, RuleWhitelistCommon |||
-| └ | <Constructor> | Public ❗️ | 🛑  | RuleAddressList |
-| └ | detectTransferRestriction | Public ❗️ |   |NO❗️ |
+| **RuleWhitelist** | Implementation | RuleWhitelistBase, AccessControlModuleStandalone |||
+| └ | <Constructor> | Public ❗️ | 🛑  | RuleWhitelistBase AccessControlModuleStandalone |
+| └ | supportsInterface | Public ❗️ |   |NO❗️ |
+| └ | _authorizeCheckSpenderManager | Internal 🔒 |   | |
+| └ | _authorizeAddressListAdd | Internal 🔒 |   | |
+| └ | _authorizeAddressListRemove | Internal 🔒 |   | |
+| └ | _msgSender | Internal 🔒 |   | |
+| └ | _msgData | Internal 🔒 |   | |
+| └ | _contextSuffixLength | Internal 🔒 |   | |
 
 
 ### Legend

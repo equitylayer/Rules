@@ -1,20 +1,21 @@
 // SPDX-License-Identifier: MPL-2.0
 pragma solidity ^0.8.20;
 
-import "forge-std/Test.sol";
-import "CMTAT/deployment/CMTATStandalone.sol";
-import "../HelperContract.sol";
+import {Test} from "forge-std/Test.sol";
+import {HelperContract} from "../HelperContract.sol";
 import {AccessControlModuleStandalone} from "../../src/modules/AccessControlModuleStandalone.sol";
+import {RuleWhitelist} from "src/rules/validation/deployment/RuleWhitelist.sol";
+import {RuleWhitelistWrapper} from "src/rules/validation/deployment/RuleWhitelistWrapper.sol";
 /**
  * @title Integration test with the CMTAT
  */
 
 contract CMTATIntegrationWhitelistWrapper is Test, HelperContract {
-    uint256 ADDRESS1_BALANCE_INIT = 31;
-    uint256 ADDRESS2_BALANCE_INIT = 32;
-    uint256 ADDRESS3_BALANCE_INIT = 33;
+    uint256 constant ADDRESS1_BALANCE_INIT = 31;
+    uint256 constant ADDRESS2_BALANCE_INIT = 32;
+    uint256 constant ADDRESS3_BALANCE_INIT = 33;
 
-    uint256 FLAG = 5;
+    uint256 constant FLAG = 5;
     RuleWhitelist ruleWhitelist2;
     RuleWhitelist ruleWhitelist3;
     RuleWhitelistWrapper ruleWhitelistWrapper;
@@ -62,6 +63,16 @@ contract CMTATIntegrationWhitelistWrapper is Test, HelperContract {
         resString = ruleWhitelistWrapper.messageForTransferRestriction(CODE_NONEXISTENT);
         // Assert
         assertEq(resString, TEXT_CODE_NOT_FOUND);
+    }
+
+    function testWrapperWithZeroRulesRejectsTransfers() public {
+        RuleWhitelistWrapper emptyWrapper =
+            new RuleWhitelistWrapper(WHITELIST_OPERATOR_ADDRESS, ZERO_ADDRESS, true);
+
+        resUint8 = emptyWrapper.detectTransferRestriction(ADDRESS1, ADDRESS2, 20);
+        assertEq(resUint8, CODE_ADDRESS_FROM_NOT_WHITELISTED);
+        resBool = emptyWrapper.canTransfer(ADDRESS1, ADDRESS2, 20);
+        assertEq(resBool, false);
     }
 
     function testDetectTransferRestrictionFrom() public {
@@ -271,5 +282,32 @@ contract CMTATIntegrationWhitelistWrapper is Test, HelperContract {
         ruleWhitelistWrapper.transferred(ADDRESS3, ADDRESS1, ADDRESS2, 0, 20);
     }
 
-    
+    /*//////////////////////////////////////////////////////////////
+                          IS VERIFIED
+    //////////////////////////////////////////////////////////////*/
+
+    function testIsVerifiedListedInOneChildRule() public {
+        vm.prank(WHITELIST_OPERATOR_ADDRESS);
+        ruleWhitelist.addAddress(ADDRESS1);
+
+        // Listed in ruleWhitelist → verified via wrapper
+        assertTrue(ruleWhitelistWrapper.isVerified(ADDRESS1));
+    }
+
+    function testIsVerifiedListedInSecondChildRule() public {
+        vm.prank(WHITELIST_OPERATOR_ADDRESS);
+        ruleWhitelist2.addAddress(ADDRESS1);
+
+        assertTrue(ruleWhitelistWrapper.isVerified(ADDRESS1));
+    }
+
+    function testIsVerifiedNotListedInAnyRule() public view {
+        assertFalse(ruleWhitelistWrapper.isVerified(ADDRESS1));
+    }
+
+    function testIsVerifiedWithNoChildRules() public {
+        RuleWhitelistWrapper emptyWrapper =
+            new RuleWhitelistWrapper(WHITELIST_OPERATOR_ADDRESS, ZERO_ADDRESS, true);
+        assertFalse(emptyWrapper.isVerified(ADDRESS1));
+    }
 }
