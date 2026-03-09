@@ -5,7 +5,7 @@
 
 |  File Name  |  SHA-1 Hash  |
 |-------------|--------------|
-| ./rules/interfaces/ITransferContext.sol | eb7956259160fd39f54d83c37fcdb612a6186852 |
+| ./rules/interfaces/ITransferContext.sol | 3303d7a0948bc9d850c589678af416f49eab532e |
 
 
 ### Contracts Description Table
@@ -16,6 +16,7 @@
 |     └      |  **Function Name**  |  **Visibility**  |  **Mutability**  |  **Modifiers**  |
 ||||||
 | **ITransferContext** | Interface |  |||
+| └ | transferred | External ❗️ | 🛑  |NO❗️ |
 | └ | transferred | External ❗️ | 🛑  |NO❗️ |
 
 

@@ -5,7 +5,7 @@
 
 |  File Name  |  SHA-1 Hash  |
 |-------------|--------------|
-| ./rules/validation/abstract/RuleWhitelistBase.sol | 7a29774322233b763220069260f15fb07b2d6db8 |
+| ./rules/validation/abstract/base/RuleWhitelistBase.sol | 143951e9f858d05f9ad5d1c1e39879043dd82563 |
 
 
 ### Contracts Description Table
@@ -15,7 +15,7 @@
 |:----------:|:-------------------:|:----------------:|:----------------:|:---------------:|
 |     └      |  **Function Name**  |  **Visibility**  |  **Mutability**  |  **Modifiers**  |
 ||||||
-| **RuleWhitelistBase** | Implementation | RuleAddressSet, RuleWhitelistCommon, IIdentityRegistryVerified |||
+| **RuleWhitelistBase** | Implementation | RuleAddressSet, RuleWhitelistShared, IIdentityRegistryVerified |||
 | └ | <Constructor> | Public ❗️ | 🛑  | RuleAddressSet |
 | └ | _detectTransferRestriction | Internal 🔒 |   | |
 | └ | _detectTransferRestrictionFrom | Internal 🔒 |   | |

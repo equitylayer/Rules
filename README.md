@@ -446,6 +446,8 @@ Implements the [ERC-2980](https://eips.ethereum.org/EIPS/eip-2980) Swiss Complia
 - **Frozenlist**: frozen addresses are completely blocked — they can neither send nor receive tokens.
 - **Priority**: frozenlist is checked first. If `from` or `to` is frozen, the transfer is rejected regardless of whitelist membership.
 
+![surya_inheritance_RuleERC2980.sol](./doc/surya/surya_inheritance/surya_inheritance_RuleERC2980.sol.png)
+
 Restriction codes:
 
 | Constant | Code | Meaning |
@@ -471,6 +473,8 @@ Uses the [Chainalysis](https://www.chainalysis.com/) Oracle to reject transfers 
 
 Documentation and the contracts addresses are available here: [Chainalysis oracle for sanctions screening](https://go.chainalysis.com/chainalysis-oracle-docs.html).
 
+![surya_inheritance_RuleSanctionsList.sol](./doc/surya/surya_inheritance/surya_inheritance_RuleSanctionsList.sol.png)
+
 **Example**
 
 During a transfer, if either address (from or to) is in the sanction list of the Oracle, the rule will return false, and the transfer will be rejected by the CMTAT.
@@ -479,27 +483,25 @@ During a transfer, if either address (from or to) is in the sanction list of the
 
 The operator sets the Chainalysis oracle with `setSanctionListOracle`. The token’s transfer path calls `detectTransferRestriction`; if the oracle flags `from` or `to`, the transfer is rejected. Calling `clearSanctionListOracle` disables checks.
 
-![surya_inheritance_RuleSanctionsList.sol](./doc/surya/surya_inheritance/surya_inheritance_RuleSanctionsList.sol.png)
-
 #### Max total supply
 
 Limits minting so that total supply never exceeds a configured maximum. Transfers and burns are not affected; only mints (`from == address(0)`) are checked.
+
+![surya_inheritance_RuleMaxTotalSupply.sol](./doc/surya/surya_inheritance/surya_inheritance_RuleMaxTotalSupply.sol.png)
 
 **Usage scenario**
 
 The operator deploys `RuleMaxTotalSupply` with `setMaxTotalSupply(1_000_000)` and sets the token with `setTokenContract`. When the issuer mints and `totalSupply + amount` exceeds the limit, `detectTransferRestriction` rejects the mint. Transfers between holders still pass.
 
-![surya_inheritance_RuleMaxTotalSupply.sol](./doc/surya/surya_inheritance/surya_inheritance_RuleMaxTotalSupply.sol.png)
-
 #### Identity registry
 
 If an identity registry address is set, this rule checks `isVerified` for the sender, recipient, and spender (for `transferFrom`). Zero addresses are ignored, and burns (`to == address(0)`) are always allowed so non‑verified holders can burn.
 
+![surya_inheritance_RuleIdentityRegistry.sol](./doc/surya/surya_inheritance/surya_inheritance_RuleIdentityRegistry.sol.png)
+
 **Usage scenario**
 
 The operator calls `setIdentityRegistry(registry)`. The issuer attempts a transfer to Alice; `detectTransferRestriction` consults `isVerified` and rejects if Alice is unverified. After the registry marks Alice verified, the transfer succeeds. Calling `clearIdentityRegistry` disables checks.
-
-![surya_inheritance_RuleIdentityRegistry.sol](./doc/surya/surya_inheritance/surya_inheritance_RuleIdentityRegistry.sol.png)
 
 ### Read-Write (Operation) rule
 
@@ -509,13 +511,11 @@ For the moment, there is only one operation rule available: ConditionalTransferL
 
 This rule requires that transfers must be approved by an operator before being executed. It hashes `(from, to, value)` to track approvals and allows the same transfer to be approved multiple times. Each successful transfer consumes one approval, applying a write operation on the blockchain.
 
+![surya_inheritance_RuleConditionalTransferLight.sol](./doc/surya/surya_inheritance/surya_inheritance_RuleConditionalTransferLight.sol.png)
+
 **Usage scenario**
 
 An operator calls `approveTransfer(from, to, value)`. The compliance manager binds the token with `bindToken(token)`. The token calls `detectTransferRestriction` (passes) and later `transferred` to consume the approval. Without approval, `detectTransferRestriction` returns code 46 and the transfer is rejected. The operator can revoke with `cancelTransferApproval`.
-
-![surya_inheritance_RuleConditionalTransferLight.sol](./doc/surya/surya_inheritance/surya_inheritance_RuleConditionalTransferLight.sol.png)
-
-
 
 ## Access Control
 
