@@ -22,7 +22,7 @@ Rules are modular validator contracts that the `RuleEngine` or `CMTAT` compatibl
 - **Rules are controllers** that validate or modify token transfers.
 - They can be applied:
   - Directly on **CMTAT** (no RuleEngine required), **or**
-  - Through the **RuleEngine** (for multi-rule orchestration).
+  - Through the [**RuleEngine**](https://github.com/CMTA/RuleEngine) (for multi-rule orchestration).
 - Rules enforce conditions such as:
   - Whitelisting / blacklisting
   - Sanctions checks
@@ -54,7 +54,7 @@ forge test
 
 | Component        | Compatible Versions                       |
 | ---------------- | ----------------------------------------- |
-| **Rules v0.1.0** | CMTAT ≥ v3.0.0<br />RuleEngine v3.0.0-rc0 |
+| **Rules v0.1.0** | CMTAT ≥ v3.0.0<br />RuleEngine v3.0.0-rc1 |
 
 Each Rule implements the interface `IRuleEngine` defined in CMTAT.
 
@@ -294,11 +294,15 @@ All validation rules implement `IRuleEngine` to be usable both standalone (plugg
 
 Available validation rules: `RuleWhitelist`, `RuleWhitelistWrapper`, `RuleBlacklist`, `RuleSanctionsList`, `RuleMaxTotalSupply`, `RuleIdentityRegistry`, `RuleERC2980`.
 
+ A community made project, [RuleSelf](https://github.com/rya-sge/ruleself), which uses [Self](https://self.xyz), a zero-knowledge identity is also available but is not developed or maintained by CMTA.
+
 ### Operation Rules (Read-Write)
 
 Operation rules modify blockchain state during transfer execution. Their `transferred()` function is state-mutating: it consumes or updates stored data as part of the transfer flow.
 
-Available operation rules: `RuleConditionalTransferLight`.
+Available operation rules: `RuleConditionalTransferLight`. 
+
+A full-featured variant, `RuleConditionalTransfer`, is maintained as a separate experimental repository at [CMTA/RuleConditionalTransfer](https://github.com/CMTA/RuleConditionalTransfer).
 
 ## Deployment Guide
 
@@ -349,6 +353,8 @@ Several rules are available in multiple access-control variants. Use the simples
 | RuleIdentityRegistry                                         | Ready-only                           | ☑                  | ☑        | ☑                                     | This rule checks the ERC-3643 Identity Registry for transfer participants when configured. |
 | RuleERC2980                                                  | Ready-only                           | ☑                  | ☑        | ☒                                     | ERC-2980 Swiss Compliant rule combining a whitelist (recipient-only) and a frozenlist (blocks both sender and recipient). Frozenlist takes priority over whitelist. |
 | RuleConditionalTransferLight                                | Ready-Write                          | —                  | ☑        | ☒<br /> (experimental rule)           | This rule requires that transfers have to be approved by an operator before being executed. Each approval is consumed once and the same transfer can be approved multiple times. |
+| [RuleConditionalTransfer](https://github.com/CMTA/RuleConditionalTransfer) (external) | Ready-Write | — | ☑ | ☒<br /> (experimental rule) | Full-featured approval-based transfer rule implementing Swiss law *Vinkulierung*. Supports automatic approval after three months, automatic transfer execution, and a conditional whitelist for address pairs that bypass approval. Maintained in a separate repository. |
+| [RuleSelf](https://github.com/rya-sge/ruleself) (community) | — | — | — | ☒<br /> (community project) | Community-maintained rule project. Not developed or maintained by CMTA. |
 
 All rules are compatible with CMTAT, as noted earlier in this README.
 
@@ -585,11 +591,11 @@ Here are the settings for [Hardhat](https://hardhat.org) and [Foundry](https://g
 
   - Forge std [v1.12.0](https://github.com/foundry-rs/forge-std/releases/tag/v1.12.0  )  
 
-  - OpenZeppelin Contracts (submodule) [v5.5.0](https://github.com/OpenZeppelin/openzeppelin-contracts/releases/tag/v5.5.0)
+  - OpenZeppelin Contracts (submodule) [v5.6.0](https://github.com/OpenZeppelin/openzeppelin-contracts/releases/tag/v5.6.0)
 
-  - CMTAT [v3.0.0](https://github.com/CMTA/CMTAT)
+  - CMTAT [v3.2.0](https://github.com/CMTA/CMTAT/releases/tag/v3.2.0)
 
-  - RuleEngine [v3.0.0-rc0](https://github.com/CMTA/RuleEngine/releases/tag/v3.0.0-rc0)
+  - RuleEngine [v3.0.0-rc1](https://github.com/CMTA/RuleEngine/releases/tag/v3.0.0-rc1)
 
 ### Toolchain installation
 
@@ -650,6 +656,24 @@ forge test --gas-report
 ```
 
 See also the test framework's [official documentation](https://book.getfoundry.sh/forge/tests), and that of the [test commands](https://book.getfoundry.sh/reference/forge/test-commands).
+
+### Gas Benchmarks
+
+Gas usage is tracked in two complementary files:
+
+- **`.gas-snapshot`** — machine-generated file produced by `forge snapshot`. It records the gas cost of every test function and is checked into the repository so that gas regressions are visible in diffs. Regenerate it with:
+
+  ```bash
+  forge snapshot
+  ```
+
+  To check for regressions against the committed snapshot without overwriting it:
+
+  ```bash
+  forge snapshot --check
+  ```
+
+- **`doc/GAS.md`** — human-readable summary of key operation costs (e.g. `addAddress`, `detectTransferRestriction`) with the date of the last measurement. Update it manually after running `forge snapshot` when behaviour or gas costs change.
 
 ### Coverage
 

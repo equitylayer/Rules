@@ -9,8 +9,8 @@ contract RuleConditionalTransferLightUnit is Test, HelperContract {
     RuleConditionalTransferLight private rule;
 
     function setUp() public {
-        vm.prank(DEFAULT_ADMIN_ADDRESS);
         rule = new RuleConditionalTransferLight(DEFAULT_ADMIN_ADDRESS);
+        vm.prank(DEFAULT_ADMIN_ADDRESS);
         rule.bindToken(ADDRESS3);
     }
 
