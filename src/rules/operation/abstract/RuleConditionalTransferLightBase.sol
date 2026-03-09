@@ -11,13 +11,14 @@ import {IERC20} from "OZ/token/ERC20/IERC20.sol";
 import {
     RuleConditionalTransferLightInvariantStorage
 } from "./RuleConditionalTransferLightInvariantStorage.sol";
+import {VersionModule} from "../../../modules/VersionModule.sol";
 
 /**
  * @title RuleConditionalTransferLightBase
  * @dev Requires operator approval for each transfer. Same transfer (from, to, value)
  *      can be approved multiple times to allow repeated transfers.
  */
-abstract contract RuleConditionalTransferLightBase is RuleConditionalTransferLightInvariantStorage, IRule {
+abstract contract RuleConditionalTransferLightBase is VersionModule, RuleConditionalTransferLightInvariantStorage, IRule {
     // Mapping from transfer hash to approval count
     mapping(bytes32 => uint256) public approvalCounts;
 

@@ -10,7 +10,7 @@ Modular compliance-rule library for CMTAT / ERC-3643 security tokens. Each rule 
 | `src/rules/operation/` | Read-write rules (modify state on transfer) |
 | `src/rules/validation/abstract/` | Shared base contracts and invariant storage |
 | `src/rules/interfaces/` | Shared interfaces (`IAddressList`, `IIdentityRegistry`, `ISanctionsList`) |
-| `src/modules/` | Reusable modules (`AccessControlModuleStandalone`, `MetaTxModuleStandalone`) |
+| `src/modules/` | Reusable modules (`AccessControlModuleStandalone`, `MetaTxModuleStandalone`, `VersionModule`) |
 | `test/` | Foundry tests, one folder per rule |
 | `lib/` | Git submodule dependencies (do not edit) |
 
@@ -29,6 +29,7 @@ Modular compliance-rule library for CMTAT / ERC-3643 security tokens. Each rule 
 | `RuleConditionalTransferLightOwnable2Step` | Owner-only approval and execution for conditional transfers |
 | `AccessControlModuleStandalone` | Base RBAC module; admin implicitly holds all roles |
 | `MetaTxModuleStandalone` | ERC-2771 meta-transaction support |
+| `VersionModule` | Implements `IERC3643Version`; returns the contract version string |
 
 ## Dependencies (lib/)
 - `openzeppelin-contracts` v5.5.0 — `AccessControl`, `Ownable2Step`, `EnumerableSet`, `ERC2771Context`
@@ -62,6 +63,7 @@ Foundry config: `foundry.toml` (solc 0.8.34, EVM prague, optimizer 200 runs).
 - Access control is implemented via an abstract `_authorize*()` method overridden by concrete subclasses (template method pattern).
 - AccessControl variants must use `onlyRole(ROLE)` in `_authorize*()` methods (avoid direct `_checkRole`).
 - AccessControl variants treat the default admin as having all roles via `hasRole`, but the admin may not appear in role member enumerations unless explicitly granted.
+- All rules implement `IERC3643Version` via `VersionModule`; the current version string is `"0.2.0"`.
 - Batch add/remove operations are non-reverting (skip duplicates); single-item operations revert on invalid input.
 - All `internal` functions should be marked `virtual`.
 - Do not create git commits; provide commit messages only when requested.

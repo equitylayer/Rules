@@ -9,8 +9,10 @@ import {IERC7551Compliance} from "CMTAT/interfaces/tokenization/draft-IERC7551.s
 /* ==== RuleEngine === */
 import {IRule} from "RuleEngine/interfaces/IRule.sol";
 import {RuleInterfaceId} from "RuleEngine/modules/library/RuleInterfaceId.sol";
+/* ==== Modules === */
+import {VersionModule} from "../../../../modules/VersionModule.sol";
 
-abstract contract RuleTransferValidation is IERC1404Extend, IERC3643ComplianceRead, IERC7551Compliance, IRule {
+abstract contract RuleTransferValidation is VersionModule, IERC1404Extend, IERC3643ComplianceRead, IERC7551Compliance, IRule {
     /**
      * @notice Internal transfer restriction check.
      * @param from the origin address

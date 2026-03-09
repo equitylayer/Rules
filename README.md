@@ -113,7 +113,7 @@ function transferred(address spender, address from, address to, uint256 tokenId,
 
 ### Directory Layout
 
-- `src/modules/`: reusable modules shared across rules (`AccessControlModuleStandalone`, `MetaTxModuleStandalone`).
+- `src/modules/`: reusable modules shared across rules (`AccessControlModuleStandalone`, `MetaTxModuleStandalone`, `VersionModule`).
 - `src/rules/interfaces/`: shared interfaces (`IAddressList`, `IIdentityRegistry`, `ISanctionsList`, `ITransferContext`).
 - `src/rules/validation/abstract/`: shared base contracts and invariant storage.
 - `src/rules/validation/abstract/base/`: base contracts with core rule logic (no access control).
@@ -376,6 +376,7 @@ All rules are compatible with CMTAT, as noted earlier in this README.
 - `forwarderIrrevocable` is accepted as-is (including `address(0)`), and is not validated against ERC-165 because some forwarders do not implement it.
 - `RuleERC2980` frozenlist takes priority over the whitelist: an address that is both whitelisted and frozen will be rejected.
 - `RuleERC2980` sender (`from`) does not need to be whitelisted; only the recipient (`to`) must be whitelisted for a transfer to succeed.
+- All rules implement `IERC3643Version` via `VersionModule` and expose a `version()` function returning `"0.2.0"`.
 
 ### Read-only (validation) rule
 
