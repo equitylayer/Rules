@@ -1572,6 +1572,42 @@ Returns the number of approvals for the transfer hash.
 
 
 
+## Security
+
+### Automated Analysis
+
+#### Aderyn (v0.2.0)
+
+Static analysis was performed with [Aderyn](https://github.com/Cyfrin/aderyn). The full report and the project team's feedback are available in [`doc/security/audits/tools/v0.2.0/`](./doc/security/audits/tools/v0.2.0/).
+
+| ID | Title | Instances | Verdict |
+|---|---|---|---|
+| L-1 | Centralization Risk | 41 | Acknowledged — by design (regulated token issuer model) |
+| L-2 | Unsafe ERC20 Operation | 1 | Acknowledged — return value already checked with `require` |
+| L-3 | Unspecific Solidity Pragma | 48 | Acknowledged — intentional for a library |
+| L-4 | Address State Variable Set Without Checks | 1 | False positive — check enforced in public-facing function |
+| L-5 | PUSH0 Opcode | 48 | Acknowledged — project targets Prague EVM |
+| L-6 | Modifier Invoked Only Once | 2 | Acknowledged — template method pattern; inlining would break abstraction |
+| L-7 | Empty Block | 34 | Acknowledged — `_authorize*()` hooks use modifier; `created()`/`destroyed()` are intentional no-ops |
+| L-8 | Costly Operations Inside Loop | 6 | Acknowledged — unavoidable (`EnumerableSet` requires one `SSTORE` per element) |
+| L-9 | Unchecked Return | 13 | False positive — all instances are `void` calls, checked in caller, or intentionally ignored |
+
+No high-severity issues were reported.
+
+#### Slither (v0.2.0)
+
+Static analysis was performed with [Slither](https://github.com/crytic/slither). The full report and the project team's feedback are available in [`doc/security/audits/tools/v0.2.0/`](./doc/security/audits/tools/v0.2.0/).
+
+| Category | Severity | Instances | Verdict |
+|---|---|---|---|
+| arbitrary-send-erc20 | High | 1 | False positive — `from` is guarded by `onlyTransferApprover`, ERC-20 allowance check, and a pre-recorded approval |
+| unused-return | Medium | 6 | False positive — existence pre-checked at public layer before calling internal helper |
+| calls-loop | Low | 15 | Acknowledged — by design; wrapper must query each child rule; child rules are read-only |
+| dead-code | Informational | 14 | False positive — `_msgData()` overrides required for ERC-2771 diamond resolution; `_transferred` override is reachable |
+| naming-convention | Informational | 2 | Acknowledged — parameter names match ERC-2980 spec |
+| unindexed-event-address | Informational | 2 | Out of scope (both in `lib/RuleEngine`); `IAddressList` events previously fixed |
+| unused-state | Informational | 48 | False positive — `RuleNFTAdapter` constants used in base dispatch logic; Slither per-contract analysis limitation |
+
 ## Intellectual property
 
 The code is copyright (c) Capital Market and Technology Association, 2022-2026, and is released under [Mozilla Public License 2.0](https://github.com/CMTA/CMTAT/blob/master/LICENSE.md).
