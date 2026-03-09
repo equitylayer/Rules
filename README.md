@@ -548,6 +548,7 @@ For simpler ownership-based control, `Ownable2Step` variants (two-step ownership
 - `RuleSanctionsListOwnable2Step`
 - `RuleIdentityRegistryOwnable2Step`
 - `RuleMaxTotalSupplyOwnable2Step`
+- `RuleERC2980Ownable2Step`
 - `RuleConditionalTransferLightOwnable2Step`
 
 `RuleConditionalTransferLightOwnable2Step` now grants approval and execution permissions exclusively to the owner.

@@ -1,6 +1,8 @@
 # Compiler files
 cache/
 out/
+cache_hardhat/
+artifacts/
 
 # Ignores development broadcast logs
 !/broadcast
@@ -9,9 +11,13 @@ out/
 
 # Docs
 docs/
+docOut/
 
 # Dotenv file
 .env
 # node_modules
 node_modules/
 /history
+/ERCSpecification
+*.dbg.json
+/skills
