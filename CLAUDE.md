@@ -23,6 +23,7 @@ Modular compliance-rule library for CMTAT / ERC-3643 security tokens. Each rule 
 | `RuleSanctionsList` | Block sanctioned addresses via Chainalysis oracle |
 | `RuleMaxTotalSupply` | Cap minting so total supply never exceeds a maximum |
 | `RuleIdentityRegistry` | Check ERC-3643 identity registry for participant verification |
+| `RuleERC2980` | ERC-2980 Swiss Compliant rule: whitelist (recipient-only) + frozenlist (blocks sender and recipient); frozenlist takes priority |
 | `RuleConditionalTransferLight` | Require operator approval before each transfer |
 | `RuleConditionalTransferLightOwnable2Step` | Owner-only approval and execution for conditional transfers |
 | `AccessControlModuleStandalone` | Base RBAC module; admin implicitly holds all roles |

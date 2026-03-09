@@ -152,7 +152,12 @@ Here the list of codes used by the different rules
 | RuleIdentityRegistry    | CODE_ADDRESS_FROM_NOT_VERIFIED       | 55   |
 |                         | CODE_ADDRESS_TO_NOT_VERIFIED         | 56   |
 |                         | CODE_ADDRESS_SPENDER_NOT_VERIFIED    | 57   |
-|                         | Reserved slot                        | 58-60 |
+|                         | Reserved slot                        | 58-59 |
+| RuleERC2980             | CODE_ADDRESS_FROM_IS_FROZEN          | 60   |
+|                         | CODE_ADDRESS_TO_IS_FROZEN            | 61   |
+|                         | CODE_ADDRESS_SPENDER_IS_FROZEN       | 62   |
+|                         | CODE_ADDRESS_TO_NOT_WHITELISTED      | 63   |
+|  | Reserved slot | 64-65 |
 
 Note: 
 
@@ -287,7 +292,7 @@ Validation rules only read blockchain state — they never modify it during a tr
 
 All validation rules implement `IRuleEngine` to be usable both standalone (plugged directly into CMTAT) and via the RuleEngine.
 
-Available validation rules: `RuleWhitelist`, `RuleWhitelistWrapper`, `RuleBlacklist`, `RuleSanctionsList`, `RuleMaxTotalSupply`, `RuleIdentityRegistry`.
+Available validation rules: `RuleWhitelist`, `RuleWhitelistWrapper`, `RuleBlacklist`, `RuleSanctionsList`, `RuleMaxTotalSupply`, `RuleIdentityRegistry`, `RuleERC2980`.
 
 ### Operation Rules (Read-Write)
 
@@ -322,6 +327,7 @@ Several rules are available in multiple access-control variants. Use the simples
   - Whitelist Wrapper
   - Blacklist
   - Sanction list (Chainalysis)
+  - ERC-2980 (whitelist + frozenlist)
 
 ### Operation Rules (Read-Write)
 
@@ -341,6 +347,7 @@ Several rules are available in multiple access-control variants. Use the simples
 | RuleSanctionList                                             | Ready-only                           | ☑                  | ☑        | ☑                                     | The purpose of this contract is to use the oracle contract from [Chainalysis](https://go.chainalysis.com/chainalysis-oracle-docs.html) to forbid transfer from/to an address included in a sanctions designation (US, EU, or UN). |
 | RuleMaxTotalSupply                                           | Ready-only                           | —                  | ☑        | ☑                                     | This rule limits minting so that the total supply never exceeds a configured maximum. |
 | RuleIdentityRegistry                                         | Ready-only                           | ☑                  | ☑        | ☑                                     | This rule checks the ERC-3643 Identity Registry for transfer participants when configured. |
+| RuleERC2980                                                  | Ready-only                           | ☑                  | ☑        | ☒                                     | ERC-2980 Swiss Compliant rule combining a whitelist (recipient-only) and a frozenlist (blocks both sender and recipient). Frozenlist takes priority over whitelist. |
 | RuleConditionalTransferLight                                | Ready-Write                          | —                  | ☑        | ☒<br /> (experimental rule)           | This rule requires that transfers have to be approved by an operator before being executed. Each approval is consumed once and the same transfer can be approved multiple times. |
 
 All rules are compatible with CMTAT, as noted earlier in this README.
@@ -361,10 +368,12 @@ All rules are compatible with CMTAT, as noted earlier in this README.
 - AccessControl variants use `onlyRole(ROLE)` in `_authorize*()` and internal helpers are marked `virtual`.
 - AccessControl variants use `AccessControlEnumerable`, so role members can be enumerated with `getRoleMember` / `getRoleMemberCount`. The default admin is treated as having all roles via `hasRole`, but may not appear in role member lists unless explicitly granted.
 - `forwarderIrrevocable` is accepted as-is (including `address(0)`), and is not validated against ERC-165 because some forwarders do not implement it.
+- `RuleERC2980` frozenlist takes priority over the whitelist: an address that is both whitelisted and frozen will be rejected.
+- `RuleERC2980` sender (`from`) does not need to be whitelisted; only the recipient (`to`) must be whitelisted for a transfer to succeed.
 
 ### Read-only (validation) rule
 
-Currently, there are six validation rules: whitelist, whitelistWrapper, blacklist, sanctionlist, max total supply, and identity registry.
+Currently, there are seven validation rules: whitelist, whitelistWrapper, blacklist, sanctionlist, max total supply, identity registry, and ERC-2980.
 
 #### Whitelist
 
@@ -421,6 +430,29 @@ Opposite of whitelist:
 The operator sets `RuleBlacklist` on the token. The issuer tries to transfer to Bob; `detectTransferRestriction` passes. The operator calls `addAddress(Bob)`. A subsequent transfer to Bob is rejected until `removeAddress(Bob)` is called.
 
 ![surya_inheritance_RuleWhitelistWrapper.sol](./doc/surya/surya_inheritance/surya_inheritance_RuleBlacklist.sol.png)
+
+#### ERC-2980 (Whitelist + Frozenlist)
+
+Implements the [ERC-2980](https://eips.ethereum.org/EIPS/eip-2980) Swiss Compliant Asset Token transfer restriction using two independent address lists managed in a single rule:
+
+- **Whitelist**: only whitelisted addresses may *receive* tokens. Senders do not need to be whitelisted and may freely transfer tokens they already hold.
+- **Frozenlist**: frozen addresses are completely blocked — they can neither send nor receive tokens.
+- **Priority**: frozenlist is checked first. If `from` or `to` is frozen, the transfer is rejected regardless of whitelist membership.
+
+Restriction codes:
+
+| Constant | Code | Meaning |
+| --- | --- | --- |
+| `CODE_ADDRESS_FROM_IS_FROZEN` | 60 | Sender is frozen |
+| `CODE_ADDRESS_TO_IS_FROZEN` | 61 | Recipient is frozen |
+| `CODE_ADDRESS_SPENDER_IS_FROZEN` | 62 | Spender is frozen |
+| `CODE_ADDRESS_TO_NOT_WHITELISTED` | 63 | Recipient is not whitelisted |
+
+**Deviation from spec**: the ERC-2980 `Whitelistable` / `Freezable` example interfaces define single-address management functions that return `bool` and do not revert on duplicates or missing entries. This implementation reverts on invalid single-item operations, consistent with the codebase convention. Batch operations remain non-reverting.
+
+**Usage scenario**
+
+The operator deploys `RuleERC2980`. The issuer whitelists Alice with `addWhitelistAddress(Alice)`. A transfer to Alice succeeds. The compliance officer freezes Bob with `addFrozenlistAddress(Bob)`. Any transfer from or to Bob is now rejected even if Bob was previously whitelisted.
 
 #### Sanction list with Chainalysis
 
@@ -501,6 +533,10 @@ See also [docs.openzeppelin.com - AccessControl](https://docs.openzeppelin.com/c
 | `RULES_MANAGEMENT_ROLE` | `0xea5f4eb72290e50c32abd6c23e45de3d8300b3286e1cbc2e293114b92e034e5e` | `setRules`, `clearRules`, `addRule`, `removeRule` (RuleWhitelistWrapper) |
 | `OPERATOR_ROLE` | `0x97667070c54ef182b0f5858b034beac1b6f3089aa2d3188bb1e8929f4fa9b929` | `approveTransfer`, `cancelTransferApproval` (RuleConditionalTransferLight) |
 | `COMPLIANCE_MANAGER_ROLE` | `0xe5c50d0927e06141e032cb9a67e1d7092dc85c0b0825191f7e1cede600028568` | `bindToken`, `unbindToken` (RuleConditionalTransferLight) |
+| `WHITELIST_ADD_ROLE` | `0x77c0b4c0975a0b0417d8ce295502737b95fee8923755fed0cce952907a1861ed` | `addWhitelistAddress`, `addWhitelistAddresses` (RuleERC2980) |
+| `WHITELIST_REMOVE_ROLE` | `0xf4d11a530c5b90f459c6ab1e335d3d77156b8ff3093308e4fca6d100ee87ade9` | `removeWhitelistAddress`, `removeWhitelistAddresses` (RuleERC2980) |
+| `FROZENLIST_ADD_ROLE` | `0xc52c49807a071974b9260f4b553ee09bd9fd85f687d8d4cc3232de7104ff7835` | `addFrozenlistAddress`, `addFrozenlistAddresses` (RuleERC2980) |
+| `FROZENLIST_REMOVE_ROLE` | `0x8be92b33a413d98540bfb0edc9129253db6d924f6c2e32c4b7809d237f7b2aaa` | `removeFrozenlistAddress`, `removeFrozenlistAddresses` (RuleERC2980) |
 
 ### Ownable2Step variants
 
@@ -652,6 +688,8 @@ Foundry consists of:
 #### Documentation
 
 https://book.getfoundry.sh/
+
+Project communication templates: see [email.md](email.md).
 
 #### Format
 
