@@ -5,7 +5,7 @@
 
 |  File Name  |  SHA-1 Hash  |
 |-------------|--------------|
-| ./modules/MetaTxModuleStandalone.sol | 9d622167d731e7457db63bcb5f9b070e30d62131 |
+| ./modules/MetaTxModuleStandalone.sol | c35aa26fde428024c80ea7421da7404d506606f4 |
 
 
 ### Contracts Description Table

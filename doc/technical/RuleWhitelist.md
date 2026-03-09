@@ -23,7 +23,7 @@ The default admin is the address put in argument(`admin`) inside the constructor
 ### Schema
 
 Here a schema of the Access Control.
-![alt text](../security/accessControl/access-control-RuleWhitelist.png)
+![Access control](../schema/plantuml/out/access-control.png)
 
 
 

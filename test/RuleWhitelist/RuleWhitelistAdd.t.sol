@@ -1,8 +1,10 @@
 // SPDX-License-Identifier: MPL-2.0
 pragma solidity ^0.8.20;
 
-import "forge-std/Test.sol";
-import "../HelperContract.sol";
+import {Test} from "forge-std/Test.sol";
+import {HelperContract} from "../HelperContract.sol";
+import {RuleWhitelist} from "src/rules/validation/deployment/RuleWhitelist.sol";
+import {IAddressList} from "src/rules/interfaces/IAddressList.sol";
 
 /**
  * @title Tests the functions to add addresses to the whitelist
@@ -161,5 +163,25 @@ contract RuleWhitelistAddTest is Test, HelperContract {
         assertEq(resBool, true);
         resUint256 = ruleWhitelist.listedAddressCount();
         assertEq(resUint256, 3);
+    }
+
+    function testFuzz_AddRemoveIdempotent(address addressA, address addressB) public {
+        address[] memory targets = new address[](3);
+        targets[0] = addressA;
+        targets[1] = addressB;
+        targets[2] = addressA;
+
+        vm.prank(WHITELIST_OPERATOR_ADDRESS);
+        ruleWhitelist.addAddresses(targets);
+
+        uint256 expectedCount = addressA == addressB ? 1 : 2;
+        resUint256 = ruleWhitelist.listedAddressCount();
+        assertEq(resUint256, expectedCount);
+
+        vm.prank(WHITELIST_OPERATOR_ADDRESS);
+        ruleWhitelist.removeAddresses(targets);
+
+        resUint256 = ruleWhitelist.listedAddressCount();
+        assertEq(resUint256, 0);
     }
 }

@@ -5,7 +5,7 @@
 
 |  File Name  |  SHA-1 Hash  |
 |-------------|--------------|
-| ./rules/validation/abstract/RuleWhitelistCommon.sol | 38cb316c3cba0fc3945d7b4ba1069ae4f3480bb0 |
+| ./rules/validation/abstract/RuleWhitelistCommon.sol | 89eb3e8385ca0e5b6c49266da7b26229915e3e3c |
 
 
 ### Contracts Description Table
@@ -15,9 +15,13 @@
 |:----------:|:-------------------:|:----------------:|:----------------:|:---------------:|
 |     └      |  **Function Name**  |  **Visibility**  |  **Mutability**  |  **Modifiers**  |
 ||||||
-| **RuleWhitelistCommon** | Implementation | RuleValidateTransfer, RuleWhitelistInvariantStorage |||
+| **RuleWhitelistCommon** | Implementation | RuleNFTAdapter, RuleWhitelistInvariantStorage |||
 | └ | canReturnTransferRestrictionCode | External ❗️ |   |NO❗️ |
 | └ | messageForTransferRestriction | External ❗️ |   |NO❗️ |
+| └ | transferred | Public ❗️ |   |NO❗️ |
+| └ | transferred | Public ❗️ |   |NO❗️ |
+| └ | _transferred | Internal 🔒 |   | |
+| └ | _transferredFrom | Internal 🔒 |   | |
 
 
 ### Legend

@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: MPL-2.0
 pragma solidity ^0.8.20;
 
-import "forge-std/Test.sol";
-import "../../HelperContract.sol";
-import "../../../lib/openzeppelin-contracts/contracts/access/AccessControl.sol";
+import {Test} from "forge-std/Test.sol";
+import {HelperContract} from "../../HelperContract.sol";
+import {AccessControl} from "../../../lib/openzeppelin-contracts/contracts/access/AccessControl.sol";
+import {RuleWhitelist} from "src/rules/validation/deployment/RuleWhitelist.sol";
 
 /**
  * @title Tests on the provided functions by OpenZeppelin

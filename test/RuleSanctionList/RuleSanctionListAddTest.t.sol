@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MPL-2.0
 pragma solidity ^0.8.20;
 
-import "forge-std/Test.sol";
-import "../HelperContract.sol";
-import "../utils/SanctionListOracle.sol";
-import {RuleSanctionsList, ISanctionsList} from "src/rules/validation/RuleSanctionsList.sol";
+import {Test} from "forge-std/Test.sol";
+import {HelperContract} from "../HelperContract.sol";
+import {SanctionListOracle} from "../utils/SanctionListOracle.sol";
+import {RuleSanctionsList, ISanctionsList} from "src/rules/validation/deployment/RuleSanctionsList.sol";
 /**
  * @title General functions of the ruleSanctionList
  */
@@ -37,10 +37,16 @@ contract RuleSanctionlistAddTest is Test, HelperContract {
         // Remove
         vm.prank(SANCTIONLIST_OPERATOR_ADDRESS);
         emit SetSanctionListOracle(ISanctionsList(ZERO_ADDRESS));
-        ruleSanctionList.setSanctionListOracle(ISanctionsList(ZERO_ADDRESS));
+        ruleSanctionList.clearSanctionListOracle();
         // Assert
         sanctionListOracleGet = ruleSanctionList.sanctionsList();
         vm.assertEq(address(sanctionListOracleGet), address(ZERO_ADDRESS));
+    }
+
+    function testCannotSetOracleToZero() public {
+        vm.prank(SANCTIONLIST_OPERATOR_ADDRESS);
+        vm.expectRevert(RuleSanctionsList_OracleAddressZeroNotAllowed.selector);
+        ruleSanctionList.setSanctionListOracle(ISanctionsList(ZERO_ADDRESS));
     }
 
     function testCannotAttackerSetOracle() public {

@@ -1,0 +1,17 @@
+// SPDX-License-Identifier: MPL-2.0
+pragma solidity ^0.8.20;
+
+import {IERC3643Version} from "CMTAT/interfaces/tokenization/IERC3643Partial.sol";
+
+/**
+ * @title VersionModule
+ * @notice Exposes the contract version as required by ERC-3643.
+ */
+abstract contract VersionModule is IERC3643Version {
+    string private constant VERSION = "0.2.0";
+
+    /// @inheritdoc IERC3643Version
+    function version() public view virtual override returns (string memory version_) {
+        return VERSION;
+    }
+}

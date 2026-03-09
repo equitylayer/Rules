@@ -1,8 +1,9 @@
 // SPDX-License-Identifier: MPL-2.0
 pragma solidity ^0.8.20;
 
-import "forge-std/Test.sol";
-import "../../HelperContract.sol";
+import {Test} from "forge-std/Test.sol";
+import {HelperContract} from "../../HelperContract.sol";
+import {RuleWhitelist} from "src/rules/validation/deployment/RuleWhitelist.sol";
 
 /**
  * @title Tests on the Access Control
