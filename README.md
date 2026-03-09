@@ -314,6 +314,7 @@ A full-featured variant, `RuleConditionalTransfer`, is maintained as a separate 
 Deployment scripts:
 - `script/DeployCMTATWithWhitelist.s.sol`
 - `script/DeployCMTATWithBlacklist.s.sol`
+- `script/DeployCMTATWithBlacklistAndSanctionsList.s.sol` — CMTAT + RuleEngine with blacklist and sanctions rules
 
 ### Choosing a Rule Variant
 
@@ -736,9 +737,13 @@ $ anvil
 
 #### Deploy
 
+> **Warning — private key security**
+> Passing `--private-key` directly on the command line is **not recommended** in production: the key is visible in your shell history and to any process that can read `/proc`. Prefer hardware wallets (`--ledger`, `--trezor`), encrypted keystores (`--account <keystore>`), or environment-variable signers. See [Foundry best practices](https://www.getfoundry.sh/best-practices) for details.
+
 ```shell
 $ forge script script/DeployCMTATWithWhitelist.s.sol --rpc-url <your_rpc_url> --private-key <your_private_key>
 $ forge script script/DeployCMTATWithBlacklist.s.sol --rpc-url <your_rpc_url> --private-key <your_private_key>
+$ forge script script/DeployCMTATWithBlacklistAndSanctionsList.s.sol --rpc-url <your_rpc_url> --private-key <your_private_key>
 ```
 
 #### Cast
