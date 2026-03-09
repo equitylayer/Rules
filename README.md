@@ -372,6 +372,7 @@ All rules are compatible with CMTAT, as noted earlier in this README.
 - `RuleConditionalTransferLight` approvals are keyed by `(from, to, value)` and are not nonce-based.
 - `RuleConditionalTransferLight` provides `approveAndTransferIfAllowed` to approve and immediately execute `transferFrom` when this rule has allowance; it assumes the token calls back `transferred()` during the transfer.
 - `RuleConditionalTransferLight` restricts `transferred()` to tokens bound via `bindToken` (ERC3643ComplianceModule).
+- `RuleConditionalTransferLight` exempts mints (`from == address(0)`) and burns (`to == address(0)`) from the approval requirement; `created` and `destroyed` delegate to `_transferred`, which returns early for those cases.
 - AccessControl variants use `onlyRole(ROLE)` in `_authorize*()` and internal helpers are marked `virtual`.
 - AccessControl variants use `AccessControlEnumerable`, so role members can be enumerated with `getRoleMember` / `getRoleMemberCount`. The default admin is treated as having all roles via `hasRole`, but may not appear in role member lists unless explicitly granted.
 - `forwarderIrrevocable` is accepted as-is (including `address(0)`), and is not validated against ERC-165 because some forwarders do not implement it.
@@ -510,7 +511,7 @@ For the moment, there is only one operation rule available: ConditionalTransferL
 
 #### Conditional transfer (light)
 
-This rule requires that transfers must be approved by an operator before being executed. It hashes `(from, to, value)` to track approvals and allows the same transfer to be approved multiple times. Each successful transfer consumes one approval, applying a write operation on the blockchain.
+This rule requires that transfers must be approved by an operator before being executed. It hashes `(from, to, value)` to track approvals and allows the same transfer to be approved multiple times. Each successful transfer consumes one approval, applying a write operation on the blockchain. Mints (`from == address(0)`) and burns (`to == address(0)`) are exempt and always pass without requiring approval.
 
 ![surya_inheritance_RuleConditionalTransferLight.sol](./doc/surya/surya_inheritance/surya_inheritance_RuleConditionalTransferLight.sol.png)
 
