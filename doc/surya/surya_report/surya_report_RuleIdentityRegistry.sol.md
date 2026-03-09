@@ -5,7 +5,7 @@
 
 |  File Name  |  SHA-1 Hash  |
 |-------------|--------------|
-| ./rules/validation/RuleIdentityRegistry.sol | c9686af9c46812c57cb5aa3adec6523ccede345d |
+| ./rules/validation/deployment/RuleIdentityRegistry.sol | de9802c7f1246d3f8055b7e8236f31d2bf599ca6 |
 
 
 ### Contracts Description Table
@@ -15,20 +15,10 @@
 |:----------:|:-------------------:|:----------------:|:----------------:|:---------------:|
 |     └      |  **Function Name**  |  **Visibility**  |  **Mutability**  |  **Modifiers**  |
 ||||||
-| **RuleIdentityRegistry** | Implementation | AccessControlModuleStandalone, RuleNFTAdapter, RuleIdentityRegistryInvariantStorage |||
-| └ | <Constructor> | Public ❗️ | 🛑  | AccessControlModuleStandalone |
-| └ | setIdentityRegistry | Public ❗️ | 🛑  | onlyIdentityRegistryManager |
-| └ | clearIdentityRegistry | Public ❗️ | 🛑  | onlyIdentityRegistryManager |
-| └ | _detectTransferRestriction | Internal 🔒 |   | |
-| └ | _detectTransferRestrictionFrom | Internal 🔒 |   | |
-| └ | transferred | Public ❗️ |   |NO❗️ |
-| └ | transferred | Public ❗️ |   |NO❗️ |
-| └ | _transferred | Internal 🔒 |   | |
-| └ | _transferredFrom | Internal 🔒 |   | |
-| └ | canReturnTransferRestrictionCode | External ❗️ |   |NO❗️ |
-| └ | messageForTransferRestriction | Public ❗️ |   |NO❗️ |
+| **RuleIdentityRegistry** | Implementation | AccessControlModuleStandalone, RuleIdentityRegistryBase |||
+| └ | <Constructor> | Public ❗️ | 🛑  | AccessControlModuleStandalone RuleIdentityRegistryBase |
 | └ | supportsInterface | Public ❗️ |   |NO❗️ |
-| └ | _authorizeIdentityRegistryManager | Internal 🔒 | 🛑  | |
+| └ | _authorizeIdentityRegistryManager | Internal 🔒 |   | onlyRole |
 
 
 ### Legend

@@ -5,7 +5,7 @@
 
 |  File Name  |  SHA-1 Hash  |
 |-------------|--------------|
-| ./rules/validation/RuleBlacklist.sol | f768a65fe6046d94db83c9f82920d9d710abb41c |
+| ./rules/validation/deployment/RuleBlacklist.sol | 8aed298894c40dd177b7b98e10b61d9e2ee7d9f7 |
 
 
 ### Contracts Description Table
@@ -18,8 +18,8 @@
 | **RuleBlacklist** | Implementation | RuleBlacklistBase, AccessControlModuleStandalone |||
 | └ | <Constructor> | Public ❗️ | 🛑  | RuleBlacklistBase AccessControlModuleStandalone |
 | └ | supportsInterface | Public ❗️ |   |NO❗️ |
-| └ | _authorizeAddressListAdd | Internal 🔒 |   | |
-| └ | _authorizeAddressListRemove | Internal 🔒 |   | |
+| └ | _authorizeAddressListAdd | Internal 🔒 |   | onlyRole |
+| └ | _authorizeAddressListRemove | Internal 🔒 |   | onlyRole |
 | └ | _msgSender | Internal 🔒 |   | |
 | └ | _msgData | Internal 🔒 |   | |
 | └ | _contextSuffixLength | Internal 🔒 |   | |

@@ -5,7 +5,7 @@
 
 |  File Name  |  SHA-1 Hash  |
 |-------------|--------------|
-| ./rules/validation/RuleMaxTotalSupply.sol | 3149538fa55c0bdff95d05ae8ac05474237b0fa9 |
+| ./rules/validation/deployment/RuleMaxTotalSupply.sol | 45cedeaa489c5bafb1047c7eae8fdb2c14e24e1c |
 
 
 ### Contracts Description Table
@@ -15,20 +15,10 @@
 |:----------:|:-------------------:|:----------------:|:----------------:|:---------------:|
 |     └      |  **Function Name**  |  **Visibility**  |  **Mutability**  |  **Modifiers**  |
 ||||||
-| **RuleMaxTotalSupply** | Implementation | AccessControlModuleStandalone, RuleNFTAdapter, RuleMaxTotalSupplyInvariantStorage |||
-| └ | <Constructor> | Public ❗️ | 🛑  | AccessControlModuleStandalone |
-| └ | setMaxTotalSupply | Public ❗️ | 🛑  | onlyMaxTotalSupplyManager |
-| └ | setTokenContract | Public ❗️ | 🛑  | onlyMaxTotalSupplyManager |
-| └ | _detectTransferRestriction | Internal 🔒 |   | |
-| └ | _detectTransferRestrictionFrom | Internal 🔒 |   | |
-| └ | transferred | Public ❗️ |   |NO❗️ |
-| └ | transferred | Public ❗️ |   |NO❗️ |
-| └ | _transferred | Internal 🔒 |   | |
-| └ | _transferredFrom | Internal 🔒 |   | |
-| └ | canReturnTransferRestrictionCode | External ❗️ |   |NO❗️ |
-| └ | messageForTransferRestriction | Public ❗️ |   |NO❗️ |
+| **RuleMaxTotalSupply** | Implementation | AccessControlModuleStandalone, RuleMaxTotalSupplyBase |||
+| └ | <Constructor> | Public ❗️ | 🛑  | AccessControlModuleStandalone RuleMaxTotalSupplyBase |
 | └ | supportsInterface | Public ❗️ |   |NO❗️ |
-| └ | _authorizeMaxTotalSupplyManager | Internal 🔒 | 🛑  | |
+| └ | _authorizeMaxTotalSupplyManager | Internal 🔒 |   | onlyRole |
 
 
 ### Legend

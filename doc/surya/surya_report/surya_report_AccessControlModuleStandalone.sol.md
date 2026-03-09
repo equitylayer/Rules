@@ -5,7 +5,7 @@
 
 |  File Name  |  SHA-1 Hash  |
 |-------------|--------------|
-| ./modules/AccessControlModuleStandalone.sol | ba34a22d4e829e6b4a81aaa22c96a04cb6941a40 |
+| ./modules/AccessControlModuleStandalone.sol | 2cc35fc3e9e22b70ad12a09380ffc25b9201f893 |
 
 
 ### Contracts Description Table
@@ -15,7 +15,7 @@
 |:----------:|:-------------------:|:----------------:|:----------------:|:---------------:|
 |     └      |  **Function Name**  |  **Visibility**  |  **Mutability**  |  **Modifiers**  |
 ||||||
-| **AccessControlModuleStandalone** | Implementation | AccessControl |||
+| **AccessControlModuleStandalone** | Implementation | AccessControlEnumerable |||
 | └ | <Constructor> | Public ❗️ | 🛑  |NO❗️ |
 | └ | hasRole | Public ❗️ |   |NO❗️ |
 

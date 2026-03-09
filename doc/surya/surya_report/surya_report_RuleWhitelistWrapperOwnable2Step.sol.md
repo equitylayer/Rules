@@ -5,7 +5,7 @@
 
 |  File Name  |  SHA-1 Hash  |
 |-------------|--------------|
-| ./rules/validation/RuleWhitelistWrapperOwnable2Step.sol | 4d095c0cfdd593a0fc8d4401643ebc4ee9794d41 |
+| ./rules/validation/deployment/RuleWhitelistWrapperOwnable2Step.sol | 4a0c970391c25af7e865ff070db90e93590e1862 |
 
 
 ### Contracts Description Table
@@ -17,8 +17,8 @@
 ||||||
 | **RuleWhitelistWrapperOwnable2Step** | Implementation | RuleWhitelistWrapperBase, Ownable2Step |||
 | └ | <Constructor> | Public ❗️ | 🛑  | RuleWhitelistWrapperBase Ownable |
-| └ | _authorizeCheckSpenderManager | Internal 🔒 |   | |
-| └ | _onlyRulesManager | Internal 🔒 |   | |
+| └ | _authorizeCheckSpenderManager | Internal 🔒 |   | onlyOwner |
+| └ | _onlyRulesManager | Internal 🔒 |   | onlyOwner |
 | └ | _msgSender | Internal 🔒 |   | |
 | └ | _msgData | Internal 🔒 |   | |
 | └ | _contextSuffixLength | Internal 🔒 |   | |

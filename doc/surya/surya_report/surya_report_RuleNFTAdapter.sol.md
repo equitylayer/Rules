@@ -5,7 +5,7 @@
 
 |  File Name  |  SHA-1 Hash  |
 |-------------|--------------|
-| ./rules/validation/abstract/RuleNFTAdapter.sol | c89ddddea9053e03048dc200469c3e2ecbcca50a |
+| ./rules/validation/abstract/core/RuleNFTAdapter.sol | f30fee37868a3a64343d7ccb183c58df9fa485ba |
 
 
 ### Contracts Description Table
@@ -15,7 +15,7 @@
 |:----------:|:-------------------:|:----------------:|:----------------:|:---------------:|
 |     └      |  **Function Name**  |  **Visibility**  |  **Mutability**  |  **Modifiers**  |
 ||||||
-| **RuleNFTAdapter** | Implementation | RuleValidateTransfer, IERC7943NonFungibleComplianceExtend, ITransferContext |||
+| **RuleNFTAdapter** | Implementation | RuleTransferValidation, IERC7943NonFungibleComplianceExtend, ITransferContext |||
 | └ | _transferred | Internal 🔒 | 🛑  | |
 | └ | _transferredFrom | Internal 🔒 | 🛑  | |
 | └ | detectTransferRestriction | Public ❗️ |   |NO❗️ |
@@ -24,6 +24,7 @@
 | └ | canTransferFrom | Public ❗️ |   |NO❗️ |
 | └ | transferred | Public ❗️ | 🛑  |NO❗️ |
 | └ | transferred | Public ❗️ | 🛑  |NO❗️ |
+| └ | transferred | External ❗️ | 🛑  |NO❗️ |
 | └ | transferred | External ❗️ | 🛑  |NO❗️ |
 
 

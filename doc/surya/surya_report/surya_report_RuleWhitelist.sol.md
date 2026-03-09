@@ -5,7 +5,7 @@
 
 |  File Name  |  SHA-1 Hash  |
 |-------------|--------------|
-| ./rules/validation/RuleWhitelist.sol | 6ffe0e4ea3ee426d6af1ac82c2bc470942be2023 |
+| ./rules/validation/deployment/RuleWhitelist.sol | 756120de4d3681f98814733f4cb4c49d2671571a |
 
 
 ### Contracts Description Table
@@ -18,9 +18,9 @@
 | **RuleWhitelist** | Implementation | RuleWhitelistBase, AccessControlModuleStandalone |||
 | └ | <Constructor> | Public ❗️ | 🛑  | RuleWhitelistBase AccessControlModuleStandalone |
 | └ | supportsInterface | Public ❗️ |   |NO❗️ |
-| └ | _authorizeCheckSpenderManager | Internal 🔒 |   | |
-| └ | _authorizeAddressListAdd | Internal 🔒 |   | |
-| └ | _authorizeAddressListRemove | Internal 🔒 |   | |
+| └ | _authorizeCheckSpenderManager | Internal 🔒 |   | onlyRole |
+| └ | _authorizeAddressListAdd | Internal 🔒 |   | onlyRole |
+| └ | _authorizeAddressListRemove | Internal 🔒 |   | onlyRole |
 | └ | _msgSender | Internal 🔒 |   | |
 | └ | _msgData | Internal 🔒 |   | |
 | └ | _contextSuffixLength | Internal 🔒 |   | |
