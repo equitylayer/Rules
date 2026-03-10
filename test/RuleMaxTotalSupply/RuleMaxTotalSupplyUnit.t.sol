@@ -87,4 +87,24 @@ contract RuleMaxTotalSupplyUnit is Test, HelperContract {
         );
         rule.transferred(ADDRESS3, ZERO_ADDRESS, ADDRESS1, 1);
     }
+
+    function testTransferred_DoesNotRevertWhenValid() public {
+        token.setTotalSupply(90);
+        rule.transferred(ZERO_ADDRESS, ADDRESS1, 10);
+    }
+
+    function testTransferredFrom_DoesNotRevertWhenValid() public {
+        token.setTotalSupply(90);
+        rule.transferred(ADDRESS3, ZERO_ADDRESS, ADDRESS1, 10);
+    }
+
+    function testCanReturnTransferRestrictionCode() public view {
+        assertTrue(rule.canReturnTransferRestrictionCode(CODE_MAX_TOTAL_SUPPLY_EXCEEDED));
+        assertFalse(rule.canReturnTransferRestrictionCode(CODE_NONEXISTENT));
+    }
+
+    function testMessageForTransferRestriction() public view {
+        assertEq(rule.messageForTransferRestriction(CODE_MAX_TOTAL_SUPPLY_EXCEEDED), TEXT_MAX_TOTAL_SUPPLY_EXCEEDED);
+        assertEq(rule.messageForTransferRestriction(CODE_NONEXISTENT), TEXT_CODE_NOT_FOUND);
+    }
 }

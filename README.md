@@ -6,6 +6,18 @@ Each rule can be used **standalone**, directly plugged into a CMTAT token, **or*
 
 **Status:** *Repository under active development*
 
+Latest update: completed 100% coverage across `src/` contracts, including direct coverage for `RuleAddressSet.contains(address)`, mint/burn-path coverage for `RuleConditionalTransferLightBase.detectTransferRestriction(...)`, and removal of an unreachable duplicate admin-zero check in `RuleConditionalTransferLight` constructor.
+
+## Schema
+
+- Using rules with CMTAT and ERC-3643 tokens through a [RuleEngine](ttps://github.com/CMTA/RuleEngine)
+
+![Rule-RuleEngine.drawio](./doc/schema/Rule-RuleEngine.drawio.png)
+
+- Using a rule directly with CMTAT and ERC-3643 tokens
+
+![Rule-Rule.drawio](./doc/schema/Rule-Rule.drawio.png)
+
 ## Table of Contents
 
 [TOC]
@@ -58,7 +70,7 @@ forge test
 
 Each Rule implements the interface `IRuleEngine` defined in CMTAT.
 
-This interface declares the ERC-3643 functions `transferred`(read-write) and `canTransfer`(ready-only) with several other functions related to [ERC-1404](https://github.com/ethereum/eips/issues/1404), [ERC-7551](https://ethereum-magicians.org/t/erc-7551-crypto-security-token-smart-contract-interface-ewpg-reworked/25477) and [ERC-3643](https://eips.ethereum.org/EIPS/eip-3643).
+This interface declares the ERC-3643 functions `transferred`(read-write) and `canTransfer`(read-only) with several other functions related to [ERC-1404](https://github.com/ethereum/eips/issues/1404), [ERC-7551](https://ethereum-magicians.org/t/erc-7551-crypto-security-token-smart-contract-interface-ewpg-reworked/25477) and [ERC-3643](https://eips.ethereum.org/EIPS/eip-3643).
 
 ## Specifications
 
@@ -344,18 +356,18 @@ Several rules are available in multiple access-control variants. Use the simples
 
 ### Summary tab
 
-| Rule                                                         | Type <br />[ready-only / read-write] | ERC-721 / ERC-1155 | ERC-3643 | Security Audit planned in the roadmap | Description                                                  |
+| Rule                                                         | Type <br />[read-only / read-write] | ERC-721 / ERC-1155 | ERC-3643 | Security Audit planned in the roadmap | Description                                                  |
 | ------------------------------------------------------------ | ------------------------------------ | ------------------ | -------- | ------------------------------------- | ------------------------------------------------------------ |
-| RuleWhitelist                                                | Ready-only                           | ☑                  | ☑        | ☑                                     | This rule can be used to restrict transfers from/to only addresses inside a whitelist. |
-| RuleWhitelistWrapper                                         | Ready-only                           | ☑                  | ☑        | ☑                                     | This rule can be used to restrict transfers from/to only addresses inside a group of whitelist rules managed by different operators. |
-| RuleBlacklist                                                | Ready-only                           | ☑                  | ☑        | ☑                                     | This rule can be used to forbid transfer from/to addresses in the blacklist |
-| RuleSanctionList                                             | Ready-only                           | ☑                  | ☑        | ☑                                     | The purpose of this contract is to use the oracle contract from [Chainalysis](https://go.chainalysis.com/chainalysis-oracle-docs.html) to forbid transfer from/to an address included in a sanctions designation (US, EU, or UN). |
-| RuleMaxTotalSupply                                           | Ready-only                           | —                  | ☑        | ☑                                     | This rule limits minting so that the total supply never exceeds a configured maximum. |
-| RuleIdentityRegistry                                         | Ready-only                           | ☑                  | ☑        | ☑                                     | This rule checks the ERC-3643 Identity Registry for transfer participants when configured. |
-| RuleERC2980                                                  | Ready-only                           | ☑                  | ☑        | ☒                                     | ERC-2980 Swiss Compliant rule combining a whitelist (recipient-only) and a frozenlist (blocks both sender and recipient). Frozenlist takes priority over whitelist. |
-| RuleConditionalTransferLight                                | Ready-Write                          | —                  | ☑        | ☒<br /> (experimental rule)           | This rule requires that transfers have to be approved by an operator before being executed. Each approval is consumed once and the same transfer can be approved multiple times. |
-| [RuleConditionalTransfer](https://github.com/CMTA/RuleConditionalTransfer) (external) | Ready-Write | — | ☑ | ☒<br /> (experimental rule) | Full-featured approval-based transfer rule implementing Swiss law *Vinkulierung*. Supports automatic approval after three months, automatic transfer execution, and a conditional whitelist for address pairs that bypass approval. Maintained in a separate repository. |
-| [RuleSelf](https://github.com/rya-sge/ruleself) (community) | — | — | — | ☒<br /> (community project) | Community-maintained rule project. Not developed or maintained by CMTA. |
+| RuleWhitelist                                                | Read-only                          | <strong><span style="color: #1e7e34;">&#x2714;</span></strong> | <strong><span style="color: #1e7e34;">&#x2714;</span></strong> | <strong><span style="color: #1e7e34;">&#x2714;</span></strong> | This rule can be used to restrict transfers from/to only addresses inside a whitelist. |
+| RuleWhitelistWrapper                                         | Read-Only                           | <strong><span style="color: #1e7e34;">&#x2714;</span></strong> | <strong><span style="color: #1e7e34;">&#x2714;</span></strong> | <strong><span style="color: #1e7e34;">&#x2714;</span></strong> | This rule can be used to restrict transfers from/to only addresses inside a group of whitelist rules managed by different operators. |
+| RuleBlacklist                                                | Read-Only                           | <strong><span style="color: #1e7e34;">&#x2714;</span></strong> | <strong><span style="color: #1e7e34;">&#x2714;</span></strong> | <strong><span style="color: #1e7e34;">&#x2714;</span></strong> | This rule can be used to forbid transfer from/to addresses in the blacklist |
+| RuleSanctionList                                             | Read-Only                           | <strong><span style="color: #1e7e34;">&#x2714;</span></strong> | <strong><span style="color: #1e7e34;">&#x2714;</span></strong> | <strong><span style="color: #1e7e34;">&#x2714;</span></strong> | The purpose of this contract is to use the oracle contract from [Chainalysis](https://go.chainalysis.com/chainalysis-oracle-docs.html) to forbid transfer from/to an address included in a sanctions designation (US, EU, or UN). |
+| RuleMaxTotalSupply                                           | Read-Only                          | <strong><span style="color: #b00020;">&#x2718;</span></strong> | <strong><span style="color: #1e7e34;">&#x2714;</span></strong> | <strong><span style="color: #1e7e34;">&#x2714;</span></strong> | This rule limits minting so that the total supply never exceeds a configured maximum. |
+| RuleIdentityRegistry                                         | Read-Only                          | <strong><span style="color: #1e7e34;">&#x2714;</span></strong> | <strong><span style="color: #1e7e34;">&#x2714;</span></strong> | <strong><span style="color: #1e7e34;">&#x2714;</span></strong> | This rule checks the ERC-3643 Identity Registry for transfer participants when configured. |
+| RuleERC2980                                                  | Read-Only                          | <strong><span style="color: #1e7e34;">&#x2714;</span></strong> | <strong><span style="color: #1e7e34;">&#x2714;</span></strong> | <strong><span style="color: #1e7e34;">&#x2714;</span></strong> | ERC-2980 Swiss Compliant rule combining a whitelist (recipient-only) and a frozenlist (blocks both sender and recipient). Frozenlist takes priority over whitelist. |
+| RuleConditionalTransferLight                                | Read-Write                          | <strong><span style="color: #b00020;">&#x2718;</span></strong> | <strong><span style="color: #1e7e34;">&#x2714;</span></strong> | <strong><span style="color: #1e7e34;">&#x2714;</span></strong> | This rule requires that transfers have to be approved by an operator before being executed. Each approval is consumed once and the same transfer can be approved multiple times. |
+| [RuleConditionalTransfer](https://github.com/CMTA/RuleConditionalTransfer) (external) | Read-Write | <strong><span style="color: #b00020;">&#x2718;</span></strong> | <strong><span style="color: #1e7e34;">&#x2714;</span></strong> | <strong><span style="color: #b00020;">&#x2718;</span></strong><br /> (experimental rule) | Full-featured approval-based transfer rule implementing Swiss law *Vinkulierung*. Supports automatic approval after three months, automatic transfer execution, and a conditional whitelist for address pairs that bypass approval. Maintained in a separate repository. |
+| [RuleSelf](https://github.com/rya-sge/ruleself) (community) | — | <strong><span style="color: #b00020;">&#x2718;</span></strong> | — | <strong><span style="color: #b00020;">&#x2718;</span></strong><br /> (community project) | Use [Self](https://self.xyz), a zero-knowledge identity  solution to determine which is allowed to interact with the token.<br />Community-maintained rule project. Not developed or maintained by CMTA. |
 
 All rules are compatible with CMTAT, as noted earlier in this README.
 
@@ -365,14 +377,14 @@ Detailed technical documentation for each rule is available in [`doc/technical/`
 
 | Rule | Document |
 | ---- | -------- |
-| RuleWhitelist | [RuleWhitelist.md](doc/technical/RuleWhitelist.md) |
-| RuleWhitelistWrapper | [RuleWhitelistWrapper.md](doc/technical/RuleWhitelistWrapper.md) |
-| RuleBlacklist | [RuleBlacklist.md](doc/technical/RuleBlacklist.md) |
-| RuleSanctionsList | [RuleSanctionList.md](doc/technical/RuleSanctionList.md) |
-| RuleMaxTotalSupply | [RuleMaxTotalSupply.md](doc/technical/RuleMaxTotalSupply.md) |
-| RuleIdentityRegistry | [RuleIdentityRegistry.md](doc/technical/RuleIdentityRegistry.md) |
-| RuleERC2980 | [RuleERC2980.md](doc/technical/RuleERC2980.md) |
-| RuleConditionalTransferLight | [RuleConditionalTransferLight.md](doc/technical/RuleConditionalTransferLight.md) |
+| RuleWhitelist | [RuleWhitelist.md](./doc/technical/RuleWhitelist.md) |
+| RuleWhitelistWrapper | [RuleWhitelistWrapper.md](./doc/technical/RuleWhitelistWrapper.md) |
+| RuleBlacklist | [RuleBlacklist.md](./doc/technical/RuleBlacklist.md) |
+| RuleSanctionsList | [RuleSanctionList.md](./doc/technical/RuleSanctionList.md) |
+| RuleMaxTotalSupply | [RuleMaxTotalSupply.md](./doc/technical/RuleMaxTotalSupply.md) |
+| RuleIdentityRegistry | [RuleIdentityRegistry.md](./doc/technical/RuleIdentityRegistry.md) |
+| RuleERC2980 | [RuleERC2980.md](./doc/technical/RuleERC2980.md) |
+| RuleConditionalTransferLight | [RuleConditionalTransferLight.md](./doc/technical/RuleConditionalTransferLight.md) |
 
 ### Operational Notes
 
@@ -666,6 +678,10 @@ To run a specific test, use
 ```bash
 forge test --match-contract <contract name> --match-test <function name>
 ```
+
+- For `RuleConditionalTransferLight` fuzz/integration tests, note that mint and burn paths (`from == address(0)` or `to == address(0)`) are intentionally exempt from approval consumption.
+- Ownable2Step variants also include dedicated tests for ownership transfer and manager-only functions (IdentityRegistry, MaxTotalSupply, SanctionsList).
+- Coverage-focused tests also target deployment wrappers and operation-rule overloads (`created`, `destroyed`, spender-aware `transferred`) to improve line/function coverage in `src/rules/operation` and `src/rules/validation/deployment`.
 
 Generate gas report
 

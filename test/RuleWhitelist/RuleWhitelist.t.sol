@@ -64,6 +64,27 @@ contract RuleWhitelistTest is Test, HelperContract {
         assertEq(resBool, true);
     }
 
+    function testContainsReflectsListingStatus() public {
+        // Act - Assert
+        assertFalse(ruleWhitelist.contains(ADDRESS1));
+
+        // Arrange
+        vm.prank(WHITELIST_OPERATOR_ADDRESS);
+        ruleWhitelist.addAddress(ADDRESS1);
+
+        // Act - Assert
+        assertTrue(ruleWhitelist.contains(ADDRESS1));
+    }
+
+    function testIsVerifiedReflectsListingStatus() public {
+        assertFalse(ruleWhitelist.isVerified(ADDRESS1));
+
+        vm.prank(WHITELIST_OPERATOR_ADDRESS);
+        ruleWhitelist.addAddress(ADDRESS1);
+
+        assertTrue(ruleWhitelist.isVerified(ADDRESS1));
+    }
+
     function testAddressesIsIndicatedAsWhitelisted() public {
         // Arrange
         _addAddresses();

@@ -10,6 +10,16 @@ import {RuleWhitelistWrapper} from "src/rules/validation/deployment/RuleWhitelis
  * @title Integration test with the CMTAT
  */
 
+contract RuleWhitelistWrapperHarnessInternal is RuleWhitelistWrapper {
+    constructor(address admin, address forwarderIrrevocable, bool checkSpender_)
+        RuleWhitelistWrapper(admin, forwarderIrrevocable, checkSpender_)
+    {}
+
+    function exposedTransferredSpenderInternal(address spender, address from, address to, uint256 value) external view {
+        _transferred(spender, from, to, value);
+    }
+}
+
 contract CMTATIntegrationWhitelistWrapper is Test, HelperContract {
     uint256 constant ADDRESS1_BALANCE_INIT = 31;
     uint256 constant ADDRESS2_BALANCE_INIT = 32;
@@ -221,6 +231,38 @@ contract CMTATIntegrationWhitelistWrapper is Test, HelperContract {
         ruleWhitelistWrapper.transferred(ADDRESS3, ADDRESS1, ADDRESS2, 0, 20);
     }
 
+    function testDetectTransferRestrictionWithSpenderFromNotWhitelisted() public {
+        vm.prank(WHITELIST_OPERATOR_ADDRESS);
+        ruleWhitelist.addAddress(ADDRESS2);
+        vm.prank(WHITELIST_OPERATOR_ADDRESS);
+        ruleWhitelist.addAddress(ADDRESS3);
+
+        resUint8 = ruleWhitelistWrapper.detectTransferRestrictionFrom(ADDRESS3, ADDRESS1, ADDRESS2, 20);
+        assertEq(resUint8, CODE_ADDRESS_FROM_NOT_WHITELISTED);
+    }
+
+    function testDetectTransferRestrictionWithSpenderToNotWhitelisted() public {
+        vm.prank(WHITELIST_OPERATOR_ADDRESS);
+        ruleWhitelist.addAddress(ADDRESS1);
+        vm.prank(WHITELIST_OPERATOR_ADDRESS);
+        ruleWhitelist.addAddress(ADDRESS3);
+
+        resUint8 = ruleWhitelistWrapper.detectTransferRestrictionFrom(ADDRESS3, ADDRESS1, ADDRESS2, 20);
+        assertEq(resUint8, CODE_ADDRESS_TO_NOT_WHITELISTED);
+    }
+
+    function testDetectTransferRestrictionFromIgnoresSpenderWhenCheckDisabled() public {
+        vm.prank(WHITELIST_OPERATOR_ADDRESS);
+        ruleWhitelistWrapper.setCheckSpender(false);
+        vm.prank(WHITELIST_OPERATOR_ADDRESS);
+        ruleWhitelist.addAddress(ADDRESS1);
+        vm.prank(WHITELIST_OPERATOR_ADDRESS);
+        ruleWhitelist.addAddress(ADDRESS2);
+
+        resUint8 = ruleWhitelistWrapper.detectTransferRestrictionFrom(ADDRESS3, ADDRESS1, ADDRESS2, 20);
+        assertEq(resUint8, NO_ERROR);
+    }
+
     function testDetectTransferRestrictionOk() public {
         // Arrange
         vm.prank(WHITELIST_OPERATOR_ADDRESS);
@@ -309,5 +351,22 @@ contract CMTATIntegrationWhitelistWrapper is Test, HelperContract {
         RuleWhitelistWrapper emptyWrapper =
             new RuleWhitelistWrapper(WHITELIST_OPERATOR_ADDRESS, ZERO_ADDRESS, true);
         assertFalse(emptyWrapper.isVerified(ADDRESS1));
+    }
+
+    function testInternalTransferredSpenderOverload() public {
+        RuleWhitelistWrapperHarnessInternal wrapperHarness =
+            new RuleWhitelistWrapperHarnessInternal(WHITELIST_OPERATOR_ADDRESS, ZERO_ADDRESS, true);
+        RuleWhitelist child = new RuleWhitelist(WHITELIST_OPERATOR_ADDRESS, ZERO_ADDRESS, true);
+
+        vm.prank(WHITELIST_OPERATOR_ADDRESS);
+        wrapperHarness.addRule(child);
+
+        vm.startPrank(WHITELIST_OPERATOR_ADDRESS);
+        child.addAddress(ADDRESS1);
+        child.addAddress(ADDRESS2);
+        child.addAddress(ADDRESS3);
+        vm.stopPrank();
+
+        wrapperHarness.exposedTransferredSpenderInternal(ADDRESS3, ADDRESS1, ADDRESS2, 20);
     }
 }

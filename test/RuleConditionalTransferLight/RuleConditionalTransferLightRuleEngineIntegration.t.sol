@@ -90,6 +90,7 @@ contract RuleConditionalTransferLightRuleEngineIntegration is Test, HelperContra
     function testFuzz_ApproveAndConsume(address from, address to, uint96 value, uint8 approvals, uint8 consumes) public {
         approvals = uint8(bound(approvals, 0, 20));
         consumes = uint8(bound(consumes, 0, approvals));
+        bool isMintOrBurnPath = from == address(0) || to == address(0);
 
         for (uint256 i = 0; i < approvals; ++i) {
             vm.prank(CONDITIONAL_TRANSFER_OPERATOR_ADDRESS);
@@ -102,6 +103,7 @@ contract RuleConditionalTransferLightRuleEngineIntegration is Test, HelperContra
         }
 
         resUint256 = ruleConditionalTransferLight.approvedCount(from, to, value);
-        assertEq(resUint256, approvals - consumes);
+        uint256 expectedCount = isMintOrBurnPath ? approvals : approvals - consumes;
+        assertEq(resUint256, expectedCount);
     }
 }
