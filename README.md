@@ -6,7 +6,7 @@ Each rule can be used **standalone**, directly plugged into a CMTAT token, **or*
 
 **Status:** *Repository under active development*
 
-Latest update: transfer-context token mocks now use OpenZeppelin ERC-20/ERC-721; test utilities and harness contracts were moved from `test/` to `src/mocks` and `src/mocks/harness`; context spender handling remains `sender == from` => direct transfer.
+Latest update: transfer-context token mocks now use OpenZeppelin ERC-20/ERC-721; test utilities and harness contracts were moved from `test/` to `src/mocks` and `src/mocks/harness`; context spender handling remains `sender == from` => direct transfer; audit L-8 fixed by removing an unused conditional-transfer custom error.
 
 ## Schema
 
@@ -1645,11 +1645,12 @@ Static analysis was performed with [Slither](https://github.com/crytic/slither).
 |---|---|---|---|
 | arbitrary-send-erc20 | High | 1 | False positive — `from` is guarded by `onlyTransferApprover`, ERC-20 allowance check, and a pre-recorded approval |
 | unused-return | Medium | 6 | False positive — existence pre-checked at public layer before calling internal helper |
-| calls-loop | Low | 15 | Acknowledged — by design; wrapper must query each child rule; child rules are read-only |
-| dead-code | Informational | 14 | False positive — `_msgData()` overrides required for ERC-2771 diamond resolution; `_transferred` override is reachable |
+| calls-loop | Low | 16 | Acknowledged — by design; wrapper must query each child rule; child rules are read-only |
+| assembly | Informational | 1 | Acknowledged — intentional gas optimisation in `_transferHash`; minimal and well-scoped |
+| missing-inheritance | Informational | 1 | Acknowledged — `TotalSupplyMock` is a test-only mock; strict interface declaration unnecessary |
 | naming-convention | Informational | 2 | Acknowledged — parameter names match ERC-2980 spec |
 | unindexed-event-address | Informational | 2 | Out of scope (both in `lib/RuleEngine`); `IAddressList` events previously fixed |
-| unused-state | Informational | 48 | False positive — `RuleNFTAdapter` constants used in base dispatch logic; Slither per-contract analysis limitation |
+| unused-state | Informational | 60 | False positive — `RuleNFTAdapter` constants used in base dispatch logic; Slither per-contract analysis limitation |
 
 ## Intellectual property
 

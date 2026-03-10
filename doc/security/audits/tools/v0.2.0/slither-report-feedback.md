@@ -2,7 +2,7 @@
 
 Report version: `v0.2.0`
 Slither report: [slither-report.md](./slither-report.md)
-Feedback date: 2026-03-09
+Feedback date: 2026-03-10
 
 Verdicts:
 
@@ -53,11 +53,11 @@ The same pattern is used in `RuleERC2980Base` for whitelist and frozenlist singl
 
 ---
 
-## calls-loop (Low) — ID-7 to ID-21
+## calls-loop (Low) — ID-7 to ID-22
 
 **Verdict: Acknowledged — by design**
 
-All 15 instances trace to the same root location: `RuleWhitelistWrapperBase._detectTransferRestrictionForTargets` iterates over child rules and calls `IAddressList(rule(i)).areAddressesListed(...)` for each.
+All 16 instances trace to the same root location: `RuleWhitelistWrapperBase._detectTransferRestrictionForTargets` iterates over child rules and calls `IAddressList(rule(i)).areAddressesListed(...)` for each.
 
 This is the fundamental purpose of the wrapper: aggregate multiple whitelist rules with OR logic. There is no way to avoid external calls per child rule. Mitigations already in place:
 
@@ -67,19 +67,27 @@ This is the fundamental purpose of the wrapper: aggregate multiple whitelist rul
 
 ---
 
-## dead-code (Informational) — ID-22 to ID-35
+## assembly (Informational) — ID-23
 
-**Verdict: False positive**
+**Verdict: Acknowledged — by design**
 
-**ID-22 to ID-30, ID-32 to ID-35 — `_msgData()` overrides:**
-These overrides are required to resolve Solidity's C3 linearisation diamond problem. Every contract that inherits both `Context` (transitively via `AccessControl` or `Ownable`) and `ERC2771Context` must override `_msgData()`, `_msgSender()`, and `_contextSuffixLength()` to disambiguate which parent's implementation to use. Without these overrides the contracts would not compile. Slither incorrectly classifies them as dead code because it does not detect the implicit Solidity MRO requirement.
+Flagged location: `RuleConditionalTransferLightBase._transferHash(address,address,uint256)` uses inline assembly (lines 180–186).
 
-**ID-31 — `RuleWhitelistWrapperBase._transferred(address,address,address,uint256)`:**
-This internal function overrides `RulesManagementModule._transferred(address,address,address,uint256)` and delegates to `RuleWhitelistShared._transferredFrom`. It is called whenever a `transferFrom`-style transfer is validated through the wrapper. Slither does not trace the call chain through the abstract base correctly.
+The assembly block computes a compact hash of the transfer parameters (`from`, `to`, `value`) using `mstore` and `keccak256`. This is an intentional micro-optimisation: it produces an `abi.encodePacked`-equivalent layout without allocating a new memory buffer, saving gas on every approval lookup. The assembly is minimal, well-scoped, and does not involve any control-flow or external calls. No safety concern.
 
 ---
 
-## naming-convention (Informational) — ID-36, ID-37
+## missing-inheritance (Informational) — ID-24
+
+**Verdict: Acknowledged — mock contract**
+
+Flagged location: `TotalSupplyMock` should inherit from `ITotalSupply`.
+
+`TotalSupplyMock` is a test-only mock located in `src/mocks/`. It implements the `totalSupply()` function to simulate a token for testing `RuleMaxTotalSupply` without deploying a full ERC-20. Declaring `ITotalSupply` inheritance would add no behaviour and is unnecessary for testing purposes. No change planned.
+
+---
+
+## naming-convention (Informational) — ID-25, ID-26
 
 **Verdict: Acknowledged**
 
@@ -87,7 +95,7 @@ Parameters `_operator` in `RuleERC2980Base.frozenlist(address)` and `RuleERC2980
 
 ---
 
-## unindexed-event-address (Informational) — ID-38, ID-39
+## unindexed-event-address (Informational) — ID-27, ID-28
 
 **Verdict: Out of scope**
 
@@ -97,11 +105,11 @@ Note: the previously reported `IAddressList.AddAddress` and `IAddressList.Remove
 
 ---
 
-## unused-state (Informational) — ID-40 to ID-87
+## unused-state (Informational) — ID-29 to ID-88
 
 **Verdict: False positive**
 
-All 48 instances report `RuleNFTAdapter` selector constants (`TRANSFERRED_SELECTOR_ERC3643`, `TRANSFERRED_SELECTOR_RULE_ENGINE`, `TRANSFERRED_SELECTOR_ERC7943`, `TRANSFERRED_SELECTOR_ERC7943_FROM`) as unused in specific concrete contracts.
+All 60 instances report `RuleNFTAdapter` selector constants (`TRANSFERRED_SELECTOR_ERC3643`, `TRANSFERRED_SELECTOR_RULE_ENGINE`, `TRANSFERRED_SELECTOR_ERC7943`, `TRANSFERRED_SELECTOR_ERC7943_FROM`) as unused in specific concrete contracts.
 
 These constants are defined in `RuleNFTAdapter` and used by its internal dispatch logic. Slither performs a per-concrete-contract analysis and flags constants not directly referenced in a given contract's own bytecode, even though they are active in the inherited base. This is a known limitation of Slither's inheritance analysis for `constant` values defined in base contracts.
 
@@ -113,8 +121,9 @@ These constants are defined in `RuleNFTAdapter` and used by its internal dispatc
 |---|---|---|---|
 | arbitrary-send-erc20 | High | ID-0 | False positive |
 | unused-return | Medium | ID-1 to ID-6 | False positive |
-| calls-loop | Low | ID-7 to ID-21 | Acknowledged — by design |
-| dead-code | Informational | ID-22 to ID-35 | False positive |
-| naming-convention | Informational | ID-36 to ID-37 | Acknowledged |
-| unindexed-event-address | Informational | ID-38 to ID-39 | Out of scope (lib/) |
-| unused-state | Informational | ID-40 to ID-87 | False positive |
+| calls-loop | Low | ID-7 to ID-22 | Acknowledged — by design |
+| assembly | Informational | ID-23 | Acknowledged — by design |
+| missing-inheritance | Informational | ID-24 | Acknowledged — mock contract |
+| naming-convention | Informational | ID-25 to ID-26 | Acknowledged |
+| unindexed-event-address | Informational | ID-27 to ID-28 | Out of scope (lib/) |
+| unused-state | Informational | ID-29 to ID-88 | False positive |

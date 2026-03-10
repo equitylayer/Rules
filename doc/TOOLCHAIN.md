@@ -2,8 +2,6 @@
 
 [TOC]
 
-
-
 ## Node.JS  package
 
 This part describe the list of libraries present in the file `package.json`.
@@ -16,22 +14,11 @@ This section concerns the packages installed in the section `devDependencies` of
 
 [Hardhat](https://hardhat.org/) plugin for integration with Foundry
 
-**[Ethlint](https://github.com/duaraghav8/Ethlint)**
-Solidity static analyzer.
-
-**[prettier-plugin-solidity](https://github.com/prettier-solidity/prettier-plugin-solidity)**
-
-A [Prettier plugin](https://prettier.io/docs/en/plugins.html) for automatically formatting your [Solidity](https://github.com/ethereum/solidity) code.
-
 #### Documentation
 
 **[sol2uml](https://github.com/naddison36/sol2uml)**
 
 Generate UML for smart contracts
-
-**[solidity-docgen](https://github.com/OpenZeppelin/solidity-docgen)**
-
-Program that extracts documentation for a Solidity project.
 
 **[Surya](https://github.com/ConsenSys/surya)**
 
@@ -116,7 +103,7 @@ npm run-script surya:report
 >Slither is a Solidity static analysis framework written in Python3
 
 ```bash
-slither .  --checklist --filter-paths "openzeppelin-contracts|test|mocksCMTAT|forge-std" > slither-report.md
+slither .  --checklist --filter-paths "openzeppelin-contracts|test|mocks|CMTAT|forge-std" > slither-report.md
 ```
 
 
