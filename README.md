@@ -8,6 +8,16 @@ Each rule can be used **standalone**, directly plugged into a CMTAT token, **or*
 
 Latest update: completed 100% coverage across `src/` contracts, including direct coverage for `RuleAddressSet.contains(address)`, mint/burn-path coverage for `RuleConditionalTransferLightBase.detectTransferRestriction(...)`, and removal of an unreachable duplicate admin-zero check in `RuleConditionalTransferLight` constructor.
 
+## Schema
+
+- Using rules with CMTAT and ERC-3643 tokens through a [RuleEngine](ttps://github.com/CMTA/RuleEngine)
+
+![Rule-RuleEngine.drawio](./doc/schema/Rule-RuleEngine.drawio.png)
+
+- Using a rule directly with CMTAT and ERC-3643 tokens
+
+![Rule-Rule.drawio](./doc/schema/Rule-Rule.drawio.png)
+
 ## Table of Contents
 
 [TOC]

@@ -21,3 +21,7 @@ node_modules/
 /ERCSpecification
 *.dbg.json
 /skills
+
+#drawio
+*.bkp
+*.dtmp
