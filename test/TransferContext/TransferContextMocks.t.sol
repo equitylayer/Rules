@@ -69,7 +69,7 @@ contract TransferContextMocksTest is Test, HelperContract {
 
         vm.expectRevert();
         vm.prank(ADDRESS3);
-        erc20.transferFrom(ADDRESS1, ADDRESS2, 10);
+        assertTrue(erc20.transferFrom(ADDRESS1, ADDRESS2, 10));
 
         vm.prank(DEFAULT_ADMIN_ADDRESS);
         rule.addAddress(ADDRESS3);

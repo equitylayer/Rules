@@ -2,7 +2,6 @@
 pragma solidity ^0.8.20;
 
 import {Test} from "forge-std/Test.sol";
-import {IRuleEngine} from "CMTAT/interfaces/engine/IRuleEngine.sol";
 import {CMTATStandalone} from "CMTAT/deployment/CMTATStandalone.sol";
 import {RuleEngine} from "RuleEngine/RuleEngine.sol";
 import {RuleBlacklist} from "src/rules/validation/deployment/RuleBlacklist.sol";
@@ -117,7 +116,7 @@ contract DeployCMTATWithBlacklistAndSanctionsListTest is
                 CODE_ADDRESS_FROM_IS_BLACKLISTED
             )
         );
-        token.transfer(ADDRESS2, amount);
+        assertTrue(token.transfer(ADDRESS2, amount));
     }
 
     function testDetectTransferRestrictionWhenSenderBlacklisted() public {
@@ -148,7 +147,7 @@ contract DeployCMTATWithBlacklistAndSanctionsListTest is
                 CODE_ADDRESS_TO_IS_BLACKLISTED
             )
         );
-        token.transfer(ADDRESS2, amount);
+        assertTrue(token.transfer(ADDRESS2, amount));
     }
 
     function testDetectTransferRestrictionWhenRecipientBlacklisted() public {
@@ -178,7 +177,7 @@ contract DeployCMTATWithBlacklistAndSanctionsListTest is
                 CODE_ADDRESS_FROM_IS_SANCTIONED
             )
         );
-        token.transfer(ADDRESS2, amount);
+        assertTrue(token.transfer(ADDRESS2, amount));
     }
 
     function testDetectTransferRestrictionWhenSenderSanctioned() public {
@@ -207,7 +206,7 @@ contract DeployCMTATWithBlacklistAndSanctionsListTest is
                 CODE_ADDRESS_TO_IS_SANCTIONED
             )
         );
-        token.transfer(ADDRESS2, amount);
+        assertTrue(token.transfer(ADDRESS2, amount));
     }
 
     function testDetectTransferRestrictionWhenRecipientSanctioned() public {

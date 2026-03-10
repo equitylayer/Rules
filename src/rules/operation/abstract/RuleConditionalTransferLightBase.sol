@@ -165,7 +165,14 @@ abstract contract RuleConditionalTransferLightBase is VersionModule, RuleConditi
     }
 
     function _transferHash(address from, address to, uint256 value) internal pure virtual returns (bytes32 hash) {
-        return keccak256(abi.encodePacked(from, to, value));
+        // Linter suggestion (`asm-keccak256`): hash packed values in assembly to avoid abi.encodePacked overhead.
+        assembly ("memory-safe") {
+            let ptr := mload(0x40)
+            mstore(ptr, shl(96, from))
+            mstore(add(ptr, 0x20), shl(96, to))
+            mstore(add(ptr, 0x40), value)
+            hash := keccak256(ptr, 0x60)
+        }
     }
 
     /*//////////////////////////////////////////////////////////////

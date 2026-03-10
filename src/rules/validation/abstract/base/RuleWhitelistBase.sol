@@ -4,7 +4,6 @@ pragma solidity ^0.8.20;
 import {RuleAddressSet} from "../RuleAddressSet/RuleAddressSet.sol";
 import {RuleWhitelistShared} from "../core/RuleWhitelistShared.sol";
 import {RuleTransferValidation} from "../core/RuleTransferValidation.sol";
-import {IERC1404Extend} from "CMTAT/interfaces/tokenization/draft-IERC1404.sol";
 import {IIdentityRegistryVerified} from "../../../interfaces/IIdentityRegistry.sol";
 
 /**

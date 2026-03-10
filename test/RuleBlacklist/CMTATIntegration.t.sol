@@ -66,7 +66,7 @@ contract CMTATIntegration is Test, HelperContract {
             )
         );
         // Act
-        cmtatContract.transfer(ADDRESS2, amount);
+        assertTrue(cmtatContract.transfer(ADDRESS2, amount));
     }
 
     function testCannotTransferIfAddressFronIsBlacklisted() public {
@@ -87,7 +87,7 @@ contract CMTATIntegration is Test, HelperContract {
             )
         );
         // Act
-        cmtatContract.transfer(ADDRESS2, amount);
+        assertTrue(cmtatContract.transfer(ADDRESS2, amount));
     }
 
     function testCannotTransferIfBothAddressesAreBlacklisted() public {
@@ -112,7 +112,7 @@ contract CMTATIntegration is Test, HelperContract {
                 CODE_ADDRESS_FROM_IS_BLACKLISTED
             )
         );
-        cmtatContract.transfer(ADDRESS2, amount);
+        assertTrue(cmtatContract.transfer(ADDRESS2, amount));
     }
 
     /**

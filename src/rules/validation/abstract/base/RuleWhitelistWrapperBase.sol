@@ -11,8 +11,6 @@ import {RuleWhitelistShared} from "../core/RuleWhitelistShared.sol";
 import {RuleTransferValidation} from "../core/RuleTransferValidation.sol";
 /* ==== RuleEngine === */
 import {RulesManagementModule} from "RuleEngine/modules/RulesManagementModule.sol";
-/* ==== CMTAT === */
-import {IERC1404, IERC1404Extend} from "CMTAT/interfaces/tokenization/draft-IERC1404.sol";
 /* ==== Interfaces === */
 import {IAddressList} from "../../../interfaces/IAddressList.sol";
 import {IIdentityRegistryVerified} from "../../../interfaces/IIdentityRegistry.sol";

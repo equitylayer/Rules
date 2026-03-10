@@ -2,7 +2,6 @@
 pragma solidity ^0.8.20;
 
 import {Test} from "forge-std/Test.sol";
-import {IRuleEngine} from "CMTAT/interfaces/engine/IRuleEngine.sol";
 import {CMTATStandalone} from "CMTAT/deployment/CMTATStandalone.sol";
 import {RuleBlacklist} from "src/rules/validation/deployment/RuleBlacklist.sol";
 import {DeployCMTATWithBlacklist} from "script/DeployCMTATWithBlacklist.s.sol";

@@ -56,7 +56,7 @@ contract CMTATIntegration is Test, HelperContract {
             )
         );
         // Act
-        cmtatContract.transfer(ADDRESS2, 21);
+        assertTrue(cmtatContract.transfer(ADDRESS2, 21));
     }
 
     function testCannotTransferWithoutFromAddressWhitelisted() public {
@@ -77,7 +77,7 @@ contract CMTATIntegration is Test, HelperContract {
             )
         );
         // Act
-        cmtatContract.transfer(ADDRESS2, amount);
+        assertTrue(cmtatContract.transfer(ADDRESS2, amount));
     }
 
     function testCannotTransferWithoutToAddressWhitelisted() public {
@@ -98,7 +98,7 @@ contract CMTATIntegration is Test, HelperContract {
             )
         );
         // Act
-        cmtatContract.transfer(ADDRESS2, amount);
+        assertTrue(cmtatContract.transfer(ADDRESS2, amount));
     }
 
     function testCanMakeATransfer() public {
