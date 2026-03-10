@@ -1,7 +1,7 @@
 # Project Guide
 
 ## Purpose
-Modular compliance-rule library for CMTAT / ERC-3643 security tokens. Each rule enforces a transfer restriction (whitelist, blacklist, sanctions, max supply, identity, conditional approval) and can be used standalone or composed via a `RuleEngine`.
+Modular compliance-rule library for CMTAT / ERC-3643 security tokens. Each rule enforces a transfer restriction (whitelist, spender whitelist, blacklist, sanctions, max supply, identity, conditional approval) and can be used standalone or composed via a `RuleEngine`.
 
 ## Key Directories
 | Path | Description |
@@ -23,6 +23,7 @@ Modular compliance-rule library for CMTAT / ERC-3643 security tokens. Each rule 
 | `RuleSanctionsList` | Block sanctioned addresses via Chainalysis oracle |
 | `RuleMaxTotalSupply` | Cap minting so total supply never exceeds a maximum |
 | `RuleIdentityRegistry` | Check ERC-3643 identity registry for participant verification |
+| `RuleSpenderWhitelist` / `RuleSpenderWhitelistOwnable2Step` | Allow `transferFrom` only when spender is whitelisted; direct transfers are always allowed |
 | `RuleERC2980` | ERC-2980 Swiss Compliant rule: whitelist (recipient-only) + frozenlist (blocks sender and recipient); frozenlist takes priority |
 | `RuleERC2980Ownable2Step` | Ownable2Step variant of RuleERC2980 |
 | `RuleConditionalTransferLight` | Require operator approval before each transfer |
@@ -57,6 +58,7 @@ Foundry config: `foundry.toml` (solc 0.8.34, EVM prague, optimizer 200 runs).
 | RuleMaxTotalSupply | 50 |
 | RuleIdentityRegistry | 55–57 |
 | RuleERC2980 | 60–63 |
+| RuleSpenderWhitelist | 66 |
 
 ## Conventions
 - Each rule has an `InvariantStorage` abstract contract holding its constants, custom errors, and events.
@@ -70,3 +72,4 @@ Foundry config: `foundry.toml` (solc 0.8.34, EVM prague, optimizer 200 runs).
 - Use `require(condition, CustomError(...))` for custom errors; avoid direct `revert CustomError(...)`.
 - `AGENTS.md` and `CLAUDE.md` are identical — always update both together.
 - Always update README.md with the latest change
+- New rule or features implemented: create/update technical documentation in `doc/technical`, update README, create/update test (target: 100% of code coverage), update CHANGELOG.md. Code coverage, run `forge coverage --report summary`

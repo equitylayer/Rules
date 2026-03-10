@@ -6,7 +6,7 @@ Each rule can be used **standalone**, directly plugged into a CMTAT token, **or*
 
 **Status:** *Repository under active development*
 
-Latest update: completed 100% coverage across `src/` contracts, including direct coverage for `RuleAddressSet.contains(address)`, mint/burn-path coverage for `RuleConditionalTransferLightBase.detectTransferRestriction(...)`, and removal of an unreachable duplicate admin-zero check in `RuleConditionalTransferLight` constructor.
+Latest update: added `RuleSpenderWhitelist` (+ `Ownable2Step` variant), technical documentation, and tests; `src/` contract coverage remains at 100%.
 
 ## Schema
 
@@ -169,7 +169,9 @@ Here the list of codes used by the different rules
 |                         | CODE_ADDRESS_TO_IS_FROZEN            | 61   |
 |                         | CODE_ADDRESS_SPENDER_IS_FROZEN       | 62   |
 |                         | CODE_ADDRESS_TO_NOT_WHITELISTED      | 63   |
-|  | Reserved slot | 64-65 |
+|                         | Reserved slot                        | 64-65 |
+| RuleSpenderWhitelist    | CODE_ADDRESS_SPENDER_NOT_WHITELISTED | 66   |
+|                         | Reserved slot                        | 67-70 |
 
 Note: 
 
@@ -304,7 +306,7 @@ Validation rules only read blockchain state — they never modify it during a tr
 
 All validation rules implement `IRuleEngine` to be usable both standalone (plugged directly into CMTAT) and via the RuleEngine.
 
-Available validation rules: `RuleWhitelist`, `RuleWhitelistWrapper`, `RuleBlacklist`, `RuleSanctionsList`, `RuleMaxTotalSupply`, `RuleIdentityRegistry`, `RuleERC2980`.
+Available validation rules: `RuleWhitelist`, `RuleWhitelistWrapper`, `RuleSpenderWhitelist`, `RuleBlacklist`, `RuleSanctionsList`, `RuleMaxTotalSupply`, `RuleIdentityRegistry`, `RuleERC2980`.
 
  A community made project, [RuleSelf](https://github.com/rya-sge/ruleself), which uses [Self](https://self.xyz), a zero-knowledge identity is also available but is not developed or maintained by CMTA.
 
@@ -342,6 +344,7 @@ Several rules are available in multiple access-control variants. Use the simples
 - Examples:
   - Whitelist
   - Whitelist Wrapper
+  - Spender Whitelist
   - Blacklist
   - Sanction list (Chainalysis)
   - ERC-2980 (whitelist + frozenlist)
@@ -364,6 +367,7 @@ Several rules are available in multiple access-control variants. Use the simples
 | RuleSanctionList                                             | Read-Only                           | <strong><span style="color: #1e7e34;">&#x2714;</span></strong> | <strong><span style="color: #1e7e34;">&#x2714;</span></strong> | <strong><span style="color: #1e7e34;">&#x2714;</span></strong> | The purpose of this contract is to use the oracle contract from [Chainalysis](https://go.chainalysis.com/chainalysis-oracle-docs.html) to forbid transfer from/to an address included in a sanctions designation (US, EU, or UN). |
 | RuleMaxTotalSupply                                           | Read-Only                          | <strong><span style="color: #b00020;">&#x2718;</span></strong> | <strong><span style="color: #1e7e34;">&#x2714;</span></strong> | <strong><span style="color: #1e7e34;">&#x2714;</span></strong> | This rule limits minting so that the total supply never exceeds a configured maximum. |
 | RuleIdentityRegistry                                         | Read-Only                          | <strong><span style="color: #1e7e34;">&#x2714;</span></strong> | <strong><span style="color: #1e7e34;">&#x2714;</span></strong> | <strong><span style="color: #1e7e34;">&#x2714;</span></strong> | This rule checks the ERC-3643 Identity Registry for transfer participants when configured. |
+| RuleSpenderWhitelist                                         | Read-Only                          | <strong><span style="color: #1e7e34;">&#x2714;</span></strong> | <strong><span style="color: #1e7e34;">&#x2714;</span></strong> | <strong><span style="color: #1e7e34;">&#x2714;</span></strong> | This rule blocks `transferFrom` when the spender is not in the whitelist. Direct transfers are always allowed. |
 | RuleERC2980                                                  | Read-Only                          | <strong><span style="color: #1e7e34;">&#x2714;</span></strong> | <strong><span style="color: #1e7e34;">&#x2714;</span></strong> | <strong><span style="color: #1e7e34;">&#x2714;</span></strong> | ERC-2980 Swiss Compliant rule combining a whitelist (recipient-only) and a frozenlist (blocks both sender and recipient). Frozenlist takes priority over whitelist. |
 | RuleConditionalTransferLight                                | Read-Write                          | <strong><span style="color: #b00020;">&#x2718;</span></strong> | <strong><span style="color: #1e7e34;">&#x2714;</span></strong> | <strong><span style="color: #1e7e34;">&#x2714;</span></strong> | This rule requires that transfers have to be approved by an operator before being executed. Each approval is consumed once and the same transfer can be approved multiple times. |
 | [RuleConditionalTransfer](https://github.com/CMTA/RuleConditionalTransfer) (external) | Read-Write | <strong><span style="color: #b00020;">&#x2718;</span></strong> | <strong><span style="color: #1e7e34;">&#x2714;</span></strong> | <strong><span style="color: #b00020;">&#x2718;</span></strong><br /> (experimental rule) | Full-featured approval-based transfer rule implementing Swiss law *Vinkulierung*. Supports automatic approval after three months, automatic transfer execution, and a conditional whitelist for address pairs that bypass approval. Maintained in a separate repository. |
@@ -383,6 +387,7 @@ Detailed technical documentation for each rule is available in [`doc/technical/`
 | RuleSanctionsList | [RuleSanctionList.md](./doc/technical/RuleSanctionList.md) |
 | RuleMaxTotalSupply | [RuleMaxTotalSupply.md](./doc/technical/RuleMaxTotalSupply.md) |
 | RuleIdentityRegistry | [RuleIdentityRegistry.md](./doc/technical/RuleIdentityRegistry.md) |
+| RuleSpenderWhitelist | [RuleSpenderWhitelist.md](./doc/technical/RuleSpenderWhitelist.md) |
 | RuleERC2980 | [RuleERC2980.md](./doc/technical/RuleERC2980.md) |
 | RuleConditionalTransferLight | [RuleConditionalTransferLight.md](./doc/technical/RuleConditionalTransferLight.md) |
 
@@ -395,6 +400,7 @@ Detailed technical documentation for each rule is available in [`doc/technical/`
 - `RuleMaxTotalSupply` trusts the configured `tokenContract` to return an accurate `totalSupply()`.
 - `RuleMaxTotalSupply` does not allow clearing the token contract; disable the rule by removing it from the RuleEngine or token.
 - `RuleWhitelistWrapper` requires child rules that implement `IAddressList`. Gas cost grows with the number of rules, and a wrapper with zero rules will reject all transfers.
+- `RuleSpenderWhitelist` only checks the spender in `transferFrom`; direct transfers always pass this rule.
 - Read-only rules still implement `transferred()` to comply with ERC-3643 and RuleEngine interfaces, but they do not change state.
 - `RuleConditionalTransferLight` approvals are keyed by `(from, to, value)` and are not nonce-based.
 - `RuleConditionalTransferLight` provides `approveAndTransferIfAllowed` to approve and immediately execute `transferFrom` when this rule has allowance; it assumes the token calls back `transferred()` during the transfer.
@@ -409,7 +415,7 @@ Detailed technical documentation for each rule is available in [`doc/technical/`
 
 ### Read-only (validation) rule
 
-Currently, there are seven validation rules: whitelist, whitelistWrapper, blacklist, sanctionlist, max total supply, identity registry, and ERC-2980.
+Currently, there are eight validation rules: whitelist, whitelistWrapper, spender whitelist, blacklist, sanctionlist, max total supply, identity registry, and ERC-2980.
 
 #### Whitelist
 
