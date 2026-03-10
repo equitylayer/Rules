@@ -13,7 +13,6 @@ abstract contract RuleConditionalTransferLightInvariantStorage is RuleSharedInva
     uint8 public constant CODE_TRANSFER_REQUEST_NOT_APPROVED = 46;
 
     /* ============ Custom error ============ */
-    error RuleConditionalTransferLight_AdminAddressZeroNotAllowed();
     error RuleConditionalTransferLight_TransferExecutorUnauthorized(address account);
     error RuleConditionalTransferLight_TokenAddressZeroNotAllowed();
     error RuleConditionalTransferLight_InsufficientAllowance(

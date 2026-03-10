@@ -5,7 +5,7 @@
 
 |  File Name  |  SHA-1 Hash  |
 |-------------|--------------|
-| ./rules/interfaces/IAddressList.sol | 2b961381e42d46c2387a86eee244fb07f4043fbb |
+| ./rules/interfaces/IAddressList.sol | 6470e15510efea5ed2dbdfa826ce74e2b7aa91b8 |
 
 
 ### Contracts Description Table

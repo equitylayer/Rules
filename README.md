@@ -437,6 +437,20 @@ An operator configures CMTAT to use `RuleWhitelist`. The issuer tries to mint to
 
 ![surya_inheritance_RuleWhitelist.sol](./doc/surya/surya_inheritance/surya_inheritance_RuleWhitelist.sol.png)
 
+#### Spender whitelist
+
+This rule only checks `transferFrom` spender authorization:
+
+- Direct transfers (`transfer`) are always allowed by this rule.
+- `transferFrom` is rejected when `spender` is not listed.
+- Restriction code: `66` (`CODE_ADDRESS_SPENDER_NOT_WHITELISTED`).
+
+**Usage scenario**
+
+The operator deploys `RuleSpenderWhitelist` and sets it in the token or `RuleEngine`. Alice calls `transfer` to Bob and it passes this rule. Bob then tries `transferFrom(Alice, Bob, amount)` and it is rejected until the operator calls `addAddress(Bob)` (or whichever spender account should be authorized).
+
+![surya_inheritance_RuleSpenderWhitelist.sol](./doc/surya/surya_inheritance/surya_inheritance_RuleSpenderWhitelist.sol.png)
+
 #### Whitelist wrapper
 
 Allows independent whitelist groups managed by different operators.

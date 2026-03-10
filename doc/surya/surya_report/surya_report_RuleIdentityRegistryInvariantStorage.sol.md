@@ -5,7 +5,7 @@
 
 |  File Name  |  SHA-1 Hash  |
 |-------------|--------------|
-| ./rules/validation/abstract/invariant/RuleIdentityRegistryInvariantStorage.sol | f48bd119a5ba7612d03d08faf053b20d5a3523b0 |
+| ./rules/validation/abstract/invariant/RuleIdentityRegistryInvariantStorage.sol | 663984fafa1c5e4989ba9e16187cec3fec5bf9b4 |
 
 
 ### Contracts Description Table
@@ -15,7 +15,7 @@
 |:----------:|:-------------------:|:----------------:|:----------------:|:---------------:|
 |     └      |  **Function Name**  |  **Visibility**  |  **Mutability**  |  **Modifiers**  |
 ||||||
-| **RuleIdentityRegistryInvariantStorage** | Implementation | RuleCommonInvariantStorage |||
+| **RuleIdentityRegistryInvariantStorage** | Implementation | RuleSharedInvariantStorage |||
 
 
 ### Legend

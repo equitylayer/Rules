@@ -5,7 +5,7 @@
 
 |  File Name  |  SHA-1 Hash  |
 |-------------|--------------|
-| ./rules/validation/abstract/RuleERC2980/invariantStorage/RuleERC2980InvariantStorage.sol | fade52ea9b2658ce1c5ddd11da5047a73c5539cd |
+| ./rules/validation/abstract/RuleERC2980/invariantStorage/RuleERC2980InvariantStorage.sol | e297f0edb2cf9641ee0277f1baef6b838a61729c |
 
 
 ### Contracts Description Table
@@ -15,7 +15,7 @@
 |:----------:|:-------------------:|:----------------:|:----------------:|:---------------:|
 |     └      |  **Function Name**  |  **Visibility**  |  **Mutability**  |  **Modifiers**  |
 ||||||
-| **RuleERC2980InvariantStorage** | Implementation | RuleCommonInvariantStorage |||
+| **RuleERC2980InvariantStorage** | Implementation | RuleSharedInvariantStorage |||
 
 
 ### Legend

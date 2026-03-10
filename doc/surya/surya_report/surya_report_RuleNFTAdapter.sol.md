@@ -5,7 +5,7 @@
 
 |  File Name  |  SHA-1 Hash  |
 |-------------|--------------|
-| ./rules/validation/abstract/core/RuleNFTAdapter.sol | f30fee37868a3a64343d7ccb183c58df9fa485ba |
+| ./rules/validation/abstract/core/RuleNFTAdapter.sol | 3c6af34113014eb17564b992ee6af4b0f973b89a |
 
 
 ### Contracts Description Table

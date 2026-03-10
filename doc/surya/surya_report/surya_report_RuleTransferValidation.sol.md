@@ -5,7 +5,7 @@
 
 |  File Name  |  SHA-1 Hash  |
 |-------------|--------------|
-| ./rules/validation/abstract/core/RuleTransferValidation.sol | df3a84d6c6a529f41063006f27b0ff52239d26d6 |
+| ./rules/validation/abstract/core/RuleTransferValidation.sol | 60cacb209f7dd69907e0319ecd359140eeb3a204 |
 
 
 ### Contracts Description Table
