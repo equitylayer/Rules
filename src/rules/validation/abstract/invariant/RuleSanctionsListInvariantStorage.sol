@@ -2,10 +2,10 @@
 
 pragma solidity ^0.8.20;
 
-import {RuleCommonInvariantStorage} from "./RuleCommonInvariantStorage.sol";
+import {RuleSharedInvariantStorage} from "./RuleSharedInvariantStorage.sol";
 import {ISanctionsList} from "../../../interfaces/ISanctionsList.sol";
 
-abstract contract RuleSanctionsListInvariantStorage is RuleCommonInvariantStorage {
+abstract contract RuleSanctionsListInvariantStorage is RuleSharedInvariantStorage {
     /* ============ Event ============ */
     event SetSanctionListOracle(ISanctionsList newOracle);
     /* ============ Custom errors ============ */

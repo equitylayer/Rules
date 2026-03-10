@@ -2,9 +2,9 @@
 
 pragma solidity ^0.8.20;
 
-import {RuleCommonInvariantStorage} from "../../invariant/RuleCommonInvariantStorage.sol";
+import {RuleSharedInvariantStorage} from "../../invariant/RuleSharedInvariantStorage.sol";
 
-abstract contract RuleWhitelistInvariantStorage is RuleCommonInvariantStorage {
+abstract contract RuleWhitelistInvariantStorage is RuleSharedInvariantStorage {
     error RuleWhitelist_InvalidTransfer(address rule, address from, address to, uint256 value, uint8 code);
     error RuleWhitelist_InvalidTransferFrom(
         address rule, address spender, address from, address to, uint256 value, uint8 code

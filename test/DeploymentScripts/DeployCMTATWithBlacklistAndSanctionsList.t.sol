@@ -117,7 +117,8 @@ contract DeployCMTATWithBlacklistAndSanctionsListTest is
                 CODE_ADDRESS_FROM_IS_BLACKLISTED
             )
         );
-        assertTrue(token.transfer(ADDRESS2, amount));
+        // forge-lint: disable-next-line(erc20-unchecked-transfer)
+        token.transfer(ADDRESS2, amount);
     }
 
     function testDetectTransferRestrictionWhenSenderBlacklisted() public {
@@ -148,7 +149,8 @@ contract DeployCMTATWithBlacklistAndSanctionsListTest is
                 CODE_ADDRESS_TO_IS_BLACKLISTED
             )
         );
-        assertTrue(token.transfer(ADDRESS2, amount));
+        // forge-lint: disable-next-line(erc20-unchecked-transfer)
+        token.transfer(ADDRESS2, amount);
     }
 
     function testDetectTransferRestrictionWhenRecipientBlacklisted() public {
@@ -178,7 +180,8 @@ contract DeployCMTATWithBlacklistAndSanctionsListTest is
                 CODE_ADDRESS_FROM_IS_SANCTIONED
             )
         );
-        assertTrue(token.transfer(ADDRESS2, amount));
+        // forge-lint: disable-next-line(erc20-unchecked-transfer)
+        token.transfer(ADDRESS2, amount);
     }
 
     function testDetectTransferRestrictionWhenSenderSanctioned() public {
@@ -207,7 +210,8 @@ contract DeployCMTATWithBlacklistAndSanctionsListTest is
                 CODE_ADDRESS_TO_IS_SANCTIONED
             )
         );
-        assertTrue(token.transfer(ADDRESS2, amount));
+        // forge-lint: disable-next-line(erc20-unchecked-transfer)
+        token.transfer(ADDRESS2, amount);
     }
 
     function testDetectTransferRestrictionWhenRecipientSanctioned() public {

@@ -60,7 +60,8 @@ contract CMTATIntegrationDirectBlacklist is Test, HelperContract {
                 CODE_ADDRESS_TO_IS_BLACKLISTED
             )
         );
-        assertTrue(cmtatContract.transfer(ADDRESS2, amount));
+        // forge-lint: disable-next-line(erc20-unchecked-transfer)
+        cmtatContract.transfer(ADDRESS2, amount);
     }
 
     function testCannotTransferIfAddressFromIsBlacklisted() public {
@@ -79,7 +80,8 @@ contract CMTATIntegrationDirectBlacklist is Test, HelperContract {
                 CODE_ADDRESS_FROM_IS_BLACKLISTED
             )
         );
-        assertTrue(cmtatContract.transfer(ADDRESS2, amount));
+        // forge-lint: disable-next-line(erc20-unchecked-transfer)
+        cmtatContract.transfer(ADDRESS2, amount);
     }
 
     function testCannotTransferIfBothAddressesAreBlacklisted() public {
@@ -102,7 +104,8 @@ contract CMTATIntegrationDirectBlacklist is Test, HelperContract {
                 CODE_ADDRESS_FROM_IS_BLACKLISTED
             )
         );
-        assertTrue(cmtatContract.transfer(ADDRESS2, amount));
+        // forge-lint: disable-next-line(erc20-unchecked-transfer)
+        cmtatContract.transfer(ADDRESS2, amount);
     }
 
     /* ---------------- Detect & Message Tests ---------------- */

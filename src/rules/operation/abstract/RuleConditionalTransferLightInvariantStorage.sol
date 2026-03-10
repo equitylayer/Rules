@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MPL-2.0
 pragma solidity ^0.8.20;
 
-import {RuleCommonInvariantStorage} from "../../validation/abstract/invariant/RuleCommonInvariantStorage.sol";
+import {RuleSharedInvariantStorage} from "../../validation/abstract/invariant/RuleSharedInvariantStorage.sol";
 
-abstract contract RuleConditionalTransferLightInvariantStorage is RuleCommonInvariantStorage {
+abstract contract RuleConditionalTransferLightInvariantStorage is RuleSharedInvariantStorage {
     /* ============ Role ============ */
     bytes32 public constant OPERATOR_ROLE = keccak256("OPERATOR_ROLE");
 

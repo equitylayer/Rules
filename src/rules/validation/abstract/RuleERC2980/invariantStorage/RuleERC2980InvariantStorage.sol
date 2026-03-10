@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MPL-2.0
 pragma solidity ^0.8.20;
 
-import {RuleCommonInvariantStorage} from "../../invariant/RuleCommonInvariantStorage.sol";
+import {RuleSharedInvariantStorage} from "../../invariant/RuleSharedInvariantStorage.sol";
 
-abstract contract RuleERC2980InvariantStorage is RuleCommonInvariantStorage {
+abstract contract RuleERC2980InvariantStorage is RuleSharedInvariantStorage {
     /* ============ Custom errors ============ */
     error RuleERC2980_InvalidTransfer(address rule, address from, address to, uint256 value, uint8 code);
     error RuleERC2980_InvalidTransferFrom(

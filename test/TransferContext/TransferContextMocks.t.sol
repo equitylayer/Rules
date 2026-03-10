@@ -69,7 +69,8 @@ contract TransferContextMocksTest is Test, HelperContract {
 
         vm.expectRevert();
         vm.prank(ADDRESS3);
-        assertTrue(erc20.transferFrom(ADDRESS1, ADDRESS2, 10));
+        // forge-lint: disable-next-line(erc20-unchecked-transfer)
+        erc20.transferFrom(ADDRESS1, ADDRESS2, 10);
 
         vm.prank(DEFAULT_ADMIN_ADDRESS);
         rule.addAddress(ADDRESS3);

@@ -69,7 +69,7 @@ Foundry config: `foundry.toml` (solc 0.8.34, EVM prague, optimizer 200 runs).
 - Batch add/remove operations are non-reverting (skip duplicates); single-item operations revert on invalid input.
 - All `internal` functions should be marked `virtual`.
 - Do not create git commits; provide commit messages only when requested.
-- Always run tests after modifying contracts.
+- Always run full tests (`forge test`) after any code modification, including lint-driven or mechanical refactors, before reporting completion.
 - Use `require(condition, CustomError(...))` for custom errors; avoid direct `revert CustomError(...)`.
 - `AGENTS.md` and `CLAUDE.md` are identical — always update both together.
 - Always update README.md with the latest change

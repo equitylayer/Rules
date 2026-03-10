@@ -56,7 +56,8 @@ contract CMTATIntegration is Test, HelperContract {
             )
         );
         // Act
-        assertTrue(cmtatContract.transfer(ADDRESS2, 21));
+        // forge-lint: disable-next-line(erc20-unchecked-transfer)
+        cmtatContract.transfer(ADDRESS2, 21);
     }
 
     function testCannotTransferWithoutFromAddressWhitelisted() public {
@@ -77,7 +78,8 @@ contract CMTATIntegration is Test, HelperContract {
             )
         );
         // Act
-        assertTrue(cmtatContract.transfer(ADDRESS2, amount));
+        // forge-lint: disable-next-line(erc20-unchecked-transfer)
+        cmtatContract.transfer(ADDRESS2, amount);
     }
 
     function testCannotTransferWithoutToAddressWhitelisted() public {
@@ -98,7 +100,8 @@ contract CMTATIntegration is Test, HelperContract {
             )
         );
         // Act
-        assertTrue(cmtatContract.transfer(ADDRESS2, amount));
+        // forge-lint: disable-next-line(erc20-unchecked-transfer)
+        cmtatContract.transfer(ADDRESS2, amount);
     }
 
     function testCanMakeATransfer() public {
