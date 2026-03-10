@@ -46,10 +46,7 @@ contract RuleConditionalTransferLight is
     function _authorizeTransferApproval() internal view virtual override onlyRole(OPERATOR_ROLE) {}
 
     function _authorizeTransferExecution() internal view virtual override {
-        require(
-            isTokenBound(_msgSender()),
-            RuleConditionalTransferLight_TransferExecutorUnauthorized(_msgSender())
-        );
+        require(isTokenBound(_msgSender()), RuleConditionalTransferLight_TransferExecutorUnauthorized(_msgSender()));
     }
 
     function _onlyComplianceManager() internal virtual override onlyRole(COMPLIANCE_MANAGER_ROLE) {}

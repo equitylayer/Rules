@@ -14,6 +14,7 @@ contract CMTATIntegration is Test, HelperContract {
     uint256 constant ADDRESS1_BALANCE_INIT = 31;
     uint256 constant ADDRESS2_BALANCE_INIT = 32;
     uint256 constant ADDRESS3_BALANCE_INIT = 33;
+
     // Arrange
     function setUp() public {
         // CMTAT
@@ -66,6 +67,7 @@ contract CMTATIntegration is Test, HelperContract {
             )
         );
         // Act
+        // forge-lint: disable-next-line(erc20-unchecked-transfer)
         cmtatContract.transfer(ADDRESS2, amount);
     }
 
@@ -87,6 +89,7 @@ contract CMTATIntegration is Test, HelperContract {
             )
         );
         // Act
+        // forge-lint: disable-next-line(erc20-unchecked-transfer)
         cmtatContract.transfer(ADDRESS2, amount);
     }
 
@@ -112,6 +115,7 @@ contract CMTATIntegration is Test, HelperContract {
                 CODE_ADDRESS_FROM_IS_BLACKLISTED
             )
         );
+        // forge-lint: disable-next-line(erc20-unchecked-transfer)
         cmtatContract.transfer(ADDRESS2, amount);
     }
 

@@ -5,8 +5,6 @@ import {Test} from "forge-std/Test.sol";
 import {IAccessControl} from "OZ/access/IAccessControl.sol";
 import {HelperContract} from "../../HelperContract.sol";
 import {RuleERC2980} from "src/rules/validation/deployment/RuleERC2980.sol";
-import {RuleERC2980InvariantStorage} from
-    "src/rules/validation/abstract/RuleERC2980/invariantStorage/RuleERC2980InvariantStorage.sol";
 
 contract RuleERC2980AccessControlTest is Test, HelperContract {
     RuleERC2980 public ruleERC2980;

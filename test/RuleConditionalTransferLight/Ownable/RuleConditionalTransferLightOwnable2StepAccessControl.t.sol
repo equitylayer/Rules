@@ -3,8 +3,9 @@ pragma solidity ^0.8.20;
 
 import {Test} from "forge-std/Test.sol";
 import {HelperContract} from "../../HelperContract.sol";
-import {RuleConditionalTransferLightOwnable2Step} from
-    "src/rules/operation/RuleConditionalTransferLightOwnable2Step.sol";
+import {
+    RuleConditionalTransferLightOwnable2Step
+} from "src/rules/operation/RuleConditionalTransferLightOwnable2Step.sol";
 
 contract RuleConditionalTransferLightOwnable2StepAccessControl is Test, HelperContract {
     // OpenZeppelin Ownable error

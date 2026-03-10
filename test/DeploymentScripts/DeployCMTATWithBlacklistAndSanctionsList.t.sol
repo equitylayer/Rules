@@ -2,19 +2,19 @@
 pragma solidity ^0.8.20;
 
 import {Test} from "forge-std/Test.sol";
-import {IRuleEngine} from "CMTAT/interfaces/engine/IRuleEngine.sol";
 import {CMTATStandalone} from "CMTAT/deployment/CMTATStandalone.sol";
 import {RuleEngine} from "RuleEngine/RuleEngine.sol";
 import {RuleBlacklist} from "src/rules/validation/deployment/RuleBlacklist.sol";
 import {RuleSanctionsList} from "src/rules/validation/deployment/RuleSanctionsList.sol";
 import {ISanctionsList} from "src/rules/interfaces/ISanctionsList.sol";
-import {RuleBlacklistInvariantStorage} from
-    "src/rules/validation/abstract/RuleAddressSet/invariantStorage/RuleBlacklistInvariantStorage.sol";
-import {RuleSanctionsListInvariantStorage} from
-    "src/rules/validation/abstract/invariant/RuleSanctionsListInvariantStorage.sol";
-import {SanctionListOracle} from "../utils/SanctionListOracle.sol";
-import {DeployCMTATWithBlacklistAndSanctionsList} from
-    "script/DeployCMTATWithBlacklistAndSanctionsList.s.sol";
+import {
+    RuleBlacklistInvariantStorage
+} from "src/rules/validation/abstract/RuleAddressSet/invariantStorage/RuleBlacklistInvariantStorage.sol";
+import {
+    RuleSanctionsListInvariantStorage
+} from "src/rules/validation/abstract/invariant/RuleSanctionsListInvariantStorage.sol";
+import {SanctionListOracle} from "src/mocks/SanctionListOracle.sol";
+import {DeployCMTATWithBlacklistAndSanctionsList} from "script/DeployCMTATWithBlacklistAndSanctionsList.s.sol";
 
 /**
  * @title DeployCMTATWithBlacklistAndSanctionsListTest
@@ -117,6 +117,7 @@ contract DeployCMTATWithBlacklistAndSanctionsListTest is
                 CODE_ADDRESS_FROM_IS_BLACKLISTED
             )
         );
+        // forge-lint: disable-next-line(erc20-unchecked-transfer)
         token.transfer(ADDRESS2, amount);
     }
 
@@ -148,6 +149,7 @@ contract DeployCMTATWithBlacklistAndSanctionsListTest is
                 CODE_ADDRESS_TO_IS_BLACKLISTED
             )
         );
+        // forge-lint: disable-next-line(erc20-unchecked-transfer)
         token.transfer(ADDRESS2, amount);
     }
 
@@ -178,6 +180,7 @@ contract DeployCMTATWithBlacklistAndSanctionsListTest is
                 CODE_ADDRESS_FROM_IS_SANCTIONED
             )
         );
+        // forge-lint: disable-next-line(erc20-unchecked-transfer)
         token.transfer(ADDRESS2, amount);
     }
 
@@ -207,6 +210,7 @@ contract DeployCMTATWithBlacklistAndSanctionsListTest is
                 CODE_ADDRESS_TO_IS_SANCTIONED
             )
         );
+        // forge-lint: disable-next-line(erc20-unchecked-transfer)
         token.transfer(ADDRESS2, amount);
     }
 

@@ -4,7 +4,7 @@ pragma solidity ^0.8.20;
 import {Test} from "forge-std/Test.sol";
 import {HelperContract} from "../../HelperContract.sol";
 import {Ownable2StepTestBase, IOwnable2StepLike} from "../../utils/Ownable2StepTestBase.sol";
-import {TotalSupplyMock} from "../../utils/TotalSupplyMock.sol";
+import {TotalSupplyMock} from "src/mocks/TotalSupplyMock.sol";
 import {RuleMaxTotalSupplyOwnable2Step} from "src/rules/validation/deployment/RuleMaxTotalSupplyOwnable2Step.sol";
 
 contract RuleMaxTotalSupplyOwnable2StepTest is Ownable2StepTestBase {

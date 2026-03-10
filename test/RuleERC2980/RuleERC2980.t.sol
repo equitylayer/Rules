@@ -4,8 +4,9 @@ pragma solidity ^0.8.20;
 import {Test} from "forge-std/Test.sol";
 import {HelperContract} from "../HelperContract.sol";
 import {RuleERC2980} from "src/rules/validation/deployment/RuleERC2980.sol";
-import {RuleERC2980InvariantStorage} from
-    "src/rules/validation/abstract/RuleERC2980/invariantStorage/RuleERC2980InvariantStorage.sol";
+import {
+    RuleERC2980InvariantStorage
+} from "src/rules/validation/abstract/RuleERC2980/invariantStorage/RuleERC2980InvariantStorage.sol";
 
 contract RuleERC2980Test is Test, HelperContract {
     RuleERC2980 public ruleERC2980;
@@ -30,21 +31,11 @@ contract RuleERC2980Test is Test, HelperContract {
     //////////////////////////////////////////////////////////////*/
 
     function testReturnTheRightMessageForAGivenCode() public view {
+        assertEq(ruleERC2980.messageForTransferRestriction(CODE_FROM_FROZEN), "The sender address is frozen");
+        assertEq(ruleERC2980.messageForTransferRestriction(CODE_TO_FROZEN), "The recipient address is frozen");
+        assertEq(ruleERC2980.messageForTransferRestriction(CODE_SPENDER_FROZEN), "The spender address is frozen");
         assertEq(
-            ruleERC2980.messageForTransferRestriction(CODE_FROM_FROZEN),
-            "The sender address is frozen"
-        );
-        assertEq(
-            ruleERC2980.messageForTransferRestriction(CODE_TO_FROZEN),
-            "The recipient address is frozen"
-        );
-        assertEq(
-            ruleERC2980.messageForTransferRestriction(CODE_SPENDER_FROZEN),
-            "The spender address is frozen"
-        );
-        assertEq(
-            ruleERC2980.messageForTransferRestriction(CODE_TO_NOT_WHITELISTED),
-            "The recipient is not in the whitelist"
+            ruleERC2980.messageForTransferRestriction(CODE_TO_NOT_WHITELISTED), "The recipient is not in the whitelist"
         );
         assertEq(ruleERC2980.messageForTransferRestriction(CODE_NONEXISTENT), TEXT_CODE_NOT_FOUND);
     }

@@ -5,7 +5,7 @@
 
 |  File Name  |  SHA-1 Hash  |
 |-------------|--------------|
-| ./rules/validation/deployment/RuleBlacklistOwnable2Step.sol | 5f123378df5b9f27789b8a8c6513c4772d6e624a |
+| ./rules/validation/deployment/RuleBlacklistOwnable2Step.sol | 52a9b745423b9706c4c88fc8aee35f4d5020c176 |
 
 
 ### Contracts Description Table

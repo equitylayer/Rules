@@ -24,9 +24,7 @@ contract RuleEngineIntegration is Test, HelperContract {
         bytes32 rulesManagerRole = ruleEngineMock.RULES_MANAGEMENT_ROLE();
 
         // Non-authorized account cannot add a rule.
-        vm.expectRevert(
-            abi.encodeWithSelector(AccessControlUnauthorizedAccount.selector, ATTACKER, rulesManagerRole)
-        );
+        vm.expectRevert(abi.encodeWithSelector(AccessControlUnauthorizedAccount.selector, ATTACKER, rulesManagerRole));
         vm.prank(ATTACKER);
         ruleEngineMock.addRule(ruleWhitelist);
 

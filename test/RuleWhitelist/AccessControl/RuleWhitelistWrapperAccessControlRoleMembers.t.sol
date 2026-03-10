@@ -1,7 +1,10 @@
 // SPDX-License-Identifier: MPL-2.0
 pragma solidity ^0.8.20;
 
-import {AccessControlEnumerableTestBase, IAccessControlEnumerableLike} from "../../utils/AccessControlEnumerableTestBase.sol";
+import {
+    AccessControlEnumerableTestBase,
+    IAccessControlEnumerableLike
+} from "../../utils/AccessControlEnumerableTestBase.sol";
 import {RuleWhitelistWrapper} from "src/rules/validation/deployment/RuleWhitelistWrapper.sol";
 
 contract RuleWhitelistWrapperAccessControlRoleMembers is AccessControlEnumerableTestBase {

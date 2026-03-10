@@ -2,7 +2,7 @@
 
 Report version: `v0.2.0`
 Aderyn report: [aderyn-report.md](./aderyn-report.md)
-Feedback date: 2026-03-09
+Feedback date: 2026-03-10
 
 This document provides the project team's assessment of each finding reported by the Aderyn static analyser. For each issue the verdict is one of:
 
@@ -10,6 +10,7 @@ This document provides the project team's assessment of each finding reported by
 |---|---|
 | **Acknowledged** | Known, accepted by design; no change planned. |
 | **Acknowledged — low impact** | Technically valid but the actual risk is negligible given context. |
+| **Fixed** | Resolved in the codebase. |
 | **To fix** | Will be addressed in a future revision. |
 | **False positive** | Tool mis-identification; no real issue exists. |
 
@@ -107,8 +108,6 @@ All flagged loops perform `EnumerableSet.add` / `EnumerableSet.remove` calls, ea
 | `_listedAddresses.add(targetAddress)` / `.remove(targetAddress)` in `RuleAddressSetInternal` (single-item helpers) | **False positive** — the return value is captured and checked by the calling single-item functions (`_addAddress`, `_removeAddress`) via `require(result, ...)`. Aderyn flags the `.add/.remove` call site inside the helper, not the outer caller where the check occurs. |
 | `_whitelist.add/remove` and `_frozenlist.add/remove` in `RuleERC2980Internal` (single-item helpers) | **False positive** — same pattern as above; return is checked by the surrounding `require`. |
 | `_addWhitelistAddresses` / `_removeWhitelistAddresses` / `_addFrozenlistAddresses` / `_removeFrozenlistAddresses` in `RuleERC2980Base` | **False positive** — batch helpers return `void`; nothing to check. |
-
-No code changes are required for L-10.
 
 ---
 

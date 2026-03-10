@@ -4,7 +4,7 @@ pragma solidity ^0.8.20;
 import {Test} from "forge-std/Test.sol";
 import {HelperContract} from "../HelperContract.sol";
 import {RuleIdentityRegistry} from "src/rules/validation/deployment/RuleIdentityRegistry.sol";
-import {IdentityRegistryMock} from "../utils/IdentityRegistryMock.sol";
+import {IdentityRegistryMock} from "src/mocks/IdentityRegistryMock.sol";
 
 contract RuleIdentityRegistryUnit is Test, HelperContract {
     IdentityRegistryMock private registry;

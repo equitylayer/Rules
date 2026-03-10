@@ -35,10 +35,7 @@ abstract contract RuleAddressSetInternal {
      * @return added The number of newly added addresses.
      * @return skipped The number of addresses that were already listed.
      */
-    function _addAddresses(address[] calldata addressesToAdd)
-        internal
-        returns (uint256 added, uint256 skipped)
-    {
+    function _addAddresses(address[] calldata addressesToAdd) internal returns (uint256 added, uint256 skipped) {
         for (uint256 i = 0; i < addressesToAdd.length; ++i) {
             if (_listedAddresses.add(addressesToAdd[i])) {
                 added += 1;

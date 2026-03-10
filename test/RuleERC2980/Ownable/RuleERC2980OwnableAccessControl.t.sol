@@ -4,8 +4,6 @@ pragma solidity ^0.8.20;
 import {Test} from "forge-std/Test.sol";
 import {HelperContract} from "../../HelperContract.sol";
 import {RuleERC2980Ownable2Step} from "src/rules/validation/deployment/RuleERC2980Ownable2Step.sol";
-import {RuleERC2980InvariantStorage} from
-    "src/rules/validation/abstract/RuleERC2980/invariantStorage/RuleERC2980InvariantStorage.sol";
 
 contract RuleERC2980OwnableAccessControl is Test, HelperContract {
     error OwnableUnauthorizedAccount(address account);

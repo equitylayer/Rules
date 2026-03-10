@@ -4,7 +4,6 @@ pragma solidity ^0.8.20;
 import {RuleAddressSet} from "../RuleAddressSet/RuleAddressSet.sol";
 import {RuleWhitelistShared} from "../core/RuleWhitelistShared.sol";
 import {RuleTransferValidation} from "../core/RuleTransferValidation.sol";
-import {IERC1404Extend} from "CMTAT/interfaces/tokenization/draft-IERC1404.sol";
 import {IIdentityRegistryVerified} from "../../../interfaces/IIdentityRegistry.sol";
 
 /**
@@ -16,7 +15,11 @@ abstract contract RuleWhitelistBase is RuleAddressSet, RuleWhitelistShared, IIde
         checkSpender = checkSpender_;
     }
 
-    function _detectTransferRestriction(address from, address to, uint256 /* value */ )
+    function _detectTransferRestriction(
+        address from,
+        address to,
+        uint256 /* value */
+    )
         internal
         view
         virtual
@@ -43,7 +46,6 @@ abstract contract RuleWhitelistBase is RuleAddressSet, RuleWhitelistShared, IIde
         }
         return _detectTransferRestriction(from, to, value);
     }
-
 
     function isVerified(address targetAddress)
         public

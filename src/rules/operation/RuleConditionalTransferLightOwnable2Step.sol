@@ -12,10 +12,7 @@ import {RuleConditionalTransferLightBase} from "./abstract/RuleConditionalTransf
  * @title RuleConditionalTransferLightOwnable2Step
  * @notice Ownable2Step variant of RuleConditionalTransferLight.
  */
-contract RuleConditionalTransferLightOwnable2Step is
-    RuleConditionalTransferLightBase,
-    Ownable2Step
-{
+contract RuleConditionalTransferLightOwnable2Step is RuleConditionalTransferLightBase, Ownable2Step {
     constructor(address owner) Ownable(owner) {}
 
     function supportsInterface(bytes4 interfaceId) public view override returns (bool) {

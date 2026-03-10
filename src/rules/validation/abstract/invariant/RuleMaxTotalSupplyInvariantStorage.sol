@@ -1,17 +1,12 @@
 // SPDX-License-Identifier: MPL-2.0
 pragma solidity ^0.8.20;
 
-import {RuleCommonInvariantStorage} from "./RuleCommonInvariantStorage.sol";
+import {RuleSharedInvariantStorage} from "./RuleSharedInvariantStorage.sol";
 
-abstract contract RuleMaxTotalSupplyInvariantStorage is RuleCommonInvariantStorage {
+abstract contract RuleMaxTotalSupplyInvariantStorage is RuleSharedInvariantStorage {
     error RuleMaxTotalSupply_InvalidTransfer(address rule, address from, address to, uint256 value, uint8 code);
     error RuleMaxTotalSupply_InvalidTransferFrom(
-        address rule,
-        address spender,
-        address from,
-        address to,
-        uint256 value,
-        uint8 code
+        address rule, address spender, address from, address to, uint256 value, uint8 code
     );
     error RuleMaxTotalSupply_TokenAddressZeroNotAllowed();
 

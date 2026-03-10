@@ -7,7 +7,6 @@ import {CMTATDeployment} from "RuleEngine/../test/utils/CMTATDeployment.sol";
 import {RuleBlacklist} from "src/rules/validation/deployment/RuleBlacklist.sol";
 import {IRuleEngine} from "CMTAT/interfaces/engine/IRuleEngine.sol";
 
-
 /**
  * @title Integration test with the CMTAT using direct RuleBlacklist
  */
@@ -61,6 +60,7 @@ contract CMTATIntegrationDirectBlacklist is Test, HelperContract {
                 CODE_ADDRESS_TO_IS_BLACKLISTED
             )
         );
+        // forge-lint: disable-next-line(erc20-unchecked-transfer)
         cmtatContract.transfer(ADDRESS2, amount);
     }
 
@@ -80,6 +80,7 @@ contract CMTATIntegrationDirectBlacklist is Test, HelperContract {
                 CODE_ADDRESS_FROM_IS_BLACKLISTED
             )
         );
+        // forge-lint: disable-next-line(erc20-unchecked-transfer)
         cmtatContract.transfer(ADDRESS2, amount);
     }
 
@@ -103,6 +104,7 @@ contract CMTATIntegrationDirectBlacklist is Test, HelperContract {
                 CODE_ADDRESS_FROM_IS_BLACKLISTED
             )
         );
+        // forge-lint: disable-next-line(erc20-unchecked-transfer)
         cmtatContract.transfer(ADDRESS2, amount);
     }
 

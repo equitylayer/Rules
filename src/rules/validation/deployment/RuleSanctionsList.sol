@@ -4,7 +4,7 @@ pragma solidity ^0.8.20;
 import {AccessControlEnumerable} from "OZ/access/extensions/AccessControlEnumerable.sol";
 import {Context} from "OZ/utils/Context.sol";
 import {AccessControlModuleStandalone} from "../../../modules/AccessControlModuleStandalone.sol";
-import {MetaTxModuleStandalone, ERC2771Context} from "../../../modules/MetaTxModuleStandalone.sol";
+import {ERC2771Context} from "../../../modules/MetaTxModuleStandalone.sol";
 import {RuleSanctionsListBase} from "../abstract/base/RuleSanctionsListBase.sol";
 import {RuleTransferValidation} from "../abstract/core/RuleTransferValidation.sol";
 import {ISanctionsList} from "../../interfaces/ISanctionsList.sol";

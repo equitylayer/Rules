@@ -9,11 +9,9 @@ interface IAddressList is IIdentityRegistryContains {
     /// @param targetAddresses The array of added addresses.
     event AddAddresses(address[] targetAddresses);
 
-
     /// @notice Emitted when multiple addresses are removed.
     /// @param targetAddresses The array of removed addresses.
     event RemoveAddresses(address[] targetAddresses);
-
 
     /// @notice Emitted when a single address is added.
     /// @param targetAddress The added address.

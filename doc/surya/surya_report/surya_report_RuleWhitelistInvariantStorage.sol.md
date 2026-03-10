@@ -5,7 +5,7 @@
 
 |  File Name  |  SHA-1 Hash  |
 |-------------|--------------|
-| ./rules/validation/abstract/RuleAddressSet/invariantStorage/RuleWhitelistInvariantStorage.sol | 47459cd64d53f9b0596944655f6950b5b6fc3833 |
+| ./rules/validation/abstract/RuleAddressSet/invariantStorage/RuleWhitelistInvariantStorage.sol | 3f3d8473cd932de92f68cbbee4ce822d622719a3 |
 
 
 ### Contracts Description Table
@@ -15,7 +15,7 @@
 |:----------:|:-------------------:|:----------------:|:----------------:|:---------------:|
 |     └      |  **Function Name**  |  **Visibility**  |  **Mutability**  |  **Modifiers**  |
 ||||||
-| **RuleWhitelistInvariantStorage** | Implementation | RuleCommonInvariantStorage |||
+| **RuleWhitelistInvariantStorage** | Implementation | RuleSharedInvariantStorage |||
 
 
 ### Legend

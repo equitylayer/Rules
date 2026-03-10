@@ -5,7 +5,7 @@
 
 |  File Name  |  SHA-1 Hash  |
 |-------------|--------------|
-| ./rules/validation/abstract/invariant/RuleMaxTotalSupplyInvariantStorage.sol | 472d1b814581d38e0e0e68c9f5496875253235df |
+| ./rules/validation/abstract/invariant/RuleMaxTotalSupplyInvariantStorage.sol | 9c921b3736a3f7f28b6b0681c2cf995a55fa9cc6 |
 
 
 ### Contracts Description Table
@@ -15,7 +15,7 @@
 |:----------:|:-------------------:|:----------------:|:----------------:|:---------------:|
 |     └      |  **Function Name**  |  **Visibility**  |  **Mutability**  |  **Modifiers**  |
 ||||||
-| **RuleMaxTotalSupplyInvariantStorage** | Implementation | RuleCommonInvariantStorage |||
+| **RuleMaxTotalSupplyInvariantStorage** | Implementation | RuleSharedInvariantStorage |||
 
 
 ### Legend

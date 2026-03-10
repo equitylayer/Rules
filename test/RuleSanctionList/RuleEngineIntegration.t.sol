@@ -3,7 +3,7 @@ pragma solidity ^0.8.20;
 
 import {Test} from "forge-std/Test.sol";
 import {HelperContract} from "../HelperContract.sol";
-import {SanctionListOracle} from "../utils/SanctionListOracle.sol";
+import {SanctionListOracle} from "src/mocks/SanctionListOracle.sol";
 import {RuleEngine} from "RuleEngine/RuleEngine.sol";
 import {RuleSanctionsList} from "src/rules/validation/deployment/RuleSanctionsList.sol";
 

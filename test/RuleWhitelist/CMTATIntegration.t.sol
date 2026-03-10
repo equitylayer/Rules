@@ -56,6 +56,7 @@ contract CMTATIntegration is Test, HelperContract {
             )
         );
         // Act
+        // forge-lint: disable-next-line(erc20-unchecked-transfer)
         cmtatContract.transfer(ADDRESS2, 21);
     }
 
@@ -77,6 +78,7 @@ contract CMTATIntegration is Test, HelperContract {
             )
         );
         // Act
+        // forge-lint: disable-next-line(erc20-unchecked-transfer)
         cmtatContract.transfer(ADDRESS2, amount);
     }
 
@@ -98,6 +100,7 @@ contract CMTATIntegration is Test, HelperContract {
             )
         );
         // Act
+        // forge-lint: disable-next-line(erc20-unchecked-transfer)
         cmtatContract.transfer(ADDRESS2, amount);
     }
 

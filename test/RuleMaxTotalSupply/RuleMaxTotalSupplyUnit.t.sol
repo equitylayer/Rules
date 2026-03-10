@@ -4,7 +4,7 @@ pragma solidity ^0.8.20;
 import {Test} from "forge-std/Test.sol";
 import {HelperContract} from "../HelperContract.sol";
 import {RuleMaxTotalSupply} from "src/rules/validation/deployment/RuleMaxTotalSupply.sol";
-import {TotalSupplyMock} from "../utils/TotalSupplyMock.sol";
+import {TotalSupplyMock} from "src/mocks/TotalSupplyMock.sol";
 
 contract RuleMaxTotalSupplyUnit is Test, HelperContract {
     TotalSupplyMock private token;

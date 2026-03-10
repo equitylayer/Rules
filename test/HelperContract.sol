@@ -9,8 +9,9 @@ import {RuleEngine} from "RuleEngine/RuleEngine.sol";
 
 // RUleBlackList
 import {RuleBlacklist} from "src/rules/validation/deployment/RuleBlacklist.sol";
-import {RuleBlacklistInvariantStorage} from
-    "src/rules/validation/abstract/RuleAddressSet/invariantStorage/RuleBlacklistInvariantStorage.sol";
+import {
+    RuleBlacklistInvariantStorage
+} from "src/rules/validation/abstract/RuleAddressSet/invariantStorage/RuleBlacklistInvariantStorage.sol";
 // RuleWhitelist
 import {RuleWhitelist} from "src/rules/validation/deployment/RuleWhitelist.sol";
 import {RuleMaxTotalSupply} from "src/rules/validation/deployment/RuleMaxTotalSupply.sol";
@@ -20,16 +21,22 @@ import {RuleConditionalTransferLight} from "src/rules/operation/RuleConditionalT
 import {
     RuleConditionalTransferLightInvariantStorage
 } from "src/rules/operation/abstract/RuleConditionalTransferLightInvariantStorage.sol";
-import {RuleWhitelistInvariantStorage} from
-    "src/rules/validation/abstract/RuleAddressSet/invariantStorage/RuleWhitelistInvariantStorage.sol";
-import {RuleAddressSetInvariantStorage} from
-    "src/rules/validation/abstract/RuleAddressSet/invariantStorage/RuleAddressSetInvariantStorage.sol";
-import {RuleMaxTotalSupplyInvariantStorage} from
-    "src/rules/validation/abstract/invariant/RuleMaxTotalSupplyInvariantStorage.sol";
-import {RuleIdentityRegistryInvariantStorage} from
-    "src/rules/validation/abstract/invariant/RuleIdentityRegistryInvariantStorage.sol";
+import {
+    RuleWhitelistInvariantStorage
+} from "src/rules/validation/abstract/RuleAddressSet/invariantStorage/RuleWhitelistInvariantStorage.sol";
+import {
+    RuleAddressSetInvariantStorage
+} from "src/rules/validation/abstract/RuleAddressSet/invariantStorage/RuleAddressSetInvariantStorage.sol";
+import {
+    RuleMaxTotalSupplyInvariantStorage
+} from "src/rules/validation/abstract/invariant/RuleMaxTotalSupplyInvariantStorage.sol";
+import {
+    RuleIdentityRegistryInvariantStorage
+} from "src/rules/validation/abstract/invariant/RuleIdentityRegistryInvariantStorage.sol";
 
-import {RuleSanctionsListInvariantStorage} from "src/rules/validation/abstract/invariant/RuleSanctionsListInvariantStorage.sol";
+import {
+    RuleSanctionsListInvariantStorage
+} from "src/rules/validation/abstract/invariant/RuleSanctionsListInvariantStorage.sol";
 
 // utils
 import {CMTATDeployment} from "RuleEngine/../test/utils/CMTATDeployment.sol";

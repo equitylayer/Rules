@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MPL-2.0
 pragma solidity ^0.8.20;
 
-import {RuleCommonInvariantStorage} from "../../validation/abstract/invariant/RuleCommonInvariantStorage.sol";
+import {RuleSharedInvariantStorage} from "../../validation/abstract/invariant/RuleSharedInvariantStorage.sol";
 
-abstract contract RuleConditionalTransferLightInvariantStorage is RuleCommonInvariantStorage {
+abstract contract RuleConditionalTransferLightInvariantStorage is RuleSharedInvariantStorage {
     /* ============ Role ============ */
     bytes32 public constant OPERATOR_ROLE = keccak256("OPERATOR_ROLE");
 
@@ -13,10 +13,11 @@ abstract contract RuleConditionalTransferLightInvariantStorage is RuleCommonInva
     uint8 public constant CODE_TRANSFER_REQUEST_NOT_APPROVED = 46;
 
     /* ============ Custom error ============ */
-    error RuleConditionalTransferLight_AdminAddressZeroNotAllowed();
     error RuleConditionalTransferLight_TransferExecutorUnauthorized(address account);
     error RuleConditionalTransferLight_TokenAddressZeroNotAllowed();
-    error RuleConditionalTransferLight_InsufficientAllowance(address token, address owner, uint256 allowance, uint256 required);
+    error RuleConditionalTransferLight_InsufficientAllowance(
+        address token, address owner, uint256 allowance, uint256 required
+    );
     error RuleConditionalTransferLight_TransferFailed();
     error TransferNotApproved();
     error TransferApprovalNotFound();

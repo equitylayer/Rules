@@ -2,7 +2,6 @@
 pragma solidity ^0.8.20;
 
 import {Test} from "forge-std/Test.sol";
-import {IRuleEngine} from "CMTAT/interfaces/engine/IRuleEngine.sol";
 import {CMTATStandalone} from "CMTAT/deployment/CMTATStandalone.sol";
 import {RuleBlacklist} from "src/rules/validation/deployment/RuleBlacklist.sol";
 import {DeployCMTATWithBlacklist} from "script/DeployCMTATWithBlacklist.s.sol";
@@ -15,10 +14,7 @@ contract DeployCMTATWithBlacklistTest is Test {
         assertEq(address(token.ruleEngine()), address(rule));
     }
 
-    function _deploy(DeployCMTATWithBlacklist script)
-        internal
-        returns (CMTATStandalone token, RuleBlacklist rule)
-    {
+    function _deploy(DeployCMTATWithBlacklist script) internal returns (CMTATStandalone token, RuleBlacklist rule) {
         (token, rule) = script.deploy(address(1), address(0));
     }
 }

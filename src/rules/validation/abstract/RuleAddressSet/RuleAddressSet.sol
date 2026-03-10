@@ -146,6 +146,7 @@ abstract contract RuleAddressSet is
             results[i] = _isAddressListed(targetAddresses[i]);
         }
     }
+
     /*//////////////////////////////////////////////////////////////
                              ERC-2771 META TX
     //////////////////////////////////////////////////////////////*/

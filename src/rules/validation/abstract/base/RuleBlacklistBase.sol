@@ -17,7 +17,11 @@ import {IRule} from "RuleEngine/interfaces/IRule.sol";
 abstract contract RuleBlacklistBase is RuleAddressSet, RuleNFTAdapter, RuleBlacklistInvariantStorage {
     constructor(address forwarderIrrevocable) RuleAddressSet(forwarderIrrevocable) {}
 
-    function _detectTransferRestriction(address from, address to, uint256 /* value */ )
+    function _detectTransferRestriction(
+        address from,
+        address to,
+        uint256 /* value */
+    )
         internal
         view
         override
@@ -110,12 +114,7 @@ abstract contract RuleBlacklistBase is RuleAddressSet, RuleNFTAdapter, RuleBlack
         );
     }
 
-    function _transferredFrom(address spender, address from, address to, uint256 value)
-        internal
-        view
-        virtual
-        override
-    {
+    function _transferredFrom(address spender, address from, address to, uint256 value) internal view virtual override {
         uint8 code = _detectTransferRestrictionFrom(spender, from, to, value);
         require(
             code == uint8(REJECTED_CODE_BASE.TRANSFER_OK),

@@ -5,7 +5,7 @@
 
 |  File Name  |  SHA-1 Hash  |
 |-------------|--------------|
-| ./rules/validation/abstract/invariant/RuleSanctionsListInvariantStorage.sol | 898f1976a71788fd6aa39127e741988481f6082f |
+| ./rules/validation/abstract/invariant/RuleSanctionsListInvariantStorage.sol | 0b799d5753392482f00fea8d5a885847747d6360 |
 
 
 ### Contracts Description Table
@@ -15,7 +15,7 @@
 |:----------:|:-------------------:|:----------------:|:----------------:|:---------------:|
 |     └      |  **Function Name**  |  **Visibility**  |  **Mutability**  |  **Modifiers**  |
 ||||||
-| **RuleSanctionsListInvariantStorage** | Implementation | RuleCommonInvariantStorage |||
+| **RuleSanctionsListInvariantStorage** | Implementation | RuleSharedInvariantStorage |||
 
 
 ### Legend

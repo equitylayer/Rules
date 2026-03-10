@@ -7,6 +7,7 @@ import {Context} from "OZ/utils/Context.sol";
 import {AccessControlModuleStandalone} from "../../../modules/AccessControlModuleStandalone.sol";
 import {RuleWhitelistBase} from "../abstract/base/RuleWhitelistBase.sol";
 import {RuleAddressSet} from "../abstract/RuleAddressSet/RuleAddressSet.sol";
+
 /* ==== CMTAT === */
 
 /**
@@ -46,7 +47,8 @@ contract RuleWhitelist is RuleWhitelistBase, AccessControlModuleStandalone {
         override(AccessControlEnumerable, RuleWhitelistBase)
         returns (bool)
     {
-        return AccessControlEnumerable.supportsInterface(interfaceId) || RuleWhitelistBase.supportsInterface(interfaceId);
+        return AccessControlEnumerable.supportsInterface(interfaceId)
+            || RuleWhitelistBase.supportsInterface(interfaceId);
     }
 
     /*//////////////////////////////////////////////////////////////

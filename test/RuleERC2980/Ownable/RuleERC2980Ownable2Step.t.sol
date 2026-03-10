@@ -2,8 +2,9 @@
 pragma solidity ^0.8.20;
 
 import {Ownable2StepTestBase, IOwnable2StepLike} from "../../utils/Ownable2StepTestBase.sol";
-import {RuleERC2980Ownable2Step as RuleERC2980Ownable2StepContract} from
-    "src/rules/validation/deployment/RuleERC2980Ownable2Step.sol";
+import {
+    RuleERC2980Ownable2Step as RuleERC2980Ownable2StepContract
+} from "src/rules/validation/deployment/RuleERC2980Ownable2Step.sol";
 
 contract RuleERC2980Ownable2StepTest is Ownable2StepTestBase {
     function _deployOwnable2Step() internal override returns (IOwnable2StepLike, address) {

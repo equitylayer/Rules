@@ -20,7 +20,7 @@ contract RuleBlacklistTest is Test, HelperContract {
         resString = ruleBlacklist.messageForTransferRestriction(CODE_ADDRESS_FROM_IS_BLACKLISTED);
         // Assert
         assertEq(resString, TEXT_ADDRESS_FROM_IS_BLACKLISTED);
-        
+
         // Act
         resString = ruleBlacklist.messageForTransferRestriction(CODE_ADDRESS_TO_IS_BLACKLISTED);
         // Assert
@@ -202,7 +202,6 @@ contract RuleBlacklistTest is Test, HelperContract {
         // Assert
         assertFalse(resBool);
 
-
         vm.prank(ADDRESS1);
         vm.expectRevert(
             abi.encodeWithSelector(
@@ -304,5 +303,4 @@ contract RuleBlacklistTest is Test, HelperContract {
         ruleBlacklist.transferred(ADDRESS3, ADDRESS1, ADDRESS2, 20);
         ruleBlacklist.transferred(ADDRESS3, ADDRESS1, ADDRESS2, 0, 20);
     }
-
 }

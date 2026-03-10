@@ -32,7 +32,8 @@ abstract contract RuleWhitelistShared is RuleNFTAdapter, RuleWhitelistInvariantS
      */
     function canReturnTransferRestrictionCode(uint8 restrictionCode) external pure override returns (bool isKnown) {
         return restrictionCode == CODE_ADDRESS_FROM_NOT_WHITELISTED
-            || restrictionCode == CODE_ADDRESS_TO_NOT_WHITELISTED || restrictionCode == CODE_ADDRESS_SPENDER_NOT_WHITELISTED;
+            || restrictionCode == CODE_ADDRESS_TO_NOT_WHITELISTED
+            || restrictionCode == CODE_ADDRESS_SPENDER_NOT_WHITELISTED;
     }
 
     /**
@@ -99,18 +100,11 @@ abstract contract RuleWhitelistShared is RuleNFTAdapter, RuleWhitelistInvariantS
         );
     }
 
-    function _transferredFrom(address spender, address from, address to, uint256 value)
-        internal
-        view
-        virtual
-        override
-    {
+    function _transferredFrom(address spender, address from, address to, uint256 value) internal view virtual override {
         uint8 code = _detectTransferRestrictionFrom(spender, from, to, value);
         require(
             code == uint8(REJECTED_CODE_BASE.TRANSFER_OK),
             RuleWhitelist_InvalidTransferFrom(address(this), spender, from, to, value, code)
         );
     }
-
-
 }

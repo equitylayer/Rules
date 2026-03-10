@@ -2,16 +2,18 @@
 
 pragma solidity ^0.8.20;
 
-import {RuleCommonInvariantStorage} from "./RuleCommonInvariantStorage.sol";
+import {RuleSharedInvariantStorage} from "./RuleSharedInvariantStorage.sol";
 import {ISanctionsList} from "../../../interfaces/ISanctionsList.sol";
 
-abstract contract RuleSanctionsListInvariantStorage is RuleCommonInvariantStorage {
+abstract contract RuleSanctionsListInvariantStorage is RuleSharedInvariantStorage {
     /* ============ Event ============ */
     event SetSanctionListOracle(ISanctionsList newOracle);
     /* ============ Custom errors ============ */
     error RuleSanctionsList_OracleAddressZeroNotAllowed();
     error RuleSanctionsList_InvalidTransfer(address rule, address from, address to, uint256 value, uint8 code);
-    error RuleSanctionsList_InvalidTransferFrom(address rule, address spender, address from, address to, uint256 value, uint8 code);
+    error RuleSanctionsList_InvalidTransferFrom(
+        address rule, address spender, address from, address to, uint256 value, uint8 code
+    );
     /* ============ Role ============ */
     bytes32 public constant SANCTIONLIST_ROLE = keccak256("SANCTIONLIST_ROLE");
 

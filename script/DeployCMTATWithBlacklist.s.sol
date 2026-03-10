@@ -8,10 +8,7 @@ import {IRuleEngine} from "CMTAT/interfaces/engine/IRuleEngine.sol";
 import {RuleBlacklist} from "src/rules/validation/deployment/RuleBlacklist.sol";
 
 contract DeployCMTATWithBlacklist is Script {
-    function deploy(address admin, address forwarder)
-        public
-        returns (CMTATStandalone token, RuleBlacklist rule)
-    {
+    function deploy(address admin, address forwarder) public returns (CMTATStandalone token, RuleBlacklist rule) {
         ICMTATConstructor.ERC20Attributes memory erc20Attributes =
             ICMTATConstructor.ERC20Attributes("CMTA Token", "CMTAT", 0);
         ICMTATConstructor.ExtraInformationAttributes memory extraInformationAttributes =
