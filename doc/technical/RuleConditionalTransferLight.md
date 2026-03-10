@@ -6,6 +6,8 @@ This rule requires that each transfer be explicitly approved by an operator befo
 
 Each approval is tracked by a hash of `(from, to, value)`. The same transfer tuple can be approved multiple times (approval count > 1) to allow repeated transfers between the same parties for the same amount.
 
+Mints (`from == address(0)`) and burns (`to == address(0)`) are **exempt**: they always pass without requiring an approval. `created` and `destroyed` follow the same path as `transferred` and return immediately for those cases.
+
 ## Schema
 
 ### Graph

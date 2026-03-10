@@ -38,9 +38,13 @@ contract RuleConditionalTransferLight is
             || AccessControlEnumerable.supportsInterface(interfaceId);
     }
 
-    function created(address /* to */, uint256 /* value */) external onlyBoundToken {}
+    function created(address to, uint256 value) external onlyBoundToken {
+        _transferred(address(0), to, value);
+    }
 
-    function destroyed(address /* from */, uint256 /* value */) external onlyBoundToken {}
+    function destroyed(address from, uint256 value) external onlyBoundToken {
+        _transferred(from, address(0), value);
+    }
 
     function _authorizeTransferApproval() internal view virtual override onlyRole(OPERATOR_ROLE) {}
 

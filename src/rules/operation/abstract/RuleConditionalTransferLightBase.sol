@@ -89,6 +89,9 @@ abstract contract RuleConditionalTransferLightBase is VersionModule, RuleConditi
         override(IERC1404)
         returns (uint8)
     {
+        if (from == address(0) || to == address(0)) {
+            return uint8(IERC1404Extend.REJECTED_CODE_BASE.TRANSFER_OK);
+        }
         bytes32 transferHash = _transferHash(from, to, value);
         if (approvalCounts[transferHash] == 0) {
             return CODE_TRANSFER_REQUEST_NOT_APPROVED;
@@ -149,6 +152,9 @@ abstract contract RuleConditionalTransferLightBase is VersionModule, RuleConditi
     }
 
     function _transferred(address from, address to, uint256 value) internal virtual {
+        if (from == address(0) || to == address(0)) {
+            return;
+        }
         bytes32 transferHash = _transferHash(from, to, value);
         uint256 count = approvalCounts[transferHash];
 

@@ -314,6 +314,7 @@ A full-featured variant, `RuleConditionalTransfer`, is maintained as a separate 
 Deployment scripts:
 - `script/DeployCMTATWithWhitelist.s.sol`
 - `script/DeployCMTATWithBlacklist.s.sol`
+- `script/DeployCMTATWithBlacklistAndSanctionsList.s.sol` — CMTAT + RuleEngine with blacklist and sanctions rules
 
 ### Choosing a Rule Variant
 
@@ -358,6 +359,21 @@ Several rules are available in multiple access-control variants. Use the simples
 
 All rules are compatible with CMTAT, as noted earlier in this README.
 
+### Technical documentation
+
+Detailed technical documentation for each rule is available in [`doc/technical/`](doc/technical/):
+
+| Rule | Document |
+| ---- | -------- |
+| RuleWhitelist | [RuleWhitelist.md](doc/technical/RuleWhitelist.md) |
+| RuleWhitelistWrapper | [RuleWhitelistWrapper.md](doc/technical/RuleWhitelistWrapper.md) |
+| RuleBlacklist | [RuleBlacklist.md](doc/technical/RuleBlacklist.md) |
+| RuleSanctionsList | [RuleSanctionList.md](doc/technical/RuleSanctionList.md) |
+| RuleMaxTotalSupply | [RuleMaxTotalSupply.md](doc/technical/RuleMaxTotalSupply.md) |
+| RuleIdentityRegistry | [RuleIdentityRegistry.md](doc/technical/RuleIdentityRegistry.md) |
+| RuleERC2980 | [RuleERC2980.md](doc/technical/RuleERC2980.md) |
+| RuleConditionalTransferLight | [RuleConditionalTransferLight.md](doc/technical/RuleConditionalTransferLight.md) |
+
 ### Operational Notes
 
 - `RuleIdentityRegistry` allows burns (`to == address(0)`) even if the sender is not verified. This matters only if the token allows self-burn.
@@ -371,6 +387,7 @@ All rules are compatible with CMTAT, as noted earlier in this README.
 - `RuleConditionalTransferLight` approvals are keyed by `(from, to, value)` and are not nonce-based.
 - `RuleConditionalTransferLight` provides `approveAndTransferIfAllowed` to approve and immediately execute `transferFrom` when this rule has allowance; it assumes the token calls back `transferred()` during the transfer.
 - `RuleConditionalTransferLight` restricts `transferred()` to tokens bound via `bindToken` (ERC3643ComplianceModule).
+- `RuleConditionalTransferLight` exempts mints (`from == address(0)`) and burns (`to == address(0)`) from the approval requirement; `created` and `destroyed` delegate to `_transferred`, which returns early for those cases.
 - AccessControl variants use `onlyRole(ROLE)` in `_authorize*()` and internal helpers are marked `virtual`.
 - AccessControl variants use `AccessControlEnumerable`, so role members can be enumerated with `getRoleMember` / `getRoleMemberCount`. The default admin is treated as having all roles via `hasRole`, but may not appear in role member lists unless explicitly granted.
 - `forwarderIrrevocable` is accepted as-is (including `address(0)`), and is not validated against ERC-165 because some forwarders do not implement it.
@@ -509,7 +526,7 @@ For the moment, there is only one operation rule available: ConditionalTransferL
 
 #### Conditional transfer (light)
 
-This rule requires that transfers must be approved by an operator before being executed. It hashes `(from, to, value)` to track approvals and allows the same transfer to be approved multiple times. Each successful transfer consumes one approval, applying a write operation on the blockchain.
+This rule requires that transfers must be approved by an operator before being executed. It hashes `(from, to, value)` to track approvals and allows the same transfer to be approved multiple times. Each successful transfer consumes one approval, applying a write operation on the blockchain. Mints (`from == address(0)`) and burns (`to == address(0)`) are exempt and always pass without requiring approval.
 
 ![surya_inheritance_RuleConditionalTransferLight.sol](./doc/surya/surya_inheritance/surya_inheritance_RuleConditionalTransferLight.sol.png)
 
@@ -736,9 +753,13 @@ $ anvil
 
 #### Deploy
 
+> **Warning — private key security**
+> Passing `--private-key` directly on the command line is **not recommended** in production: the key is visible in your shell history and to any process that can read `/proc`. Prefer hardware wallets (`--ledger`, `--trezor`), encrypted keystores (`--account <keystore>`), or environment-variable signers. See [Foundry best practices](https://www.getfoundry.sh/best-practices) for details.
+
 ```shell
 $ forge script script/DeployCMTATWithWhitelist.s.sol --rpc-url <your_rpc_url> --private-key <your_private_key>
 $ forge script script/DeployCMTATWithBlacklist.s.sol --rpc-url <your_rpc_url> --private-key <your_private_key>
+$ forge script script/DeployCMTATWithBlacklistAndSanctionsList.s.sol --rpc-url <your_rpc_url> --private-key <your_private_key>
 ```
 
 #### Cast
