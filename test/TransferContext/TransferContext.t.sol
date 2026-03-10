@@ -72,4 +72,28 @@ contract TransferContextTest is Test, HelperContract {
         vm.prank(ADDRESS3);
         token.transferFromWithContext(ADDRESS1, ADDRESS2, 10, true, 0);
     }
+
+    function testTransferFromContextFungibleWhitelist() public {
+        RuleWhitelist rule = _deployWhitelistRule();
+        token.setRule(address(rule));
+        token.mint(ADDRESS1, 100);
+
+        vm.prank(ADDRESS1);
+        token.approve(ADDRESS3, 10);
+
+        vm.prank(ADDRESS3);
+        token.transferFromWithContext(ADDRESS1, ADDRESS2, 10, true, 0);
+    }
+
+    function testTransferFromContextWithTokenIdWhitelist() public {
+        RuleWhitelist rule = _deployWhitelistRule();
+        token.setRule(address(rule));
+        token.mint(ADDRESS1, 100);
+
+        vm.prank(ADDRESS1);
+        token.approve(ADDRESS3, 10);
+
+        vm.prank(ADDRESS3);
+        token.transferFromWithContext(ADDRESS1, ADDRESS2, 10, false, 1);
+    }
 }

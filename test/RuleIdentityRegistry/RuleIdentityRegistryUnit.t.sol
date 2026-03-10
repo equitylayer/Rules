@@ -51,6 +51,14 @@ contract RuleIdentityRegistryUnit is Test, HelperContract {
         assertEq(resUint8, CODE_ADDRESS_SPENDER_NOT_VERIFIED);
     }
 
+    function testDetectRestrictionFrom_NoRegistry_ReturnsOk() public {
+        vm.prank(DEFAULT_ADMIN_ADDRESS);
+        rule.clearIdentityRegistry();
+
+        resUint8 = rule.detectTransferRestrictionFrom(ADDRESS3, ADDRESS1, ADDRESS2, 1);
+        assertEq(resUint8, TRANSFER_OK);
+    }
+
     function testSetIdentityRegistry_RevertsOnZeroAddress() public {
         vm.expectRevert(RuleIdentityRegistry_RegistryAddressZeroNotAllowed.selector);
         vm.prank(DEFAULT_ADMIN_ADDRESS);
@@ -101,5 +109,36 @@ contract RuleIdentityRegistryUnit is Test, HelperContract {
             )
         );
         rule.transferred(ADDRESS3, ADDRESS1, ADDRESS2, 10);
+    }
+
+    function testTransferred_DoesNotRevertWhenValid() public {
+        registry.setVerified(ADDRESS1, true);
+        registry.setVerified(ADDRESS2, true);
+
+        rule.transferred(ADDRESS1, ADDRESS2, 10);
+    }
+
+    function testTransferredFrom_DoesNotRevertWhenValid() public {
+        registry.setVerified(ADDRESS1, true);
+        registry.setVerified(ADDRESS2, true);
+        registry.setVerified(ADDRESS3, true);
+
+        rule.transferred(ADDRESS3, ADDRESS1, ADDRESS2, 10);
+    }
+
+    function testCanReturnTransferRestrictionCode() public view {
+        assertTrue(rule.canReturnTransferRestrictionCode(CODE_ADDRESS_FROM_NOT_VERIFIED));
+        assertTrue(rule.canReturnTransferRestrictionCode(CODE_ADDRESS_TO_NOT_VERIFIED));
+        assertTrue(rule.canReturnTransferRestrictionCode(CODE_ADDRESS_SPENDER_NOT_VERIFIED));
+        assertFalse(rule.canReturnTransferRestrictionCode(CODE_NONEXISTENT));
+    }
+
+    function testMessageForTransferRestriction() public view {
+        assertEq(rule.messageForTransferRestriction(CODE_ADDRESS_FROM_NOT_VERIFIED), TEXT_ADDRESS_FROM_NOT_VERIFIED);
+        assertEq(rule.messageForTransferRestriction(CODE_ADDRESS_TO_NOT_VERIFIED), TEXT_ADDRESS_TO_NOT_VERIFIED);
+        assertEq(
+            rule.messageForTransferRestriction(CODE_ADDRESS_SPENDER_NOT_VERIFIED), TEXT_ADDRESS_SPENDER_NOT_VERIFIED
+        );
+        assertEq(rule.messageForTransferRestriction(CODE_NONEXISTENT), TEXT_CODE_NOT_FOUND);
     }
 }

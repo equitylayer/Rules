@@ -14,6 +14,11 @@ contract RuleConditionalTransferLightUnit is Test, HelperContract {
         rule.bindToken(ADDRESS3);
     }
 
+    function testConstructorRevertsOnZeroAdmin() public {
+        vm.expectRevert();
+        new RuleConditionalTransferLight(address(0));
+    }
+
     function testApproveTransfer_OnlyOperator() public {
         vm.expectRevert();
         vm.prank(ADDRESS1);
@@ -59,5 +64,19 @@ contract RuleConditionalTransferLightUnit is Test, HelperContract {
         assertEq(resUint8, TRANSFER_OK);
         resBool = rule.canTransfer(ADDRESS1, ADDRESS2, 10);
         assertEq(resBool, true);
+    }
+
+    function testDetectRestrictionMintOrBurnPathReturnsTransferOk() public {
+        resUint8 = rule.detectTransferRestriction(address(0), ADDRESS2, 10);
+        assertEq(resUint8, TRANSFER_OK);
+
+        resUint8 = rule.detectTransferRestriction(ADDRESS1, address(0), 10);
+        assertEq(resUint8, TRANSFER_OK);
+
+        resBool = rule.canTransfer(address(0), ADDRESS2, 10);
+        assertTrue(resBool);
+
+        resBool = rule.canTransfer(ADDRESS1, address(0), 10);
+        assertTrue(resBool);
     }
 }

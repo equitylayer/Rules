@@ -401,4 +401,36 @@ contract RuleERC2980Test is Test, HelperContract {
         assertTrue(results[0]);
         assertFalse(results[1]);
     }
+
+    function testBatchOperationsSkipDuplicatesAndMissingEntries() public {
+        // Whitelist: duplicate entry should be skipped in batch add path.
+        address[] memory whitelistToAdd = new address[](1);
+        whitelistToAdd[0] = ADDRESS2; // already whitelisted in setUp
+        vm.prank(DEFAULT_ADMIN_ADDRESS);
+        ruleERC2980.addWhitelistAddresses(whitelistToAdd);
+        assertEq(ruleERC2980.whitelistAddressCount(), 1);
+
+        // Whitelist: removing a missing address should be skipped in batch remove path.
+        address[] memory whitelistToRemove = new address[](1);
+        whitelistToRemove[0] = ADDRESS3; // not whitelisted
+        vm.prank(DEFAULT_ADMIN_ADDRESS);
+        ruleERC2980.removeWhitelistAddresses(whitelistToRemove);
+        assertEq(ruleERC2980.whitelistAddressCount(), 1);
+
+        // Frozenlist: duplicate entry should be skipped in batch add path.
+        vm.prank(DEFAULT_ADMIN_ADDRESS);
+        ruleERC2980.addFrozenlistAddress(ADDRESS1);
+        address[] memory frozenToAdd = new address[](1);
+        frozenToAdd[0] = ADDRESS1; // already frozen
+        vm.prank(DEFAULT_ADMIN_ADDRESS);
+        ruleERC2980.addFrozenlistAddresses(frozenToAdd);
+        assertEq(ruleERC2980.frozenlistAddressCount(), 1);
+
+        // Frozenlist: removing a missing address should be skipped in batch remove path.
+        address[] memory frozenToRemove = new address[](1);
+        frozenToRemove[0] = ADDRESS3; // not frozen
+        vm.prank(DEFAULT_ADMIN_ADDRESS);
+        ruleERC2980.removeFrozenlistAddresses(frozenToRemove);
+        assertEq(ruleERC2980.frozenlistAddressCount(), 1);
+    }
 }

@@ -22,10 +22,7 @@ contract RuleConditionalTransferLight is
     /**
      * @param admin Address of the contract admin.
      */
-    constructor(address admin) AccessControlModuleStandalone(admin) {
-        require(admin != address(0), RuleConditionalTransferLight_AdminAddressZeroNotAllowed());
-
-    }
+    constructor(address admin) AccessControlModuleStandalone(admin) {}
 
     function supportsInterface(bytes4 interfaceId)
         public
