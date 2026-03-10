@@ -67,8 +67,7 @@ contract CMTATIntegrationWhitelistWrapper is Test, HelperContract {
     }
 
     function testWrapperWithZeroRulesRejectsTransfers() public {
-        RuleWhitelistWrapper emptyWrapper =
-            new RuleWhitelistWrapper(WHITELIST_OPERATOR_ADDRESS, ZERO_ADDRESS, true);
+        RuleWhitelistWrapper emptyWrapper = new RuleWhitelistWrapper(WHITELIST_OPERATOR_ADDRESS, ZERO_ADDRESS, true);
 
         resUint8 = emptyWrapper.detectTransferRestriction(ADDRESS1, ADDRESS2, 20);
         assertEq(resUint8, CODE_ADDRESS_FROM_NOT_WHITELISTED);
@@ -91,7 +90,6 @@ contract CMTATIntegrationWhitelistWrapper is Test, HelperContract {
         resBool = ruleWhitelistWrapper.canTransfer(ADDRESS1, ADDRESS2, 0, 20);
         // Assert
         assertEq(resBool, false);
-
 
         vm.prank(ADDRESS1);
         vm.expectRevert(
@@ -135,7 +133,6 @@ contract CMTATIntegrationWhitelistWrapper is Test, HelperContract {
         // Assert
         assertEq(resUint8, CODE_ADDRESS_TO_NOT_WHITELISTED);
 
-
         vm.prank(ADDRESS1);
         vm.expectRevert(
             abi.encodeWithSelector(
@@ -162,7 +159,6 @@ contract CMTATIntegrationWhitelistWrapper is Test, HelperContract {
             )
         );
         ruleWhitelistWrapper.transferred(ADDRESS1, ADDRESS2, 0, 20);
-        
     }
 
     function testDetectTransferRestrictionWithSpender() public {
@@ -339,8 +335,7 @@ contract CMTATIntegrationWhitelistWrapper is Test, HelperContract {
     }
 
     function testIsVerifiedWithNoChildRules() public {
-        RuleWhitelistWrapper emptyWrapper =
-            new RuleWhitelistWrapper(WHITELIST_OPERATOR_ADDRESS, ZERO_ADDRESS, true);
+        RuleWhitelistWrapper emptyWrapper = new RuleWhitelistWrapper(WHITELIST_OPERATOR_ADDRESS, ZERO_ADDRESS, true);
         assertFalse(emptyWrapper.isVerified(ADDRESS1));
     }
 

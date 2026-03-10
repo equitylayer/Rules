@@ -8,9 +8,7 @@ import {IERC7551Compliance} from "CMTAT/interfaces/tokenization/draft-IERC7551.s
 import {IRule} from "RuleEngine/interfaces/IRule.sol";
 import {ITransferContext} from "../../interfaces/ITransferContext.sol";
 import {IERC20} from "OZ/token/ERC20/IERC20.sol";
-import {
-    RuleConditionalTransferLightInvariantStorage
-} from "./RuleConditionalTransferLightInvariantStorage.sol";
+import {RuleConditionalTransferLightInvariantStorage} from "./RuleConditionalTransferLightInvariantStorage.sol";
 import {VersionModule} from "../../../modules/VersionModule.sol";
 
 /**
@@ -18,7 +16,11 @@ import {VersionModule} from "../../../modules/VersionModule.sol";
  * @dev Requires operator approval for each transfer. Same transfer (from, to, value)
  *      can be approved multiple times to allow repeated transfers.
  */
-abstract contract RuleConditionalTransferLightBase is VersionModule, RuleConditionalTransferLightInvariantStorage, IRule {
+abstract contract RuleConditionalTransferLightBase is
+    VersionModule,
+    RuleConditionalTransferLightInvariantStorage,
+    IRule
+{
     // Mapping from transfer hash to approval count
     mapping(bytes32 => uint256) public approvalCounts;
 
@@ -52,10 +54,7 @@ abstract contract RuleConditionalTransferLightBase is VersionModule, RuleConditi
         approveTransfer(from, to, value);
 
         uint256 allowed = IERC20(token).allowance(from, address(this));
-        require(
-            allowed >= value,
-            RuleConditionalTransferLight_InsufficientAllowance(token, from, allowed, value)
-        );
+        require(allowed >= value, RuleConditionalTransferLight_InsufficientAllowance(token, from, allowed, value));
 
         bool success = IERC20(token).transferFrom(from, to, value);
         require(success, RuleConditionalTransferLight_TransferFailed());
@@ -75,7 +74,13 @@ abstract contract RuleConditionalTransferLightBase is VersionModule, RuleConditi
         _transferred(from, to, value);
     }
 
-    function transferred(address /* spender */, address from, address to, uint256 value)
+    function transferred(
+        address,
+        /* spender */
+        address from,
+        address to,
+        uint256 value
+    )
         public
         override(IRuleEngine)
         onlyTransferExecutor
@@ -99,7 +104,13 @@ abstract contract RuleConditionalTransferLightBase is VersionModule, RuleConditi
         return uint8(IERC1404Extend.REJECTED_CODE_BASE.TRANSFER_OK);
     }
 
-    function detectTransferRestrictionFrom(address /* spender */, address from, address to, uint256 value)
+    function detectTransferRestrictionFrom(
+        address,
+        /* spender */
+        address from,
+        address to,
+        uint256 value
+    )
         public
         view
         override(IERC1404Extend)

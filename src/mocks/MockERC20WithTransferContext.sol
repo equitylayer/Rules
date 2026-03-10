@@ -30,7 +30,10 @@ contract MockERC20WithTransferContext is ERC20 {
         return success;
     }
 
-    function transferWithContext(address to, uint256 value, bool useFungibleContext, uint256 tokenId) external returns (bool) {
+    function transferWithContext(address to, uint256 value, bool useFungibleContext, uint256 tokenId)
+        external
+        returns (bool)
+    {
         _transfer(_msgSender(), to, value);
         if (useFungibleContext) {
             _notifyFungible(_msgSender(), _msgSender(), to, value);
@@ -40,13 +43,10 @@ contract MockERC20WithTransferContext is ERC20 {
         return true;
     }
 
-    function transferFromWithContext(
-        address from,
-        address to,
-        uint256 value,
-        bool useFungibleContext,
-        uint256 tokenId
-    ) external returns (bool) {
+    function transferFromWithContext(address from, address to, uint256 value, bool useFungibleContext, uint256 tokenId)
+        external
+        returns (bool)
+    {
         address sender = _msgSender();
         _spendAllowance(from, sender, value);
         _transfer(from, to, value);

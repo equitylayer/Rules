@@ -17,10 +17,8 @@ import {ITransferContext} from "../../../interfaces/ITransferContext.sol";
  * @dev Delegates tokenId overloads to RuleTransferValidation's internal hooks.
  */
 abstract contract RuleNFTAdapter is RuleTransferValidation, IERC7943NonFungibleComplianceExtend, ITransferContext {
-    bytes4 internal constant TRANSFERRED_SELECTOR_ERC3643 =
-        IERC3643IComplianceContract.transferred.selector;
-    bytes4 internal constant TRANSFERRED_SELECTOR_RULE_ENGINE =
-        IRuleEngine.transferred.selector;
+    bytes4 internal constant TRANSFERRED_SELECTOR_ERC3643 = IERC3643IComplianceContract.transferred.selector;
+    bytes4 internal constant TRANSFERRED_SELECTOR_RULE_ENGINE = IRuleEngine.transferred.selector;
     bytes4 internal constant TRANSFERRED_SELECTOR_ERC7943 =
         bytes4(keccak256("transferred(address,address,uint256,uint256)"));
     bytes4 internal constant TRANSFERRED_SELECTOR_ERC7943_FROM =
@@ -34,10 +32,17 @@ abstract contract RuleNFTAdapter is RuleTransferValidation, IERC7943NonFungibleC
      * @notice Internal hook for post-transfer validation or state updates (spender-aware).
      */
     function _transferredFrom(address spender, address from, address to, uint256 value) internal virtual;
+
     /**
      * @inheritdoc IERC7943NonFungibleComplianceExtend
      */
-    function detectTransferRestriction(address from, address to, uint256 /* tokenId */, uint256 value)
+    function detectTransferRestriction(
+        address from,
+        address to,
+        uint256,
+        /* tokenId */
+        uint256 value
+    )
         public
         view
         virtual
@@ -54,7 +59,8 @@ abstract contract RuleNFTAdapter is RuleTransferValidation, IERC7943NonFungibleC
         address spender,
         address from,
         address to,
-        uint256 /* tokenId */,
+        uint256,
+        /* tokenId */
         uint256 value
     ) public view virtual override(IERC7943NonFungibleComplianceExtend) returns (uint8) {
         return _detectTransferRestrictionFrom(spender, from, to, value);
@@ -63,7 +69,13 @@ abstract contract RuleNFTAdapter is RuleTransferValidation, IERC7943NonFungibleC
     /**
      * @inheritdoc IERC7943NonFungibleCompliance
      */
-    function canTransfer(address from, address to, uint256 /* tokenId */, uint256 amount)
+    function canTransfer(
+        address from,
+        address to,
+        uint256,
+        /* tokenId */
+        uint256 amount
+    )
         public
         view
         override(IERC7943NonFungibleCompliance)
@@ -75,7 +87,14 @@ abstract contract RuleNFTAdapter is RuleTransferValidation, IERC7943NonFungibleC
     /**
      * @inheritdoc IERC7943NonFungibleComplianceExtend
      */
-    function canTransferFrom(address spender, address from, address to, uint256 /* tokenId */, uint256 value)
+    function canTransferFrom(
+        address spender,
+        address from,
+        address to,
+        uint256,
+        /* tokenId */
+        uint256 value
+    )
         public
         view
         virtual
@@ -89,7 +108,13 @@ abstract contract RuleNFTAdapter is RuleTransferValidation, IERC7943NonFungibleC
     /**
      * @inheritdoc IERC7943NonFungibleComplianceExtend
      */
-    function transferred(address from, address to, uint256 /* tokenId */, uint256 value)
+    function transferred(
+        address from,
+        address to,
+        uint256,
+        /* tokenId */
+        uint256 value
+    )
         public
         virtual
         override(IERC7943NonFungibleComplianceExtend)
@@ -100,7 +125,14 @@ abstract contract RuleNFTAdapter is RuleTransferValidation, IERC7943NonFungibleC
     /**
      * @inheritdoc IERC7943NonFungibleComplianceExtend
      */
-    function transferred(address spender, address from, address to, uint256 /* tokenId */, uint256 value)
+    function transferred(
+        address spender,
+        address from,
+        address to,
+        uint256,
+        /* tokenId */
+        uint256 value
+    )
         public
         virtual
         override(IERC7943NonFungibleComplianceExtend)

@@ -8,7 +8,9 @@ import {IRule} from "RuleEngine/interfaces/IRule.sol";
 import {RuleInterfaceId} from "RuleEngine/modules/library/RuleInterfaceId.sol";
 import {ISanctionsList} from "src/rules/interfaces/ISanctionsList.sol";
 import {RuleConditionalTransferLight} from "src/rules/operation/RuleConditionalTransferLight.sol";
-import {RuleConditionalTransferLightOwnable2Step} from "src/rules/operation/RuleConditionalTransferLightOwnable2Step.sol";
+import {
+    RuleConditionalTransferLightOwnable2Step
+} from "src/rules/operation/RuleConditionalTransferLightOwnable2Step.sol";
 import {
     RuleBlacklistHarness,
     RuleWhitelistHarness,
@@ -100,11 +102,15 @@ contract OperationCoverageExtraTest is Test, HelperContract {
         rule.transferred(ADDRESS3, ADDRESS1, ADDRESS2, 77);
 
         assertEq(rule.approvedCount(ADDRESS1, ADDRESS2, 77), 0);
-        assertEq(rule.detectTransferRestrictionFrom(ADDRESS3, ADDRESS1, ADDRESS2, 77), CODE_TRANSFER_REQUEST_NOT_APPROVED);
+        assertEq(
+            rule.detectTransferRestrictionFrom(ADDRESS3, ADDRESS1, ADDRESS2, 77), CODE_TRANSFER_REQUEST_NOT_APPROVED
+        );
         assertFalse(rule.canTransfer(ADDRESS1, ADDRESS2, 77));
         assertFalse(rule.canTransferFrom(ADDRESS3, ADDRESS1, ADDRESS2, 77));
         assertTrue(rule.canReturnTransferRestrictionCode(CODE_TRANSFER_REQUEST_NOT_APPROVED));
-        assertEq(rule.messageForTransferRestriction(CODE_TRANSFER_REQUEST_NOT_APPROVED), TEXT_TRANSFER_REQUEST_NOT_APPROVED);
+        assertEq(
+            rule.messageForTransferRestriction(CODE_TRANSFER_REQUEST_NOT_APPROVED), TEXT_TRANSFER_REQUEST_NOT_APPROVED
+        );
         assertEq(rule.messageForTransferRestriction(CODE_NONEXISTENT), TEXT_CODE_NOT_FOUND);
 
         assertTrue(rule.supportsInterface(type(IERC165).interfaceId));

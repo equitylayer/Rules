@@ -44,7 +44,7 @@ contract RuleSanctionlistTest is Test, HelperContract {
         resString = ruleSanctionList.messageForTransferRestriction(CODE_ADDRESS_FROM_IS_SANCTIONED);
         // Assert
         assertEq(resString, TEXT_ADDRESS_FROM_IS_SANCTIONED);
-        
+
         // Act
         resString = ruleSanctionList.messageForTransferRestriction(CODE_ADDRESS_TO_IS_SANCTIONED);
         // Assert
@@ -74,7 +74,6 @@ contract RuleSanctionlistTest is Test, HelperContract {
         resBool = ruleSanctionList.canTransfer(ADDRESS2, ADDRESS1, 0, 20);
         assertEq(resBool, true);
     }
-
 
     function testTransferFromDetectedAsInvalid() public {
         // Act
@@ -204,7 +203,6 @@ contract RuleSanctionlistTest is Test, HelperContract {
         resUint8 = ruleSanctionList.detectTransferRestrictionFrom(ADDRESS3, ADDRESS1, ADDRESS2, 0, 20);
         // Assert
         assertEq(resUint8, NO_ERROR);
-
 
         resBool = ruleSanctionList.canTransferFrom(ADDRESS3, ADDRESS1, ADDRESS2, 20);
         assertEq(resBool, true);

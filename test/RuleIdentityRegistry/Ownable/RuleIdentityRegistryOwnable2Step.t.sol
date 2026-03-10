@@ -5,8 +5,7 @@ import {Test} from "forge-std/Test.sol";
 import {HelperContract} from "../../HelperContract.sol";
 import {Ownable2StepTestBase, IOwnable2StepLike} from "../../utils/Ownable2StepTestBase.sol";
 import {IdentityRegistryMock} from "src/mocks/IdentityRegistryMock.sol";
-import {RuleIdentityRegistryOwnable2Step} from
-    "src/rules/validation/deployment/RuleIdentityRegistryOwnable2Step.sol";
+import {RuleIdentityRegistryOwnable2Step} from "src/rules/validation/deployment/RuleIdentityRegistryOwnable2Step.sol";
 
 contract RuleIdentityRegistryOwnable2StepTest is Ownable2StepTestBase {
     function _deployOwnable2Step() internal override returns (IOwnable2StepLike, address) {

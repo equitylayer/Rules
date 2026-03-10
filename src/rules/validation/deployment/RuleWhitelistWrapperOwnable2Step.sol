@@ -44,8 +44,13 @@ contract RuleWhitelistWrapperOwnable2Step is RuleWhitelistWrapperBase, Ownable2S
         return RuleWhitelistWrapperBase._msgData();
     }
 
-    function _contextSuffixLength() internal view virtual override(RuleWhitelistWrapperBase, Context) returns (uint256) {
+    function _contextSuffixLength()
+        internal
+        view
+        virtual
+        override(RuleWhitelistWrapperBase, Context)
+        returns (uint256)
+    {
         return RuleWhitelistWrapperBase._contextSuffixLength();
     }
-
 }

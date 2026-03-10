@@ -132,7 +132,6 @@ contract RuleWhitelistTest is Test, HelperContract {
         // Assert
         assertEq(resString, TEXT_ADDRESS_SPENDER_NOT_WHITELISTED);
 
-
         // Act
         resString = ruleWhitelist.messageForTransferRestriction(CODE_NONEXISTENT);
         // Assert
@@ -308,7 +307,6 @@ contract RuleWhitelistTest is Test, HelperContract {
         resBool = ruleWhitelist.canTransferFrom(ADDRESS3, ADDRESS1, ADDRESS2, 0, 20);
         // Assert
         assertEq(resBool, false);
-
 
         vm.prank(ADDRESS1);
         vm.expectRevert(

@@ -25,7 +25,11 @@ abstract contract RuleSanctionsListBase is MetaTxModuleStandalone, RuleNFTAdapte
         }
     }
 
-    function _detectTransferRestriction(address from, address to, uint256 /* value */)
+    function _detectTransferRestriction(
+        address from,
+        address to,
+        uint256 /* value */
+    )
         internal
         view
         override
@@ -87,19 +91,11 @@ abstract contract RuleSanctionsListBase is MetaTxModuleStandalone, RuleNFTAdapte
         _setSanctionListOracle(ISanctionsList(address(0)));
     }
 
-    function transferred(address from, address to, uint256 value)
-        public
-        view
-        override(IERC3643IComplianceContract)
-    {
+    function transferred(address from, address to, uint256 value) public view override(IERC3643IComplianceContract) {
         _transferred(from, to, value);
     }
 
-    function transferred(address spender, address from, address to, uint256 value)
-        public
-        view
-        override(IRuleEngine)
-    {
+    function transferred(address spender, address from, address to, uint256 value) public view override(IRuleEngine) {
         _transferredFrom(spender, from, to, value);
     }
 
@@ -111,12 +107,7 @@ abstract contract RuleSanctionsListBase is MetaTxModuleStandalone, RuleNFTAdapte
         );
     }
 
-    function _transferredFrom(address spender, address from, address to, uint256 value)
-        internal
-        view
-        virtual
-        override
-    {
+    function _transferredFrom(address spender, address from, address to, uint256 value) internal view virtual override {
         uint8 code = _detectTransferRestrictionFrom(spender, from, to, value);
         require(
             code == uint8(IERC1404Extend.REJECTED_CODE_BASE.TRANSFER_OK),

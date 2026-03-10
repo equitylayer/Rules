@@ -21,7 +21,9 @@ contract RuleSpenderWhitelistHarness is RuleSpenderWhitelist {
 }
 
 contract RuleSpenderWhitelistOwnable2StepHarness is RuleSpenderWhitelistOwnable2Step {
-    constructor(address owner, address forwarderIrrevocable) RuleSpenderWhitelistOwnable2Step(owner, forwarderIrrevocable) {}
+    constructor(address owner, address forwarderIrrevocable)
+        RuleSpenderWhitelistOwnable2Step(owner, forwarderIrrevocable)
+    {}
 
     function exposedMsgSender() external view returns (address) {
         return _msgSender();

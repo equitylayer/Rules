@@ -26,7 +26,8 @@ contract VersionTest is Test, HelperContract {
     }
 
     function testVersionRuleSanctionsList() public {
-        RuleSanctionsList rule = new RuleSanctionsList(DEFAULT_ADMIN_ADDRESS, ZERO_ADDRESS, ISanctionsList(ZERO_ADDRESS));
+        RuleSanctionsList rule =
+            new RuleSanctionsList(DEFAULT_ADMIN_ADDRESS, ZERO_ADDRESS, ISanctionsList(ZERO_ADDRESS));
         assertEq(rule.version(), EXPECTED_VERSION);
     }
 

@@ -32,7 +32,8 @@ contract RuleBlacklist is RuleBlacklistBase, AccessControlModuleStandalone {
         override(AccessControlEnumerable, RuleBlacklistBase)
         returns (bool)
     {
-        return AccessControlEnumerable.supportsInterface(interfaceId) || RuleBlacklistBase.supportsInterface(interfaceId);
+        return AccessControlEnumerable.supportsInterface(interfaceId)
+            || RuleBlacklistBase.supportsInterface(interfaceId);
     }
 
     function _authorizeAddressListAdd() internal view virtual override onlyRole(ADDRESS_LIST_ADD_ROLE) {}

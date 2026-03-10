@@ -6,7 +6,9 @@ import {RuleCommonInvariantStorage} from "../../invariant/RuleCommonInvariantSto
 
 abstract contract RuleBlacklistInvariantStorage is RuleCommonInvariantStorage {
     error RuleBlacklist_InvalidTransfer(address rule, address from, address to, uint256 value, uint8 code);
-    error RuleBlacklist_InvalidTransferFrom(address rule, address spender, address from, address to, uint256 value, uint8 code);
+    error RuleBlacklist_InvalidTransferFrom(
+        address rule, address spender, address from, address to, uint256 value, uint8 code
+    );
     /* ============ String message ============ */
 
     string constant TEXT_ADDRESS_FROM_IS_BLACKLISTED = "The sender is blacklisted";

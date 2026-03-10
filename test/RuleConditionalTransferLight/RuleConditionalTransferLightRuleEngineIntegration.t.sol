@@ -15,8 +15,7 @@ contract RuleConditionalTransferLightRuleEngineIntegration is Test, HelperContra
         ruleEngineMock = new RuleEngine(DEFAULT_ADMIN_ADDRESS, ZERO_ADDRESS, ZERO_ADDRESS);
 
         vm.prank(DEFAULT_ADMIN_ADDRESS);
-        ruleConditionalTransferLight =
-            new RuleConditionalTransferLight(CONDITIONAL_TRANSFER_OPERATOR_ADDRESS);
+        ruleConditionalTransferLight = new RuleConditionalTransferLight(CONDITIONAL_TRANSFER_OPERATOR_ADDRESS);
 
         vm.prank(CONDITIONAL_TRANSFER_OPERATOR_ADDRESS);
         ruleConditionalTransferLight.bindToken(address(ruleEngineMock));
@@ -87,7 +86,9 @@ contract RuleConditionalTransferLightRuleEngineIntegration is Test, HelperContra
         ruleConditionalTransferLight.cancelTransferApproval(ADDRESS1, ADDRESS2, amount);
     }
 
-    function testFuzz_ApproveAndConsume(address from, address to, uint96 value, uint8 approvals, uint8 consumes) public {
+    function testFuzz_ApproveAndConsume(address from, address to, uint96 value, uint8 approvals, uint8 consumes)
+        public
+    {
         approvals = uint8(bound(approvals, 0, 20));
         consumes = uint8(bound(consumes, 0, approvals));
         bool isMintOrBurnPath = from == address(0) || to == address(0);

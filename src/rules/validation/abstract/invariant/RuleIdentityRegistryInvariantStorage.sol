@@ -6,12 +6,7 @@ import {RuleCommonInvariantStorage} from "./RuleCommonInvariantStorage.sol";
 abstract contract RuleIdentityRegistryInvariantStorage is RuleCommonInvariantStorage {
     error RuleIdentityRegistry_InvalidTransfer(address rule, address from, address to, uint256 value, uint8 code);
     error RuleIdentityRegistry_InvalidTransferFrom(
-        address rule,
-        address spender,
-        address from,
-        address to,
-        uint256 value,
-        uint8 code
+        address rule, address spender, address from, address to, uint256 value, uint8 code
     );
     error RuleIdentityRegistry_RegistryAddressZeroNotAllowed();
 

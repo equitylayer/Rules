@@ -13,10 +13,7 @@ import {RuleWhitelistWrapperBase} from "../abstract/base/RuleWhitelistWrapperBas
 /**
  * @title Wrapper to call several different whitelist rules
  */
-contract RuleWhitelistWrapper is
-    RuleWhitelistWrapperBase,
-    AccessControlModuleStandalone
-{
+contract RuleWhitelistWrapper is RuleWhitelistWrapperBase, AccessControlModuleStandalone {
     /*//////////////////////////////////////////////////////////////
                               CONSTRUCTOR
     //////////////////////////////////////////////////////////////*/
@@ -63,7 +60,13 @@ contract RuleWhitelistWrapper is
         return RuleWhitelistWrapperBase._msgData();
     }
 
-    function _contextSuffixLength() internal view virtual override(RuleWhitelistWrapperBase, Context) returns (uint256) {
+    function _contextSuffixLength()
+        internal
+        view
+        virtual
+        override(RuleWhitelistWrapperBase, Context)
+        returns (uint256)
+    {
         return RuleWhitelistWrapperBase._contextSuffixLength();
     }
 

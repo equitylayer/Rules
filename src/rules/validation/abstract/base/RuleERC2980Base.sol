@@ -44,7 +44,11 @@ abstract contract RuleERC2980Base is
                          TRANSFER RESTRICTION LOGIC
     //////////////////////////////////////////////////////////////*/
 
-    function _detectTransferRestriction(address from, address to, uint256 /* value */ )
+    function _detectTransferRestriction(
+        address from,
+        address to,
+        uint256 /* value */
+    )
         internal
         view
         virtual
@@ -107,12 +111,7 @@ abstract contract RuleERC2980Base is
         );
     }
 
-    function _transferredFrom(address spender, address from, address to, uint256 value)
-        internal
-        view
-        virtual
-        override
-    {
+    function _transferredFrom(address spender, address from, address to, uint256 value) internal view virtual override {
         uint8 code = _detectTransferRestrictionFrom(spender, from, to, value);
         require(
             code == uint8(IERC1404Extend.REJECTED_CODE_BASE.TRANSFER_OK),
@@ -132,8 +131,7 @@ abstract contract RuleERC2980Base is
         returns (bool)
     {
         return restrictionCode == CODE_ADDRESS_FROM_IS_FROZEN || restrictionCode == CODE_ADDRESS_TO_IS_FROZEN
-            || restrictionCode == CODE_ADDRESS_SPENDER_IS_FROZEN
-            || restrictionCode == CODE_ADDRESS_TO_NOT_WHITELISTED;
+            || restrictionCode == CODE_ADDRESS_SPENDER_IS_FROZEN || restrictionCode == CODE_ADDRESS_TO_NOT_WHITELISTED;
     }
 
     function messageForTransferRestriction(uint8 restrictionCode)
@@ -232,13 +230,7 @@ abstract contract RuleERC2980Base is
      * @dev Reflects whitelist membership only. Frozen status is intentionally excluded:
      * freezing is a temporary enforcement action and does not revoke identity verification.
      */
-    function isVerified(address targetAddress)
-        public
-        view
-        virtual
-        override(IIdentityRegistryVerified)
-        returns (bool)
-    {
+    function isVerified(address targetAddress) public view virtual override(IIdentityRegistryVerified) returns (bool) {
         return _isWhitelisted(targetAddress);
     }
 

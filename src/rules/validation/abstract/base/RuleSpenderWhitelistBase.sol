@@ -16,13 +16,7 @@ import {IRuleEngine} from "CMTAT/interfaces/engine/IRuleEngine.sol";
 abstract contract RuleSpenderWhitelistBase is RuleAddressSet, RuleNFTAdapter, RuleSpenderWhitelistInvariantStorage {
     constructor(address forwarderIrrevocable) RuleAddressSet(forwarderIrrevocable) {}
 
-    function _detectTransferRestriction(address, address, uint256)
-        internal
-        pure
-        virtual
-        override
-        returns (uint8)
-    {
+    function _detectTransferRestriction(address, address, uint256) internal pure virtual override returns (uint8) {
         return uint8(IERC1404Extend.REJECTED_CODE_BASE.TRANSFER_OK);
     }
 
@@ -60,11 +54,7 @@ abstract contract RuleSpenderWhitelistBase is RuleAddressSet, RuleNFTAdapter, Ru
      */
     function transferred(address, address, uint256) public view override(IERC3643IComplianceContract) {}
 
-    function transferred(address spender, address from, address to, uint256 value)
-        public
-        view
-        override(IRuleEngine)
-    {
+    function transferred(address spender, address from, address to, uint256 value) public view override(IRuleEngine) {
         _transferredFrom(spender, from, to, value);
     }
 
@@ -72,12 +62,7 @@ abstract contract RuleSpenderWhitelistBase is RuleAddressSet, RuleNFTAdapter, Ru
         // no-op: regular transfers are intentionally ignored by this rule
     }
 
-    function _transferredFrom(address spender, address from, address to, uint256 value)
-        internal
-        view
-        virtual
-        override
-    {
+    function _transferredFrom(address spender, address from, address to, uint256 value) internal view virtual override {
         uint8 code = _detectTransferRestrictionFrom(spender, from, to, value);
         require(
             code == uint8(IERC1404Extend.REJECTED_CODE_BASE.TRANSFER_OK),

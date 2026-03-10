@@ -31,9 +31,7 @@ abstract contract RuleWhitelistWrapperBase is
     /**
      * @param forwarderIrrevocable Address of the forwarder, required for the gasless support
      */
-    constructor(address forwarderIrrevocable, bool checkSpender_)
-        MetaTxModuleStandalone(forwarderIrrevocable)
-    {
+    constructor(address forwarderIrrevocable, bool checkSpender_) MetaTxModuleStandalone(forwarderIrrevocable) {
         checkSpender = checkSpender_;
     }
 
@@ -45,7 +43,11 @@ abstract contract RuleWhitelistWrapperBase is
      * @return The restricion code or REJECTED_CODE_BASE.TRANSFER_OK
      *
      */
-    function _detectTransferRestriction(address from, address to, uint256 /* value */)
+    function _detectTransferRestriction(
+        address from,
+        address to,
+        uint256 /* value */
+    )
         internal
         view
         virtual
@@ -111,13 +113,7 @@ abstract contract RuleWhitelistWrapperBase is
      * @notice Returns true if the address is listed in at least one child whitelist rule.
      * @dev Delegates to the same child-rule scan used by transfer restriction checks.
      */
-    function isVerified(address targetAddress)
-        public
-        view
-        virtual
-        override(IIdentityRegistryVerified)
-        returns (bool)
-    {
+    function isVerified(address targetAddress) public view virtual override(IIdentityRegistryVerified) returns (bool) {
         address[] memory targets = new address[](1);
         targets[0] = targetAddress;
         bool[] memory result = _detectTransferRestrictionForTargets(targets);

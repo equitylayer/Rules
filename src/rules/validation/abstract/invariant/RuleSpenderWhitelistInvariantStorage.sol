@@ -9,11 +9,6 @@ abstract contract RuleSpenderWhitelistInvariantStorage is RuleCommonInvariantSto
     string constant TEXT_ADDRESS_SPENDER_NOT_WHITELISTED = "SpenderWhitelist: Spender is not whitelisted";
 
     error RuleSpenderWhitelist_InvalidTransferFrom(
-        address ruleEngine,
-        address spender,
-        address from,
-        address to,
-        uint256 value,
-        uint8 restrictionCode
+        address ruleEngine, address spender, address from, address to, uint256 value, uint8 restrictionCode
     );
 }

@@ -10,7 +10,6 @@ import {RuleEngine} from "RuleEngine/RuleEngine.sol";
  * @title Integration test between RuleEngine and RuleBlacklist
  */
 contract RuleBlacklistRuleEngineIntegration is Test, HelperContract {
-
     function setUp() public {
         vm.prank(DEFAULT_ADMIN_ADDRESS);
         ruleBlacklist = new RuleBlacklist(DEFAULT_ADMIN_ADDRESS, ZERO_ADDRESS);

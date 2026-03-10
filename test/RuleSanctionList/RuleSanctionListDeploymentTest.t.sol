@@ -57,20 +57,20 @@ contract RuleSanctionListDeploymentTest is Test, HelperContract {
     }
 
     function testcanTransferIfNoOracleSet() public {
-         ruleSanctionList =
+        ruleSanctionList =
             new RuleSanctionsList(SANCTIONLIST_OPERATOR_ADDRESS, address(ZERO_ADDRESS), ISanctionsList(ZERO_ADDRESS));
         // Act
         // ADDRESS1 -> ADDRESS2
         resBool = ruleSanctionList.canTransfer(ADDRESS1, ADDRESS2, 20);
         assertEq(resBool, true);
-        
+
         resBool = ruleSanctionList.canTransfer(ADDRESS1, ADDRESS2, 0, 20);
         assertEq(resBool, true);
-        
+
         // ADDRESS2 -> ADDRESS1
         resBool = ruleSanctionList.canTransfer(ADDRESS2, ADDRESS1, 20);
         assertEq(resBool, true);
-        
+
         resBool = ruleSanctionList.canTransfer(ADDRESS2, ADDRESS1, 0, 20);
         assertEq(resBool, true);
 

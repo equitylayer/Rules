@@ -31,10 +31,7 @@ contract RuleSpenderWhitelistTest is Test, HelperContract {
     }
 
     function testTransferFromRejectedWhenSpenderNotWhitelisted() public {
-        assertEq(
-            rule.detectTransferRestrictionFrom(ADDRESS3, ADDRESS1, ADDRESS2, 10),
-            CODE_SPENDER_NOT_WHITELISTED
-        );
+        assertEq(rule.detectTransferRestrictionFrom(ADDRESS3, ADDRESS1, ADDRESS2, 10), CODE_SPENDER_NOT_WHITELISTED);
         assertFalse(rule.canTransferFrom(ADDRESS3, ADDRESS1, ADDRESS2, 10));
 
         vm.expectRevert();
@@ -56,10 +53,7 @@ contract RuleSpenderWhitelistTest is Test, HelperContract {
         rule.addAddress(ADDRESS3);
 
         assertEq(rule.detectTransferRestriction(ADDRESS1, ADDRESS2, 1, 10), TRANSFER_OK);
-        assertEq(
-            rule.detectTransferRestrictionFrom(ADDRESS3, ADDRESS1, ADDRESS2, 1, 10),
-            TRANSFER_OK
-        );
+        assertEq(rule.detectTransferRestrictionFrom(ADDRESS3, ADDRESS1, ADDRESS2, 1, 10), TRANSFER_OK);
         assertTrue(rule.canTransfer(ADDRESS1, ADDRESS2, 1, 10));
         assertTrue(rule.canTransferFrom(ADDRESS3, ADDRESS1, ADDRESS2, 1, 10));
         rule.transferred(ADDRESS1, ADDRESS2, 1, 10);
@@ -70,10 +64,7 @@ contract RuleSpenderWhitelistTest is Test, HelperContract {
         assertTrue(rule.canReturnTransferRestrictionCode(CODE_SPENDER_NOT_WHITELISTED));
         assertFalse(rule.canReturnTransferRestrictionCode(CODE_NONEXISTENT));
 
-        assertEq(
-            rule.messageForTransferRestriction(CODE_SPENDER_NOT_WHITELISTED),
-            TEXT_SPENDER_NOT_WHITELISTED
-        );
+        assertEq(rule.messageForTransferRestriction(CODE_SPENDER_NOT_WHITELISTED), TEXT_SPENDER_NOT_WHITELISTED);
         assertEq(rule.messageForTransferRestriction(CODE_NONEXISTENT), TEXT_CODE_NOT_FOUND);
     }
 

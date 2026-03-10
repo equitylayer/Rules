@@ -12,10 +12,7 @@ import {RuleAddressSet} from "../abstract/RuleAddressSet/RuleAddressSet.sol";
  * @notice Ownable2Step variant of RuleBlacklist with owner-based authorization hooks.
  */
 contract RuleBlacklistOwnable2Step is RuleBlacklistBase, Ownable2Step {
-    constructor(address owner, address forwarderIrrevocable)
-        RuleBlacklistBase(forwarderIrrevocable)
-        Ownable(owner)
-    {}
+    constructor(address owner, address forwarderIrrevocable) RuleBlacklistBase(forwarderIrrevocable) Ownable(owner) {}
 
     function _authorizeAddressListAdd() internal view virtual override onlyOwner {}
 

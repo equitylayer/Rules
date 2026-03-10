@@ -7,7 +7,6 @@ import {CMTATDeployment} from "RuleEngine/../test/utils/CMTATDeployment.sol";
 import {RuleBlacklist} from "src/rules/validation/deployment/RuleBlacklist.sol";
 import {IRuleEngine} from "CMTAT/interfaces/engine/IRuleEngine.sol";
 
-
 /**
  * @title Integration test with the CMTAT using direct RuleBlacklist
  */

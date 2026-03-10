@@ -34,7 +34,12 @@ abstract contract RuleMaxTotalSupplyBase is RuleTransferValidation, RuleMaxTotal
         emit TokenContractUpdated(newTokenContract);
     }
 
-    function _detectTransferRestriction(address from, address /* to */, uint256 value)
+    function _detectTransferRestriction(
+        address from,
+        address,
+        /* to */
+        uint256 value
+    )
         internal
         view
         override
@@ -58,19 +63,11 @@ abstract contract RuleMaxTotalSupplyBase is RuleTransferValidation, RuleMaxTotal
         return _detectTransferRestriction(from, to, value);
     }
 
-    function transferred(address from, address to, uint256 value)
-        public
-        view
-        override(IERC3643IComplianceContract)
-    {
+    function transferred(address from, address to, uint256 value) public view override(IERC3643IComplianceContract) {
         _transferred(from, to, value);
     }
 
-    function transferred(address spender, address from, address to, uint256 value)
-        public
-        view
-        override(IRuleEngine)
-    {
+    function transferred(address spender, address from, address to, uint256 value) public view override(IRuleEngine) {
         _transferredFrom(spender, from, to, value);
     }
 

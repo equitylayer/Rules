@@ -28,10 +28,7 @@ interface IERC7943NonFungibleCompliance {
      * @param amount The amount being transferred (always `1` for ERC-721).
      * @return allowed `true` if the transfer is permitted, otherwise `false`.
      */
-    function canTransfer(address from, address to, uint256 tokenId, uint256 amount)
-        external
-        view
-        returns (bool allowed);
+    function canTransfer(address from, address to, uint256 tokenId, uint256 amount) external view returns (bool allowed);
 }
 
 /**

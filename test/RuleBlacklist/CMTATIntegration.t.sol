@@ -14,6 +14,7 @@ contract CMTATIntegration is Test, HelperContract {
     uint256 constant ADDRESS1_BALANCE_INIT = 31;
     uint256 constant ADDRESS2_BALANCE_INIT = 32;
     uint256 constant ADDRESS3_BALANCE_INIT = 33;
+
     // Arrange
     function setUp() public {
         // CMTAT
