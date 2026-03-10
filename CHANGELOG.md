@@ -49,6 +49,12 @@ Commit: `TBD`
 
 ### Added
 
+- `RuleSpenderWhitelist` — validation rule that blocks `transferFrom` when spender is not listed; direct transfers are always allowed. Restriction code 66.
+- `RuleSpenderWhitelistOwnable2Step` — Ownable2Step variant of `RuleSpenderWhitelist`.
+- Technical documentation file `doc/technical/RuleSpenderWhitelist.md`.
+- Transfer-context mocks in `src/mocks`: `MockERC20WithTransferContext` and `MockERC721WithTransferContext`.
+- Transfer-context mocks in `src/mocks` now inherit OpenZeppelin `ERC20` / `ERC721` and emit rule callbacks through `ITransferContext`.
+- Transfer-context tests for ERC-20/ERC-721 mock integration in `test/TransferContext/TransferContextMocks.t.sol`.
 - `RuleERC2980` — ERC-2980 Swiss Compliant rule combining a whitelist (recipient-only) and a frozenlist (blocks sender, recipient, and spender); frozenlist takes priority. Restriction codes 60–63.
 - `RuleERC2980Ownable2Step` — Ownable2Step variant of `RuleERC2980`.
 - `IERC2980` interface with NatSpec documenting the deviation from the ERC example interfaces (single-item functions revert on invalid input rather than returning `bool`).
@@ -72,6 +78,8 @@ Commit: `TBD`
 - `RuleConditionalTransferLight` and `RuleMaxTotalSupply` are ERC-20 only; ERC-721/1155 compliance interfaces are limited to validation rules.
 - Address list batch updates emit only add/remove events (no summary events).
 - Reorganized validation contracts into `abstract/base`, `abstract/core`, `abstract/invariant`, and `deployment` folders.
+- Rule transfer-context dispatch now treats `sender == from` as direct transfer (non-spender path) in `RuleNFTAdapter`.
+- Concrete utilities and harness contracts used by tests were moved from `test/` into `src/mocks` and `src/mocks/harness`.
 
 ### Dependencies
 

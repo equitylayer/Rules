@@ -6,19 +6,10 @@ import {HelperContract} from "../HelperContract.sol";
 import {AccessControlModuleStandalone} from "../../src/modules/AccessControlModuleStandalone.sol";
 import {RuleWhitelist} from "src/rules/validation/deployment/RuleWhitelist.sol";
 import {RuleWhitelistWrapper} from "src/rules/validation/deployment/RuleWhitelistWrapper.sol";
+import {RuleWhitelistWrapperHarnessInternal} from "src/mocks/harness/RuleWhitelistWrapperHarnessInternal.sol";
 /**
  * @title Integration test with the CMTAT
  */
-
-contract RuleWhitelistWrapperHarnessInternal is RuleWhitelistWrapper {
-    constructor(address admin, address forwarderIrrevocable, bool checkSpender_)
-        RuleWhitelistWrapper(admin, forwarderIrrevocable, checkSpender_)
-    {}
-
-    function exposedTransferredSpenderInternal(address spender, address from, address to, uint256 value) external view {
-        _transferred(spender, from, to, value);
-    }
-}
 
 contract CMTATIntegrationWhitelistWrapper is Test, HelperContract {
     uint256 constant ADDRESS1_BALANCE_INIT = 31;

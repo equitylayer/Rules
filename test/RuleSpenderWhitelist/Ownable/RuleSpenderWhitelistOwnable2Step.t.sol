@@ -5,22 +5,7 @@ import {Test} from "forge-std/Test.sol";
 import {HelperContract} from "../../HelperContract.sol";
 import {Ownable} from "OZ/access/Ownable.sol";
 import {RuleSpenderWhitelistOwnable2Step} from "src/rules/validation/deployment/RuleSpenderWhitelistOwnable2Step.sol";
-
-contract RuleSpenderWhitelistOwnable2StepHarness is RuleSpenderWhitelistOwnable2Step {
-    constructor(address owner, address forwarderIrrevocable) RuleSpenderWhitelistOwnable2Step(owner, forwarderIrrevocable) {}
-
-    function exposedMsgSender() external view returns (address) {
-        return _msgSender();
-    }
-
-    function exposedMsgData() external view returns (bytes memory) {
-        return _msgData();
-    }
-
-    function exposedContextSuffixLength() external view returns (uint256) {
-        return _contextSuffixLength();
-    }
-}
+import {RuleSpenderWhitelistOwnable2StepHarness} from "src/mocks/harness/RuleSpenderWhitelistHarnesses.sol";
 
 contract RuleSpenderWhitelistOwnable2StepTest is Test, HelperContract {
     RuleSpenderWhitelistOwnable2StepHarness private rule;

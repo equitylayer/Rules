@@ -4,27 +4,10 @@ pragma solidity ^0.8.20;
 import {Test} from "forge-std/Test.sol";
 import {HelperContract} from "../../HelperContract.sol";
 import {Ownable2StepTestBase, IOwnable2StepLike} from "../../utils/Ownable2StepTestBase.sol";
-import {SanctionListOracle} from "../../utils/SanctionListOracle.sol";
+import {SanctionListOracle} from "src/mocks/SanctionListOracle.sol";
 import {ISanctionsList} from "src/rules/interfaces/ISanctionsList.sol";
 import {RuleSanctionsListOwnable2Step} from "src/rules/validation/deployment/RuleSanctionsListOwnable2Step.sol";
-
-contract RuleSanctionsListOwnable2StepHarness is RuleSanctionsListOwnable2Step {
-    constructor(address owner, address forwarderIrrevocable, ISanctionsList sanctionContractOracle_)
-        RuleSanctionsListOwnable2Step(owner, forwarderIrrevocable, sanctionContractOracle_)
-    {}
-
-    function exposedMsgSender() external view returns (address) {
-        return _msgSender();
-    }
-
-    function exposedMsgData() external view returns (bytes memory) {
-        return _msgData();
-    }
-
-    function exposedContextSuffixLength() external view returns (uint256) {
-        return _contextSuffixLength();
-    }
-}
+import {RuleSanctionsListOwnable2StepHarness} from "src/mocks/harness/RuleSanctionsListOwnable2StepHarness.sol";
 
 contract RuleSanctionsListOwnable2StepTest is Ownable2StepTestBase {
     function _deployOwnable2Step() internal override returns (IOwnable2StepLike, address) {

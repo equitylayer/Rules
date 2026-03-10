@@ -18,88 +18,17 @@ import {RuleBlacklistOwnable2Step} from "src/rules/validation/deployment/RuleBla
 import {RuleWhitelistOwnable2Step} from "src/rules/validation/deployment/RuleWhitelistOwnable2Step.sol";
 import {RuleWhitelistWrapperOwnable2Step} from "src/rules/validation/deployment/RuleWhitelistWrapperOwnable2Step.sol";
 import {RuleERC2980Ownable2Step} from "src/rules/validation/deployment/RuleERC2980Ownable2Step.sol";
-
-contract RuleBlacklistHarness is RuleBlacklist {
-    constructor(address admin, address forwarderIrrevocable) RuleBlacklist(admin, forwarderIrrevocable) {}
-
-    function exposedMsgDataLength() external view returns (uint256) {
-        return _msgData().length;
-    }
-}
-
-contract RuleWhitelistHarness is RuleWhitelist {
-    constructor(address admin, address forwarderIrrevocable, bool checkSpender_)
-        RuleWhitelist(admin, forwarderIrrevocable, checkSpender_)
-    {}
-
-    function exposedMsgDataLength() external view returns (uint256) {
-        return _msgData().length;
-    }
-}
-
-contract RuleWhitelistWrapperHarness is RuleWhitelistWrapper {
-    constructor(address admin, address forwarderIrrevocable, bool checkSpender_)
-        RuleWhitelistWrapper(admin, forwarderIrrevocable, checkSpender_)
-    {}
-
-    function exposedMsgDataLength() external view returns (uint256) {
-        return _msgData().length;
-    }
-}
-
-contract RuleERC2980Harness is RuleERC2980 {
-    constructor(address admin, address forwarderIrrevocable) RuleERC2980(admin, forwarderIrrevocable) {}
-
-    function exposedMsgDataLength() external view returns (uint256) {
-        return _msgData().length;
-    }
-}
-
-contract RuleSanctionsListHarness is RuleSanctionsList {
-    constructor(address admin, address forwarderIrrevocable, ISanctionsList sanctionContractOracle_)
-        RuleSanctionsList(admin, forwarderIrrevocable, sanctionContractOracle_)
-    {}
-
-    function exposedMsgDataLength() external view returns (uint256) {
-        return _msgData().length;
-    }
-}
-
-contract RuleBlacklistOwnable2StepHarness is RuleBlacklistOwnable2Step {
-    constructor(address owner, address forwarderIrrevocable) RuleBlacklistOwnable2Step(owner, forwarderIrrevocable) {}
-
-    function exposedMsgDataLength() external view returns (uint256) {
-        return _msgData().length;
-    }
-}
-
-contract RuleWhitelistOwnable2StepHarness is RuleWhitelistOwnable2Step {
-    constructor(address owner, address forwarderIrrevocable, bool checkSpender_)
-        RuleWhitelistOwnable2Step(owner, forwarderIrrevocable, checkSpender_)
-    {}
-
-    function exposedMsgDataLength() external view returns (uint256) {
-        return _msgData().length;
-    }
-}
-
-contract RuleWhitelistWrapperOwnable2StepHarness is RuleWhitelistWrapperOwnable2Step {
-    constructor(address owner, address forwarderIrrevocable, bool checkSpender_)
-        RuleWhitelistWrapperOwnable2Step(owner, forwarderIrrevocable, checkSpender_)
-    {}
-
-    function exposedMsgDataLength() external view returns (uint256) {
-        return _msgData().length;
-    }
-}
-
-contract RuleERC2980Ownable2StepHarness is RuleERC2980Ownable2Step {
-    constructor(address owner, address forwarderIrrevocable) RuleERC2980Ownable2Step(owner, forwarderIrrevocable) {}
-
-    function exposedMsgDataLength() external view returns (uint256) {
-        return _msgData().length;
-    }
-}
+import {
+    RuleBlacklistHarness,
+    RuleWhitelistHarness,
+    RuleWhitelistWrapperHarness,
+    RuleERC2980Harness,
+    RuleSanctionsListHarness,
+    RuleBlacklistOwnable2StepHarness,
+    RuleWhitelistOwnable2StepHarness,
+    RuleWhitelistWrapperOwnable2StepHarness,
+    RuleERC2980Ownable2StepHarness
+} from "src/mocks/harness/DeploymentCoverageHarnesses.sol";
 
 contract DeploymentCoverageExtraTest is Test, HelperContract {
     function testDeploymentWrappersAndHooksCoverage() public {

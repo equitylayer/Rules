@@ -6,7 +6,7 @@ Each rule can be used **standalone**, directly plugged into a CMTAT token, **or*
 
 **Status:** *Repository under active development*
 
-Latest update: added `RuleSpenderWhitelist` (+ `Ownable2Step` variant), technical documentation, and tests; `src/` contract coverage remains at 100%.
+Latest update: transfer-context token mocks now use OpenZeppelin ERC-20/ERC-721; test utilities and harness contracts were moved from `test/` to `src/mocks` and `src/mocks/harness`; context spender handling remains `sender == from` => direct transfer.
 
 ## Schema
 

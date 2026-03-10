@@ -12,7 +12,7 @@ import {RuleBlacklistInvariantStorage} from
     "src/rules/validation/abstract/RuleAddressSet/invariantStorage/RuleBlacklistInvariantStorage.sol";
 import {RuleSanctionsListInvariantStorage} from
     "src/rules/validation/abstract/invariant/RuleSanctionsListInvariantStorage.sol";
-import {SanctionListOracle} from "../utils/SanctionListOracle.sol";
+import {SanctionListOracle} from "src/mocks/SanctionListOracle.sol";
 import {DeployCMTATWithBlacklistAndSanctionsList} from
     "script/DeployCMTATWithBlacklistAndSanctionsList.s.sol";
 

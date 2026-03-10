@@ -7,22 +7,7 @@ import {RuleSpenderWhitelist} from "src/rules/validation/deployment/RuleSpenderW
 import {AccessControlModuleStandalone} from "src/modules/AccessControlModuleStandalone.sol";
 import {IAccessControl} from "OZ/access/IAccessControl.sol";
 import {IRule} from "RuleEngine/interfaces/IRule.sol";
-
-contract RuleSpenderWhitelistHarness is RuleSpenderWhitelist {
-    constructor(address admin, address forwarderIrrevocable) RuleSpenderWhitelist(admin, forwarderIrrevocable) {}
-
-    function exposedMsgSender() external view returns (address) {
-        return _msgSender();
-    }
-
-    function exposedMsgData() external view returns (bytes memory) {
-        return _msgData();
-    }
-
-    function exposedContextSuffixLength() external view returns (uint256) {
-        return _contextSuffixLength();
-    }
-}
+import {RuleSpenderWhitelistHarness} from "src/mocks/harness/RuleSpenderWhitelistHarnesses.sol";
 
 contract RuleSpenderWhitelistTest is Test, HelperContract {
     uint8 internal constant CODE_SPENDER_NOT_WHITELISTED = 66;

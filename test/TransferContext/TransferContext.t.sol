@@ -5,7 +5,7 @@ import {Test} from "forge-std/Test.sol";
 import {HelperContract} from "../HelperContract.sol";
 import {RuleWhitelist} from "src/rules/validation/deployment/RuleWhitelist.sol";
 import {RuleConditionalTransferLight} from "src/rules/operation/RuleConditionalTransferLight.sol";
-import {MockERC20WithTransferContext} from "../utils/MockERC20WithTransferContext.sol";
+import {MockERC20WithTransferContext} from "src/mocks/MockERC20WithTransferContext.sol";
 
 contract TransferContextTest is Test, HelperContract {
     MockERC20WithTransferContext private token;

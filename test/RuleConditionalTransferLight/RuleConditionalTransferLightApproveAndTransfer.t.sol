@@ -4,23 +4,8 @@ pragma solidity ^0.8.20;
 import {Test} from "forge-std/Test.sol";
 import {HelperContract} from "../HelperContract.sol";
 import {RuleConditionalTransferLight} from "src/rules/operation/RuleConditionalTransferLight.sol";
-import {MockERC20WithTransferContext} from "../utils/MockERC20WithTransferContext.sol";
-
-contract MockERC20TransferFromFalse {
-    mapping(address => mapping(address => uint256)) private _allowances;
-
-    function setAllowance(address owner, address spender, uint256 value) external {
-        _allowances[owner][spender] = value;
-    }
-
-    function allowance(address owner, address spender) external view returns (uint256) {
-        return _allowances[owner][spender];
-    }
-
-    function transferFrom(address, address, uint256) external pure returns (bool) {
-        return false;
-    }
-}
+import {MockERC20WithTransferContext} from "src/mocks/MockERC20WithTransferContext.sol";
+import {MockERC20TransferFromFalse} from "src/mocks/MockERC20TransferFromFalse.sol";
 
 contract RuleConditionalTransferLightApproveAndTransfer is Test, HelperContract {
     RuleConditionalTransferLight private rule;

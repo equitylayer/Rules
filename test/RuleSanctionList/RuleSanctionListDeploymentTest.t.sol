@@ -4,7 +4,7 @@ pragma solidity ^0.8.20;
 import {Test} from "forge-std/Test.sol";
 import {HelperContract} from "../HelperContract.sol";
 import {MinimalForwarderMock} from "CMTAT/mocks/MinimalForwarderMock.sol";
-import {SanctionListOracle} from "../utils/SanctionListOracle.sol";
+import {SanctionListOracle} from "src/mocks/SanctionListOracle.sol";
 import {RuleSanctionsList, ISanctionsList} from "src/rules/validation/deployment/RuleSanctionsList.sol";
 import {AccessControlModuleStandalone} from "../../src/modules/AccessControlModuleStandalone.sol";
 /**
