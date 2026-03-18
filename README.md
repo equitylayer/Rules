@@ -566,13 +566,19 @@ An operator calls `approveTransfer(from, to, value)`. The compliance manager bin
 
 ## Access Control
 
-The modules `AccessControlModuleStandalone` allows to implement RBAC access control by  inheriting from the contract `AccessControl`from OpenZeppelin. 
+The module `AccessControlModuleStandalone` implements RBAC access control by inheriting from OpenZeppelin's `AccessControlEnumerable`.
 
-This module overrides the OpenZeppelin function `hasRole`to give by default all the roles to the `admin`.
+Each rule implements its own access control by inheriting from `AccessControlModuleStandalone`. The default admin is the address passed as `admin` to the constructor at deployment.
 
-Each rule implements its own access control by inheriting from the module `AccessControlModuleStandalone`.
+#### `DEFAULT_ADMIN_ROLE` implicit role behaviour
 
-For all rules, the default admin is the address put in argument(`admin`) inside the constructor and set when the contract is deployed.
+`AccessControlModuleStandalone` overrides OpenZeppelin's `hasRole` so that any account holding `DEFAULT_ADMIN_ROLE` returns `true` for **every** role check. This is intentional: the OpenZeppelin `DEFAULT_ADMIN_ROLE` holder can already grant itself any role at any time, so treating it as implicitly holding all roles from the start removes unnecessary ceremony and makes access management easier in practice.
+
+Practical consequences integrators must be aware of:
+
+- **`grantRole` to a default admin is a no-op.** `_grantRole` checks `!hasRole(role, account)` before writing storage; since the admin already returns `true` via the override, the storage write and the `RoleGranted` event are skipped. The admin will **not** appear in `getRoleMember` / `getRoleMemberCount` enumerations for non-default roles unless the role was explicitly granted before the admin was set.
+- **`revokeRole` / `renounceRole` on a non-default role for a default admin are misleading.** They emit `RoleRevoked` and clear the storage flag, but `hasRole` continues to return `true` because the account still holds `DEFAULT_ADMIN_ROLE`. The effective privilege is unchanged. To fully remove access, `DEFAULT_ADMIN_ROLE` itself must be revoked.
+- **Off-chain monitoring should use `hasRole` queries**, not role-membership events or enumeration, to determine the effective privileges of admin accounts.
 
 See also [docs.openzeppelin.com - AccessControl](https://docs.openzeppelin.com/contracts/5.x/api/access#AccessControl)
 
