@@ -98,9 +98,12 @@ contract OperationCoverageExtraTest is Test, HelperContract {
             new RuleConditionalTransferLightOwnable2Step(CONDITIONAL_TRANSFER_OPERATOR_ADDRESS);
 
         vm.prank(CONDITIONAL_TRANSFER_OPERATOR_ADDRESS);
-        rule.approveTransfer(ADDRESS1, ADDRESS2, 77);
+        rule.bindToken(ADDRESS3);
 
         vm.prank(CONDITIONAL_TRANSFER_OPERATOR_ADDRESS);
+        rule.approveTransfer(ADDRESS1, ADDRESS2, 77);
+
+        vm.prank(ADDRESS3);
         rule.transferred(ADDRESS3, ADDRESS1, ADDRESS2, 77);
 
         assertEq(rule.approvedCount(ADDRESS1, ADDRESS2, 77), 0);

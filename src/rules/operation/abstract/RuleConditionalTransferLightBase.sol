@@ -6,6 +6,7 @@ import {IERC1404, IERC1404Extend} from "CMTAT/interfaces/tokenization/draft-IERC
 import {IERC3643ComplianceRead, IERC3643IComplianceContract} from "CMTAT/interfaces/tokenization/IERC3643Partial.sol";
 import {IERC7551Compliance} from "CMTAT/interfaces/tokenization/draft-IERC7551.sol";
 import {IRule} from "RuleEngine/interfaces/IRule.sol";
+import {ERC3643ComplianceModule} from "RuleEngine/modules/ERC3643ComplianceModule.sol";
 import {ITransferContext} from "../../interfaces/ITransferContext.sol";
 import {IERC20} from "OZ/token/ERC20/IERC20.sol";
 import {RuleConditionalTransferLightInvariantStorage} from "./RuleConditionalTransferLightInvariantStorage.sol";
@@ -18,6 +19,7 @@ import {VersionModule} from "../../../modules/VersionModule.sol";
  */
 abstract contract RuleConditionalTransferLightBase is
     VersionModule,
+    ERC3643ComplianceModule,
     RuleConditionalTransferLightInvariantStorage,
     IRule
 {
@@ -44,12 +46,13 @@ abstract contract RuleConditionalTransferLightBase is
      * @dev This function is only safe for tokens that call back `transferred()` during transfer.
      * @dev CEI is intentionally inverted so the approval exists for the callback.
      */
-    function approveAndTransferIfAllowed(address token, address from, address to, uint256 value)
+    function approveAndTransferIfAllowed(address from, address to, uint256 value)
         public
         onlyTransferApprover
         returns (bool)
     {
-        require(token != address(0), RuleConditionalTransferLight_TokenAddressZeroNotAllowed());
+        address token = getTokenBound();
+        require(token != address(0), RuleConditionalTransferLight_TokenNotBound());
 
         approveTransfer(from, to, value);
 
@@ -154,6 +157,14 @@ abstract contract RuleConditionalTransferLightBase is
         return TEXT_CODE_NOT_FOUND;
     }
 
+    function created(address to, uint256 value) external onlyBoundToken {
+        _transferred(address(0), to, value);
+    }
+
+    function destroyed(address from, uint256 value) external onlyBoundToken {
+        _transferred(from, address(0), value);
+    }
+
     function transferred(ITransferContext.FungibleTransferContext calldata ctx) external onlyTransferExecutor {
         _transferredFromContext(ctx);
     }
@@ -200,7 +211,23 @@ abstract contract RuleConditionalTransferLightBase is
         _;
     }
 
+    /**
+     * @notice Binds a token to this rule. Reverts if a token is already bound.
+     * @dev Enforces single-token binding to prevent cross-token approval replay.
+     *      To migrate to a new token, call `unbindToken` first.
+     * @dev WARNING: `unbindToken` does not clear `approvalCounts`. Stale approvals
+     *      from the previous token remain in storage and can be consumed after rebinding.
+     *      The operator who controls rebinding also controls approvals, so the trust
+     *      model is preserved, but integrators should be aware of this behavior.
+     */
+    function bindToken(address token) public override onlyComplianceManager {
+        require(getTokenBound() == address(0), RuleConditionalTransferLight_TokenAlreadyBound());
+        _bindToken(token);
+    }
+
     function _authorizeTransferApproval() internal view virtual;
 
-    function _authorizeTransferExecution() internal view virtual;
+    function _authorizeTransferExecution() internal view {
+        require(isTokenBound(_msgSender()), RuleConditionalTransferLight_TransferExecutorUnauthorized(_msgSender()));
+    }
 }

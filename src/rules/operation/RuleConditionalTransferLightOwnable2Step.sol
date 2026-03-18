@@ -25,5 +25,5 @@ contract RuleConditionalTransferLightOwnable2Step is RuleConditionalTransferLigh
 
     function _authorizeTransferApproval() internal view virtual override onlyOwner {}
 
-    function _authorizeTransferExecution() internal view virtual override onlyOwner {}
+    function _onlyComplianceManager() internal virtual override onlyOwner {}
 }

@@ -15,6 +15,8 @@ contract RuleConditionalTransferLightOwnable2StepAccessControl is Test, HelperCo
 
     function setUp() public {
         rule = new RuleConditionalTransferLightOwnable2Step(CONDITIONAL_TRANSFER_OPERATOR_ADDRESS);
+        vm.prank(CONDITIONAL_TRANSFER_OPERATOR_ADDRESS);
+        rule.bindToken(ADDRESS3);
     }
 
     function testOwnerCanApproveAndExecuteTransfer() public {
@@ -22,7 +24,7 @@ contract RuleConditionalTransferLightOwnable2StepAccessControl is Test, HelperCo
         rule.approveTransfer(ADDRESS1, ADDRESS2, 10);
         assertEq(rule.approvedCount(ADDRESS1, ADDRESS2, 10), 1);
 
-        vm.prank(CONDITIONAL_TRANSFER_OPERATOR_ADDRESS);
+        vm.prank(ADDRESS3);
         rule.transferred(ADDRESS1, ADDRESS2, 10);
         assertEq(rule.approvedCount(ADDRESS1, ADDRESS2, 10), 0);
     }
@@ -35,7 +37,9 @@ contract RuleConditionalTransferLightOwnable2StepAccessControl is Test, HelperCo
         vm.prank(CONDITIONAL_TRANSFER_OPERATOR_ADDRESS);
         rule.approveTransfer(ADDRESS1, ADDRESS2, 10);
 
-        vm.expectRevert(abi.encodeWithSelector(OwnableUnauthorizedAccount.selector, ATTACKER));
+        vm.expectRevert(
+            abi.encodeWithSelector(RuleConditionalTransferLight_TransferExecutorUnauthorized.selector, ATTACKER)
+        );
         vm.prank(ATTACKER);
         rule.transferred(ADDRESS1, ADDRESS2, 10);
     }

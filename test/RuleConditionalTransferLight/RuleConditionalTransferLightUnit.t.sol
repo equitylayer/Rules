@@ -19,6 +19,19 @@ contract RuleConditionalTransferLightUnit is Test, HelperContract {
         new RuleConditionalTransferLight(address(0));
     }
 
+    function testBindToken_RevertsIfAlreadyBound() public {
+        vm.expectRevert(RuleConditionalTransferLight_TokenAlreadyBound.selector);
+        vm.prank(DEFAULT_ADMIN_ADDRESS);
+        rule.bindToken(ADDRESS1);
+    }
+
+    function testBindToken_RevertsForUnauthorizedCaller() public {
+        RuleConditionalTransferLight freshRule = new RuleConditionalTransferLight(DEFAULT_ADMIN_ADDRESS);
+        vm.expectRevert();
+        vm.prank(ADDRESS1);
+        freshRule.bindToken(ADDRESS3);
+    }
+
     function testApproveTransfer_OnlyOperator() public {
         vm.expectRevert();
         vm.prank(ADDRESS1);

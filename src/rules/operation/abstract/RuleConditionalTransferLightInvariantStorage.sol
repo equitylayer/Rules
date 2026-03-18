@@ -14,7 +14,8 @@ abstract contract RuleConditionalTransferLightInvariantStorage is RuleSharedInva
 
     /* ============ Custom error ============ */
     error RuleConditionalTransferLight_TransferExecutorUnauthorized(address account);
-    error RuleConditionalTransferLight_TokenAddressZeroNotAllowed();
+    error RuleConditionalTransferLight_TokenNotBound();
+    error RuleConditionalTransferLight_TokenAlreadyBound();
     error RuleConditionalTransferLight_InsufficientAllowance(
         address token, address owner, uint256 allowance, uint256 required
     );

@@ -402,7 +402,7 @@ Detailed technical documentation for each rule is available in [`doc/technical/`
 - Read-only rules still implement `transferred()` to comply with ERC-3643 and RuleEngine interfaces, but they do not change state.
 - `RuleConditionalTransferLight` approvals are keyed by `(from, to, value)` and are not nonce-based.
 - `RuleConditionalTransferLight` provides `approveAndTransferIfAllowed` to approve and immediately execute `transferFrom` when this rule has allowance; it assumes the token calls back `transferred()` during the transfer.
-- `RuleConditionalTransferLight` restricts `transferred()` to tokens bound via `bindToken` (ERC3643ComplianceModule).
+- `RuleConditionalTransferLight` restricts `transferred()` to the single token bound via `bindToken`. Only one token can be bound at a time: a second `bindToken` call reverts with `RuleConditionalTransferLight_TokenAlreadyBound`. The token can be unbound with `unbindToken`, after which a new token may be bound.
 - `RuleConditionalTransferLight` exempts mints (`from == address(0)`) and burns (`to == address(0)`) from the approval requirement; `created` and `destroyed` delegate to `_transferred`, which returns early for those cases.
 - AccessControl variants use `onlyRole(ROLE)` in `_authorize*()` and internal helpers are marked `virtual`.
 - AccessControl variants use `AccessControlEnumerable`, so role members can be enumerated with `getRoleMember` / `getRoleMemberCount`. The default admin is treated as having all roles via `hasRole`, but may not appear in role member lists unless explicitly granted.
@@ -562,7 +562,7 @@ This rule requires that transfers must be approved by an operator before being e
 
 **Usage scenario**
 
-An operator calls `approveTransfer(from, to, value)`. The compliance manager binds the token with `bindToken(token)`. The token calls `detectTransferRestriction` (passes) and later `transferred` to consume the approval. Without approval, `detectTransferRestriction` returns code 46 and the transfer is rejected. The operator can revoke with `cancelTransferApproval`.
+An operator calls `approveTransfer(from, to, value)`. The compliance manager binds exactly one token with `bindToken(token)`; attempting to bind a second token reverts. The token calls `detectTransferRestriction` (passes) and later `transferred` to consume the approval. Without approval, `detectTransferRestriction` returns code 46 and the transfer is rejected. The operator can revoke with `cancelTransferApproval`. To migrate to a different token, the compliance manager must first call `unbindToken` before binding the new one.
 
 ## Access Control
 

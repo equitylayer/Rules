@@ -26,7 +26,7 @@ Modular compliance-rule library for CMTAT / ERC-3643 security tokens. Each rule 
 | `RuleSpenderWhitelist` / `RuleSpenderWhitelistOwnable2Step` | Allow `transferFrom` only when spender is whitelisted; direct transfers are always allowed |
 | `RuleERC2980` | ERC-2980 Swiss Compliant rule: whitelist (recipient-only) + frozenlist (blocks sender, recipient, and spender for `transferFrom`); frozenlist takes priority |
 | `RuleERC2980Ownable2Step` | Ownable2Step variant of RuleERC2980 |
-| `RuleConditionalTransferLight` | Require operator approval before each transfer |
+| `RuleConditionalTransferLight` | Require operator approval before each transfer; bound to exactly one token at a time (`bindToken` reverts if a token is already bound; use `unbindToken` first to migrate) |
 | `RuleConditionalTransferLightOwnable2Step` | Owner-only approval and execution for conditional transfers |
 | `AccessControlModuleStandalone` | Base RBAC module; admin implicitly holds all roles |
 | `MetaTxModuleStandalone` | ERC-2771 meta-transaction support |
