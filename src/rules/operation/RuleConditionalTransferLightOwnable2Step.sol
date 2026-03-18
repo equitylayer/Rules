@@ -3,9 +3,10 @@ pragma solidity ^0.8.20;
 
 import {Ownable} from "OZ/access/Ownable.sol";
 import {Ownable2Step} from "OZ/access/Ownable2Step.sol";
-import {IRule} from "RuleEngine/interfaces/IRule.sol";
 import {RuleInterfaceId} from "RuleEngine/modules/library/RuleInterfaceId.sol";
 import {IERC165} from "OZ/utils/introspection/IERC165.sol";
+import {ERC1404ExtendInterfaceId} from "CMTAT/library/ERC1404ExtendInterfaceId.sol";
+import {RuleEngineInterfaceId} from "CMTAT/library/RuleEngineInterfaceId.sol";
 import {RuleConditionalTransferLightBase} from "./abstract/RuleConditionalTransferLightBase.sol";
 
 /**
@@ -16,8 +17,10 @@ contract RuleConditionalTransferLightOwnable2Step is RuleConditionalTransferLigh
     constructor(address owner) Ownable(owner) {}
 
     function supportsInterface(bytes4 interfaceId) public view override returns (bool) {
-        return interfaceId == type(IERC165).interfaceId || interfaceId == RuleInterfaceId.IRULE_INTERFACE_ID
-            || interfaceId == type(IRule).interfaceId;
+        return interfaceId == type(IERC165).interfaceId
+            || interfaceId == RuleEngineInterfaceId.RULE_ENGINE_INTERFACE_ID
+            || interfaceId == ERC1404ExtendInterfaceId.ERC1404EXTEND_INTERFACE_ID
+            || interfaceId == RuleInterfaceId.IRULE_INTERFACE_ID;
     }
 
     function _authorizeTransferApproval() internal view virtual override onlyOwner {}

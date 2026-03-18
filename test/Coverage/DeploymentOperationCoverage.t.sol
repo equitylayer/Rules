@@ -4,8 +4,9 @@ pragma solidity ^0.8.20;
 import {Test} from "forge-std/Test.sol";
 import {HelperContract} from "../HelperContract.sol";
 import {IERC165} from "OZ/utils/introspection/IERC165.sol";
-import {IRule} from "RuleEngine/interfaces/IRule.sol";
 import {RuleInterfaceId} from "RuleEngine/modules/library/RuleInterfaceId.sol";
+import {ERC1404ExtendInterfaceId} from "CMTAT/library/ERC1404ExtendInterfaceId.sol";
+import {RuleEngineInterfaceId} from "CMTAT/library/RuleEngineInterfaceId.sol";
 import {ISanctionsList} from "src/rules/interfaces/ISanctionsList.sol";
 import {RuleConditionalTransferLight} from "src/rules/operation/RuleConditionalTransferLight.sol";
 import {
@@ -86,8 +87,9 @@ contract OperationCoverageExtraTest is Test, HelperContract {
         rule.created(ADDRESS1, 1);
         rule.destroyed(ADDRESS1, 1);
 
-        assertTrue(rule.supportsInterface(type(IRule).interfaceId));
         assertTrue(rule.supportsInterface(RuleInterfaceId.IRULE_INTERFACE_ID));
+        assertTrue(rule.supportsInterface(ERC1404ExtendInterfaceId.ERC1404EXTEND_INTERFACE_ID));
+        assertTrue(rule.supportsInterface(RuleEngineInterfaceId.RULE_ENGINE_INTERFACE_ID));
         assertFalse(rule.supportsInterface(bytes4(0xdeadbeef)));
     }
 
@@ -114,8 +116,9 @@ contract OperationCoverageExtraTest is Test, HelperContract {
         assertEq(rule.messageForTransferRestriction(CODE_NONEXISTENT), TEXT_CODE_NOT_FOUND);
 
         assertTrue(rule.supportsInterface(type(IERC165).interfaceId));
-        assertTrue(rule.supportsInterface(type(IRule).interfaceId));
         assertTrue(rule.supportsInterface(RuleInterfaceId.IRULE_INTERFACE_ID));
+        assertTrue(rule.supportsInterface(ERC1404ExtendInterfaceId.ERC1404EXTEND_INTERFACE_ID));
+        assertTrue(rule.supportsInterface(RuleEngineInterfaceId.RULE_ENGINE_INTERFACE_ID));
         assertFalse(rule.supportsInterface(bytes4(0xdeadbeef)));
     }
 }

@@ -5,6 +5,8 @@ import {AccessControlEnumerable} from "OZ/access/extensions/AccessControlEnumera
 import {IERC165} from "OZ/utils/introspection/IERC165.sol";
 import {IRule} from "RuleEngine/interfaces/IRule.sol";
 import {RuleInterfaceId} from "RuleEngine/modules/library/RuleInterfaceId.sol";
+import {ERC1404ExtendInterfaceId} from "CMTAT/library/ERC1404ExtendInterfaceId.sol";
+import {RuleEngineInterfaceId} from "CMTAT/library/RuleEngineInterfaceId.sol";
 import {AccessControlModuleStandalone} from "../../modules/AccessControlModuleStandalone.sol";
 import {ERC3643ComplianceModule} from "RuleEngine/modules/ERC3643ComplianceModule.sol";
 import {RuleConditionalTransferLightBase} from "./abstract/RuleConditionalTransferLightBase.sol";
@@ -31,7 +33,9 @@ contract RuleConditionalTransferLight is
         override(AccessControlEnumerable, IERC165)
         returns (bool)
     {
-        return interfaceId == RuleInterfaceId.IRULE_INTERFACE_ID || interfaceId == type(IRule).interfaceId
+        return interfaceId == RuleEngineInterfaceId.RULE_ENGINE_INTERFACE_ID
+            || interfaceId == ERC1404ExtendInterfaceId.ERC1404EXTEND_INTERFACE_ID
+            || interfaceId == RuleInterfaceId.IRULE_INTERFACE_ID
             || AccessControlEnumerable.supportsInterface(interfaceId);
     }
 
