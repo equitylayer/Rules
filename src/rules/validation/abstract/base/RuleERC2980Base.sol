@@ -41,118 +41,33 @@ abstract contract RuleERC2980Base is
     constructor(address forwarderIrrevocable) MetaTxModuleStandalone(forwarderIrrevocable) {}
 
     /*//////////////////////////////////////////////////////////////
-                         TRANSFER RESTRICTION LOGIC
+                            ACCESS CONTROL
     //////////////////////////////////////////////////////////////*/
 
-    function _detectTransferRestriction(
-        address from,
-        address to,
-        uint256 /* value */
-    )
-        internal
-        view
-        virtual
-        override
-        returns (uint8)
-    {
-        // Frozenlist check has priority
-        if (_isFrozen(from)) {
-            return CODE_ADDRESS_FROM_IS_FROZEN;
-        } else if (_isFrozen(to)) {
-            return CODE_ADDRESS_TO_IS_FROZEN;
-        }
-        // Whitelist check: only the recipient must be whitelisted
-        if (!_isWhitelisted(to)) {
-            return CODE_ADDRESS_TO_NOT_WHITELISTED;
-        }
-        return uint8(IERC1404Extend.REJECTED_CODE_BASE.TRANSFER_OK);
+    modifier onlyWhitelistAdd() {
+        _authorizeWhitelistAdd();
+        _;
     }
 
-    function _detectTransferRestrictionFrom(address spender, address from, address to, uint256 value)
-        internal
-        view
-        virtual
-        override
-        returns (uint8)
-    {
-        if (_isFrozen(spender)) {
-            return CODE_ADDRESS_SPENDER_IS_FROZEN;
-        }
-        return _detectTransferRestriction(from, to, value);
+    modifier onlyWhitelistRemove() {
+        _authorizeWhitelistRemove();
+        _;
     }
 
-    /*//////////////////////////////////////////////////////////////
-                        ERC-3643 / IRuleEngine HOOKS
-    //////////////////////////////////////////////////////////////*/
-
-    function transferred(address from, address to, uint256 value)
-        public
-        view
-        virtual
-        override(IERC3643IComplianceContract)
-    {
-        _transferred(from, to, value);
+    modifier onlyFrozenlistAdd() {
+        _authorizeFrozenlistAdd();
+        _;
     }
 
-    function transferred(address spender, address from, address to, uint256 value)
-        public
-        view
-        virtual
-        override(IRuleEngine)
-    {
-        _transferredFrom(spender, from, to, value);
+    modifier onlyFrozenlistRemove() {
+        _authorizeFrozenlistRemove();
+        _;
     }
 
-    function _transferred(address from, address to, uint256 value) internal view virtual override {
-        uint8 code = _detectTransferRestriction(from, to, value);
-        require(
-            code == uint8(IERC1404Extend.REJECTED_CODE_BASE.TRANSFER_OK),
-            RuleERC2980_InvalidTransfer(address(this), from, to, value, code)
-        );
-    }
-
-    function _transferredFrom(address spender, address from, address to, uint256 value) internal view virtual override {
-        uint8 code = _detectTransferRestrictionFrom(spender, from, to, value);
-        require(
-            code == uint8(IERC1404Extend.REJECTED_CODE_BASE.TRANSFER_OK),
-            RuleERC2980_InvalidTransferFrom(address(this), spender, from, to, value, code)
-        );
-    }
-
-    /*//////////////////////////////////////////////////////////////
-                      RESTRICTION CODE HELPERS
-    //////////////////////////////////////////////////////////////*/
-
-    function canReturnTransferRestrictionCode(uint8 restrictionCode)
-        public
-        pure
-        virtual
-        override(IRule)
-        returns (bool)
-    {
-        return restrictionCode == CODE_ADDRESS_FROM_IS_FROZEN || restrictionCode == CODE_ADDRESS_TO_IS_FROZEN
-            || restrictionCode == CODE_ADDRESS_SPENDER_IS_FROZEN || restrictionCode == CODE_ADDRESS_TO_NOT_WHITELISTED;
-    }
-
-    function messageForTransferRestriction(uint8 restrictionCode)
-        public
-        pure
-        virtual
-        override(IERC1404)
-        returns (string memory)
-    {
-        if (restrictionCode == CODE_ADDRESS_FROM_IS_FROZEN) {
-            return TEXT_ADDRESS_FROM_IS_FROZEN;
-        } else if (restrictionCode == CODE_ADDRESS_TO_IS_FROZEN) {
-            return TEXT_ADDRESS_TO_IS_FROZEN;
-        } else if (restrictionCode == CODE_ADDRESS_SPENDER_IS_FROZEN) {
-            return TEXT_ADDRESS_SPENDER_IS_FROZEN;
-        } else if (restrictionCode == CODE_ADDRESS_TO_NOT_WHITELISTED) {
-            return TEXT_ADDRESS_TO_NOT_WHITELISTED;
-        } else {
-            return TEXT_CODE_NOT_FOUND;
-        }
-    }
+    function _authorizeWhitelistAdd() internal view virtual;
+    function _authorizeWhitelistRemove() internal view virtual;
+    function _authorizeFrozenlistAdd() internal view virtual;
+    function _authorizeFrozenlistRemove() internal view virtual;
 
     /*//////////////////////////////////////////////////////////////
                        WHITELIST MANAGEMENT
@@ -202,46 +117,6 @@ abstract contract RuleERC2980Base is
         require(_isWhitelisted(targetAddress), RuleERC2980_AddressNotFound());
         _removeWhitelistAddress(targetAddress);
         emit RemoveWhitelistAddress(targetAddress);
-    }
-
-    /**
-     * @notice Returns the number of whitelisted addresses.
-     */
-    function whitelistAddressCount() public view returns (uint256) {
-        return _whitelistCount();
-    }
-
-    /**
-     * @notice Returns true if the address is in the whitelist.
-     */
-    function isWhitelisted(address targetAddress) public view returns (bool) {
-        return _isWhitelisted(targetAddress);
-    }
-
-    /**
-     * @notice ERC-2980 getter: returns true if the address is whitelisted.
-     */
-    function whitelist(address _operator) public view virtual override(IERC2980) returns (bool) {
-        return _isWhitelisted(_operator);
-    }
-
-    /**
-     * @notice Returns true if the address is whitelisted (identity-verified).
-     * @dev Reflects whitelist membership only. Frozen status is intentionally excluded:
-     * freezing is a temporary enforcement action and does not revoke identity verification.
-     */
-    function isVerified(address targetAddress) public view virtual override(IIdentityRegistryVerified) returns (bool) {
-        return _isWhitelisted(targetAddress);
-    }
-
-    /**
-     * @notice Checks multiple addresses for whitelist membership.
-     */
-    function areWhitelisted(address[] memory targetAddresses) public view returns (bool[] memory results) {
-        results = new bool[](targetAddresses.length);
-        for (uint256 i = 0; i < targetAddresses.length; ++i) {
-            results[i] = _isWhitelisted(targetAddresses[i]);
-        }
     }
 
     /*//////////////////////////////////////////////////////////////
@@ -294,6 +169,103 @@ abstract contract RuleERC2980Base is
         emit RemoveFrozenlistAddress(targetAddress);
     }
 
+    /*//////////////////////////////////////////////////////////////
+                        PUBLIC FUNCTIONS
+    //////////////////////////////////////////////////////////////*/
+
+    function transferred(address from, address to, uint256 value)
+        public
+        view
+        virtual
+        override(IERC3643IComplianceContract)
+    {
+        _transferred(from, to, value);
+    }
+
+    function transferred(address spender, address from, address to, uint256 value)
+        public
+        view
+        virtual
+        override(IRuleEngine)
+    {
+        _transferredFrom(spender, from, to, value);
+    }
+
+    function canReturnTransferRestrictionCode(uint8 restrictionCode)
+        public
+        pure
+        virtual
+        override(IRule)
+        returns (bool)
+    {
+        return restrictionCode == CODE_ADDRESS_FROM_IS_FROZEN || restrictionCode == CODE_ADDRESS_TO_IS_FROZEN
+            || restrictionCode == CODE_ADDRESS_SPENDER_IS_FROZEN || restrictionCode == CODE_ADDRESS_TO_NOT_WHITELISTED;
+    }
+
+    function messageForTransferRestriction(uint8 restrictionCode)
+        public
+        pure
+        virtual
+        override(IERC1404)
+        returns (string memory)
+    {
+        if (restrictionCode == CODE_ADDRESS_FROM_IS_FROZEN) {
+            return TEXT_ADDRESS_FROM_IS_FROZEN;
+        } else if (restrictionCode == CODE_ADDRESS_TO_IS_FROZEN) {
+            return TEXT_ADDRESS_TO_IS_FROZEN;
+        } else if (restrictionCode == CODE_ADDRESS_SPENDER_IS_FROZEN) {
+            return TEXT_ADDRESS_SPENDER_IS_FROZEN;
+        } else if (restrictionCode == CODE_ADDRESS_TO_NOT_WHITELISTED) {
+            return TEXT_ADDRESS_TO_NOT_WHITELISTED;
+        } else {
+            return TEXT_CODE_NOT_FOUND;
+        }
+    }
+
+    function supportsInterface(bytes4 interfaceId) public view virtual override(RuleTransferValidation) returns (bool) {
+        return RuleTransferValidation.supportsInterface(interfaceId);
+    }
+
+    /**
+     * @notice Returns the number of whitelisted addresses.
+     */
+    function whitelistAddressCount() public view returns (uint256) {
+        return _whitelistCount();
+    }
+
+    /**
+     * @notice Returns true if the address is in the whitelist.
+     */
+    function isWhitelisted(address targetAddress) public view returns (bool) {
+        return _isWhitelisted(targetAddress);
+    }
+
+    /**
+     * @notice ERC-2980 getter: returns true if the address is whitelisted.
+     */
+    function whitelist(address _operator) public view virtual override(IERC2980) returns (bool) {
+        return _isWhitelisted(_operator);
+    }
+
+    /**
+     * @notice Returns true if the address is whitelisted (identity-verified).
+     * @dev Reflects whitelist membership only. Frozen status is intentionally excluded:
+     * freezing is a temporary enforcement action and does not revoke identity verification.
+     */
+    function isVerified(address targetAddress) public view virtual override(IIdentityRegistryVerified) returns (bool) {
+        return _isWhitelisted(targetAddress);
+    }
+
+    /**
+     * @notice Checks multiple addresses for whitelist membership.
+     */
+    function areWhitelisted(address[] memory targetAddresses) public view returns (bool[] memory results) {
+        results = new bool[](targetAddresses.length);
+        for (uint256 i = 0; i < targetAddresses.length; ++i) {
+            results[i] = _isWhitelisted(targetAddresses[i]);
+        }
+    }
+
     /**
      * @notice Returns the number of frozen addresses.
      */
@@ -326,45 +298,61 @@ abstract contract RuleERC2980Base is
     }
 
     /*//////////////////////////////////////////////////////////////
-                          INTERFACE SUPPORT
+                        INTERNAL FUNCTIONS
     //////////////////////////////////////////////////////////////*/
 
-    function supportsInterface(bytes4 interfaceId) public view virtual override(RuleTransferValidation) returns (bool) {
-        return RuleTransferValidation.supportsInterface(interfaceId);
+    function _detectTransferRestriction(
+        address from,
+        address to,
+        uint256 /* value */
+    )
+        internal
+        view
+        virtual
+        override
+        returns (uint8)
+    {
+        // Frozenlist check has priority
+        if (_isFrozen(from)) {
+            return CODE_ADDRESS_FROM_IS_FROZEN;
+        } else if (_isFrozen(to)) {
+            return CODE_ADDRESS_TO_IS_FROZEN;
+        }
+        // Whitelist check: only the recipient must be whitelisted
+        if (!_isWhitelisted(to)) {
+            return CODE_ADDRESS_TO_NOT_WHITELISTED;
+        }
+        return uint8(IERC1404Extend.REJECTED_CODE_BASE.TRANSFER_OK);
     }
 
-    /*//////////////////////////////////////////////////////////////
-                            ACCESS CONTROL
-    //////////////////////////////////////////////////////////////*/
-
-    modifier onlyWhitelistAdd() {
-        _authorizeWhitelistAdd();
-        _;
+    function _detectTransferRestrictionFrom(address spender, address from, address to, uint256 value)
+        internal
+        view
+        virtual
+        override
+        returns (uint8)
+    {
+        if (_isFrozen(spender)) {
+            return CODE_ADDRESS_SPENDER_IS_FROZEN;
+        }
+        return _detectTransferRestriction(from, to, value);
     }
 
-    modifier onlyWhitelistRemove() {
-        _authorizeWhitelistRemove();
-        _;
+    function _transferred(address from, address to, uint256 value) internal view virtual override {
+        uint8 code = _detectTransferRestriction(from, to, value);
+        require(
+            code == uint8(IERC1404Extend.REJECTED_CODE_BASE.TRANSFER_OK),
+            RuleERC2980_InvalidTransfer(address(this), from, to, value, code)
+        );
     }
 
-    modifier onlyFrozenlistAdd() {
-        _authorizeFrozenlistAdd();
-        _;
+    function _transferredFrom(address spender, address from, address to, uint256 value) internal view virtual override {
+        uint8 code = _detectTransferRestrictionFrom(spender, from, to, value);
+        require(
+            code == uint8(IERC1404Extend.REJECTED_CODE_BASE.TRANSFER_OK),
+            RuleERC2980_InvalidTransferFrom(address(this), spender, from, to, value, code)
+        );
     }
-
-    modifier onlyFrozenlistRemove() {
-        _authorizeFrozenlistRemove();
-        _;
-    }
-
-    function _authorizeWhitelistAdd() internal view virtual;
-    function _authorizeWhitelistRemove() internal view virtual;
-    function _authorizeFrozenlistAdd() internal view virtual;
-    function _authorizeFrozenlistRemove() internal view virtual;
-
-    /*//////////////////////////////////////////////////////////////
-                             ERC-2771 META TX
-    //////////////////////////////////////////////////////////////*/
 
     function _msgSender() internal view virtual override(ERC2771Context) returns (address sender) {
         return ERC2771Context._msgSender();

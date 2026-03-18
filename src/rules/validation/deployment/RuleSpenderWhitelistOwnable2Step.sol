@@ -12,14 +12,26 @@ import {RuleAddressSet} from "../abstract/RuleAddressSet/RuleAddressSet.sol";
  * @notice Ownable2Step deployment variant of spender whitelist rule.
  */
 contract RuleSpenderWhitelistOwnable2Step is RuleSpenderWhitelistBase, Ownable2Step {
+    /*//////////////////////////////////////////////////////////////
+                             CONSTRUCTOR
+    //////////////////////////////////////////////////////////////*/
+
     constructor(address owner, address forwarderIrrevocable)
         RuleSpenderWhitelistBase(forwarderIrrevocable)
         Ownable(owner)
     {}
 
+    /*//////////////////////////////////////////////////////////////
+                            ACCESS CONTROL
+    //////////////////////////////////////////////////////////////*/
+
     function _authorizeAddressListAdd() internal view virtual override onlyOwner {}
 
     function _authorizeAddressListRemove() internal view virtual override onlyOwner {}
+
+    /*//////////////////////////////////////////////////////////////
+                        INTERNAL FUNCTIONS
+    //////////////////////////////////////////////////////////////*/
 
     function _msgSender() internal view virtual override(Context, RuleAddressSet) returns (address sender) {
         return super._msgSender();

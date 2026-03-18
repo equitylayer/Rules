@@ -22,6 +22,38 @@ abstract contract RuleConditionalTransferLightBase is
     RuleConditionalTransferLightApprovalBase,
     IRule
 {
+    /*//////////////////////////////////////////////////////////////
+                        EXTERNAL FUNCTIONS
+    //////////////////////////////////////////////////////////////*/
+
+    function canReturnTransferRestrictionCode(uint8 restrictionCode) external pure override(IRule) returns (bool) {
+        return restrictionCode == CODE_TRANSFER_REQUEST_NOT_APPROVED;
+    }
+
+    function messageForTransferRestriction(uint8 restrictionCode)
+        external
+        pure
+        override(IERC1404)
+        returns (string memory)
+    {
+        if (restrictionCode == CODE_TRANSFER_REQUEST_NOT_APPROVED) {
+            return TEXT_TRANSFER_REQUEST_NOT_APPROVED;
+        }
+        return TEXT_CODE_NOT_FOUND;
+    }
+
+    function created(address to, uint256 value) external onlyBoundToken {
+        _transferred(address(0), to, value);
+    }
+
+    function destroyed(address from, uint256 value) external onlyBoundToken {
+        _transferred(from, address(0), value);
+    }
+
+    /*//////////////////////////////////////////////////////////////
+                        PUBLIC FUNCTIONS
+    //////////////////////////////////////////////////////////////*/
+
     /**
      * @notice Approves and performs a transferFrom using this rule as spender.
      * @dev Requires `from` to have approved this contract on the token.
@@ -66,6 +98,20 @@ abstract contract RuleConditionalTransferLightBase is
         onlyTransferExecutor
     {
         _transferred(from, to, value);
+    }
+
+    /**
+     * @notice Binds a token to this rule. Reverts if a token is already bound.
+     * @dev Enforces single-token binding to prevent cross-token approval replay.
+     *      To migrate to a new token, call `unbindToken` first.
+     * @dev WARNING: `unbindToken` does not clear `approvalCounts`. Stale approvals
+     *      from the previous token remain in storage and can be consumed after rebinding.
+     *      The operator who controls rebinding also controls approvals, so the trust
+     *      model is preserved, but integrators should be aware of this behavior.
+     */
+    function bindToken(address token) public override onlyComplianceManager {
+        require(getTokenBound() == address(0), RuleConditionalTransferLight_TokenAlreadyBound());
+        _bindToken(token);
     }
 
     function detectTransferRestriction(address from, address to, uint256 value)
@@ -118,47 +164,9 @@ abstract contract RuleConditionalTransferLightBase is
             == uint8(IERC1404Extend.REJECTED_CODE_BASE.TRANSFER_OK);
     }
 
-    function canReturnTransferRestrictionCode(uint8 restrictionCode) external pure override(IRule) returns (bool) {
-        return restrictionCode == CODE_TRANSFER_REQUEST_NOT_APPROVED;
-    }
-
-    function messageForTransferRestriction(uint8 restrictionCode)
-        external
-        pure
-        override(IERC1404)
-        returns (string memory)
-    {
-        if (restrictionCode == CODE_TRANSFER_REQUEST_NOT_APPROVED) {
-            return TEXT_TRANSFER_REQUEST_NOT_APPROVED;
-        }
-        return TEXT_CODE_NOT_FOUND;
-    }
-
-    function created(address to, uint256 value) external onlyBoundToken {
-        _transferred(address(0), to, value);
-    }
-
-    function destroyed(address from, uint256 value) external onlyBoundToken {
-        _transferred(from, address(0), value);
-    }
-
     /*//////////////////////////////////////////////////////////////
                             ACCESS CONTROL
     //////////////////////////////////////////////////////////////*/
-
-    /**
-     * @notice Binds a token to this rule. Reverts if a token is already bound.
-     * @dev Enforces single-token binding to prevent cross-token approval replay.
-     *      To migrate to a new token, call `unbindToken` first.
-     * @dev WARNING: `unbindToken` does not clear `approvalCounts`. Stale approvals
-     *      from the previous token remain in storage and can be consumed after rebinding.
-     *      The operator who controls rebinding also controls approvals, so the trust
-     *      model is preserved, but integrators should be aware of this behavior.
-     */
-    function bindToken(address token) public override onlyComplianceManager {
-        require(getTokenBound() == address(0), RuleConditionalTransferLight_TokenAlreadyBound());
-        _bindToken(token);
-    }
 
     function _authorizeTransferExecution() internal view override {
         require(isTokenBound(_msgSender()), RuleConditionalTransferLight_TransferExecutorUnauthorized(_msgSender()));

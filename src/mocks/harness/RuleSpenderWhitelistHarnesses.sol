@@ -5,7 +5,15 @@ import {RuleSpenderWhitelist} from "src/rules/validation/deployment/RuleSpenderW
 import {RuleSpenderWhitelistOwnable2Step} from "src/rules/validation/deployment/RuleSpenderWhitelistOwnable2Step.sol";
 
 contract RuleSpenderWhitelistHarness is RuleSpenderWhitelist {
+    /*//////////////////////////////////////////////////////////////
+                             CONSTRUCTOR
+    //////////////////////////////////////////////////////////////*/
+
     constructor(address admin, address forwarderIrrevocable) RuleSpenderWhitelist(admin, forwarderIrrevocable) {}
+
+    /*//////////////////////////////////////////////////////////////
+                        EXTERNAL FUNCTIONS
+    //////////////////////////////////////////////////////////////*/
 
     function exposedMsgSender() external view returns (address) {
         return _msgSender();
@@ -21,9 +29,17 @@ contract RuleSpenderWhitelistHarness is RuleSpenderWhitelist {
 }
 
 contract RuleSpenderWhitelistOwnable2StepHarness is RuleSpenderWhitelistOwnable2Step {
+    /*//////////////////////////////////////////////////////////////
+                             CONSTRUCTOR
+    //////////////////////////////////////////////////////////////*/
+
     constructor(address owner, address forwarderIrrevocable)
         RuleSpenderWhitelistOwnable2Step(owner, forwarderIrrevocable)
     {}
+
+    /*//////////////////////////////////////////////////////////////
+                        EXTERNAL FUNCTIONS
+    //////////////////////////////////////////////////////////////*/
 
     function exposedMsgSender() external view returns (address) {
         return _msgSender();

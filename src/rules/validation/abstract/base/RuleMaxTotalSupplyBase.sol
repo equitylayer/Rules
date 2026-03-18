@@ -17,11 +17,27 @@ abstract contract RuleMaxTotalSupplyBase is RuleTransferValidation, RuleMaxTotal
     ITotalSupply public tokenContract;
     uint256 public maxTotalSupply;
 
+    /*//////////////////////////////////////////////////////////////
+                             CONSTRUCTOR
+    //////////////////////////////////////////////////////////////*/
+
     constructor(address tokenContract_, uint256 maxTotalSupply_) {
         require(tokenContract_ != address(0), RuleMaxTotalSupply_TokenAddressZeroNotAllowed());
         tokenContract = ITotalSupply(tokenContract_);
         maxTotalSupply = maxTotalSupply_;
     }
+
+    /*//////////////////////////////////////////////////////////////
+                        EXTERNAL FUNCTIONS
+    //////////////////////////////////////////////////////////////*/
+
+    function canReturnTransferRestrictionCode(uint8 restrictionCode) external pure override returns (bool) {
+        return restrictionCode == CODE_MAX_TOTAL_SUPPLY_EXCEEDED;
+    }
+
+    /*//////////////////////////////////////////////////////////////
+                        PUBLIC FUNCTIONS
+    //////////////////////////////////////////////////////////////*/
 
     function setMaxTotalSupply(uint256 newMaxTotalSupply) public onlyMaxTotalSupplyManager {
         maxTotalSupply = newMaxTotalSupply;
@@ -33,6 +49,41 @@ abstract contract RuleMaxTotalSupplyBase is RuleTransferValidation, RuleMaxTotal
         tokenContract = ITotalSupply(newTokenContract);
         emit TokenContractUpdated(newTokenContract);
     }
+
+    function transferred(address from, address to, uint256 value) public view override(IERC3643IComplianceContract) {
+        _transferred(from, to, value);
+    }
+
+    function transferred(address spender, address from, address to, uint256 value) public view override(IRuleEngine) {
+        _transferredFrom(spender, from, to, value);
+    }
+
+    function messageForTransferRestriction(uint8 restrictionCode)
+        public
+        pure
+        override(IERC1404)
+        returns (string memory)
+    {
+        if (restrictionCode == CODE_MAX_TOTAL_SUPPLY_EXCEEDED) {
+            return TEXT_MAX_TOTAL_SUPPLY_EXCEEDED;
+        }
+        return TEXT_CODE_NOT_FOUND;
+    }
+
+    /*//////////////////////////////////////////////////////////////
+                            ACCESS CONTROL
+    //////////////////////////////////////////////////////////////*/
+
+    modifier onlyMaxTotalSupplyManager() {
+        _authorizeMaxTotalSupplyManager();
+        _;
+    }
+
+    function _authorizeMaxTotalSupplyManager() internal view virtual;
+
+    /*//////////////////////////////////////////////////////////////
+                        INTERNAL FUNCTIONS
+    //////////////////////////////////////////////////////////////*/
 
     function _detectTransferRestriction(
         address from,
@@ -63,14 +114,6 @@ abstract contract RuleMaxTotalSupplyBase is RuleTransferValidation, RuleMaxTotal
         return _detectTransferRestriction(from, to, value);
     }
 
-    function transferred(address from, address to, uint256 value) public view override(IERC3643IComplianceContract) {
-        _transferred(from, to, value);
-    }
-
-    function transferred(address spender, address from, address to, uint256 value) public view override(IRuleEngine) {
-        _transferredFrom(spender, from, to, value);
-    }
-
     function _transferred(address from, address to, uint256 value) internal view virtual {
         uint8 code = _detectTransferRestriction(from, to, value);
         require(
@@ -86,31 +129,4 @@ abstract contract RuleMaxTotalSupplyBase is RuleTransferValidation, RuleMaxTotal
             RuleMaxTotalSupply_InvalidTransferFrom(address(this), spender, from, to, value, code)
         );
     }
-
-    function canReturnTransferRestrictionCode(uint8 restrictionCode) external pure override returns (bool) {
-        return restrictionCode == CODE_MAX_TOTAL_SUPPLY_EXCEEDED;
-    }
-
-    function messageForTransferRestriction(uint8 restrictionCode)
-        public
-        pure
-        override(IERC1404)
-        returns (string memory)
-    {
-        if (restrictionCode == CODE_MAX_TOTAL_SUPPLY_EXCEEDED) {
-            return TEXT_MAX_TOTAL_SUPPLY_EXCEEDED;
-        }
-        return TEXT_CODE_NOT_FOUND;
-    }
-
-    /*//////////////////////////////////////////////////////////////
-                            ACCESS CONTROL
-    //////////////////////////////////////////////////////////////*/
-
-    modifier onlyMaxTotalSupplyManager() {
-        _authorizeMaxTotalSupplyManager();
-        _;
-    }
-
-    function _authorizeMaxTotalSupplyManager() internal view virtual;
 }

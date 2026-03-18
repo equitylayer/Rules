@@ -13,6 +13,36 @@ abstract contract RuleConditionalTransferLightApprovalBase is RuleConditionalTra
     // Mapping from transfer hash to approval count
     mapping(bytes32 => uint256) public approvalCounts;
 
+    /*//////////////////////////////////////////////////////////////
+                        ACCESS CONTROL
+    //////////////////////////////////////////////////////////////*/
+
+    modifier onlyTransferApprover() {
+        _authorizeTransferApproval();
+        _;
+    }
+
+    modifier onlyTransferExecutor() {
+        _authorizeTransferExecution();
+        _;
+    }
+
+    function _authorizeTransferApproval() internal view virtual;
+
+    function _authorizeTransferExecution() internal view virtual;
+
+    /*//////////////////////////////////////////////////////////////
+                        EXTERNAL FUNCTIONS
+    //////////////////////////////////////////////////////////////*/
+
+    function transferred(ITransferContext.FungibleTransferContext calldata ctx) external onlyTransferExecutor {
+        _transferredFromContext(ctx);
+    }
+
+    /*//////////////////////////////////////////////////////////////
+                        PUBLIC FUNCTIONS
+    //////////////////////////////////////////////////////////////*/
+
     function approveTransfer(address from, address to, uint256 value) public onlyTransferApprover {
         bytes32 transferHash = _transferHash(from, to, value);
         approvalCounts[transferHash] += 1;
@@ -32,9 +62,9 @@ abstract contract RuleConditionalTransferLightApprovalBase is RuleConditionalTra
         return approvalCounts[transferHash];
     }
 
-    function transferred(ITransferContext.FungibleTransferContext calldata ctx) external onlyTransferExecutor {
-        _transferredFromContext(ctx);
-    }
+    /*//////////////////////////////////////////////////////////////
+                        INTERNAL FUNCTIONS
+    //////////////////////////////////////////////////////////////*/
 
     function _transferredFromContext(ITransferContext.FungibleTransferContext calldata ctx) internal virtual {
         _transferred(ctx.from, ctx.to, ctx.value);
@@ -63,22 +93,4 @@ abstract contract RuleConditionalTransferLightApprovalBase is RuleConditionalTra
             hash := keccak256(ptr, 0x60)
         }
     }
-
-    /*//////////////////////////////////////////////////////////////
-                            ACCESS CONTROL
-    //////////////////////////////////////////////////////////////*/
-
-    modifier onlyTransferApprover() {
-        _authorizeTransferApproval();
-        _;
-    }
-
-    modifier onlyTransferExecutor() {
-        _authorizeTransferExecution();
-        _;
-    }
-
-    function _authorizeTransferApproval() internal view virtual;
-
-    function _authorizeTransferExecution() internal view virtual;
 }

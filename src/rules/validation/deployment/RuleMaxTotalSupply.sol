@@ -11,6 +11,10 @@ import {RuleTransferValidation} from "../abstract/core/RuleTransferValidation.so
  * @notice Restricts minting so that total supply never exceeds a maximum value.
  */
 contract RuleMaxTotalSupply is AccessControlModuleStandalone, RuleMaxTotalSupplyBase {
+    /*//////////////////////////////////////////////////////////////
+                             CONSTRUCTOR
+    //////////////////////////////////////////////////////////////*/
+
     /**
      * @param admin Address that receives the default admin role.
      * @param tokenContract_ Token contract that exposes totalSupply (must be non-zero).
@@ -20,6 +24,10 @@ contract RuleMaxTotalSupply is AccessControlModuleStandalone, RuleMaxTotalSupply
         AccessControlModuleStandalone(admin)
         RuleMaxTotalSupplyBase(tokenContract_, maxTotalSupply_)
     {}
+
+    /*//////////////////////////////////////////////////////////////
+                          PUBLIC FUNCTIONS
+    //////////////////////////////////////////////////////////////*/
 
     function supportsInterface(bytes4 interfaceId)
         public

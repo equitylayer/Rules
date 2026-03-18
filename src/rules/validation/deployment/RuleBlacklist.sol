@@ -25,6 +25,10 @@ contract RuleBlacklist is RuleBlacklistBase, AccessControlModuleStandalone {
         AccessControlModuleStandalone(admin)
     {}
 
+    /*//////////////////////////////////////////////////////////////
+                          PUBLIC FUNCTIONS
+    //////////////////////////////////////////////////////////////*/
+
     function supportsInterface(bytes4 interfaceId)
         public
         view
@@ -36,9 +40,17 @@ contract RuleBlacklist is RuleBlacklistBase, AccessControlModuleStandalone {
             || RuleBlacklistBase.supportsInterface(interfaceId);
     }
 
+    /*//////////////////////////////////////////////////////////////
+                            ACCESS CONTROL
+    //////////////////////////////////////////////////////////////*/
+
     function _authorizeAddressListAdd() internal view virtual override onlyRole(ADDRESS_LIST_ADD_ROLE) {}
 
     function _authorizeAddressListRemove() internal view virtual override onlyRole(ADDRESS_LIST_REMOVE_ROLE) {}
+
+    /*//////////////////////////////////////////////////////////////
+                        INTERNAL FUNCTIONS
+    //////////////////////////////////////////////////////////////*/
 
     function _msgSender() internal view virtual override(Context, RuleAddressSet) returns (address sender) {
         return super._msgSender();

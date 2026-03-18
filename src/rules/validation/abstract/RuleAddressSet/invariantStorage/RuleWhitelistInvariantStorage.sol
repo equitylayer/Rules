@@ -5,12 +5,7 @@ pragma solidity ^0.8.20;
 import {RuleSharedInvariantStorage} from "../../invariant/RuleSharedInvariantStorage.sol";
 
 abstract contract RuleWhitelistInvariantStorage is RuleSharedInvariantStorage {
-    error RuleWhitelist_InvalidTransfer(address rule, address from, address to, uint256 value, uint8 code);
-    error RuleWhitelist_InvalidTransferFrom(
-        address rule, address spender, address from, address to, uint256 value, uint8 code
-    );
     /* ============ String message ============ */
-
     string constant TEXT_ADDRESS_FROM_NOT_WHITELISTED = "The sender is not in the whitelist";
     string constant TEXT_ADDRESS_TO_NOT_WHITELISTED = "The recipient is not in the whitelist";
     string constant TEXT_ADDRESS_SPENDER_NOT_WHITELISTED = "The spender is not in the whitelist";
@@ -24,4 +19,9 @@ abstract contract RuleWhitelistInvariantStorage is RuleSharedInvariantStorage {
     /* ============ Events ============ */
     /// @dev Emitted when the `checkSpender` flag is updated.
     event CheckSpenderUpdated(bool newValue);
+
+    error RuleWhitelist_InvalidTransfer(address rule, address from, address to, uint256 value, uint8 code);
+    error RuleWhitelist_InvalidTransferFrom(
+        address rule, address spender, address from, address to, uint256 value, uint8 code
+    );
 }

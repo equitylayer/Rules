@@ -14,7 +14,15 @@ import {RuleConditionalTransferLightBase} from "./abstract/RuleConditionalTransf
  * @notice Ownable2Step variant of RuleConditionalTransferLight.
  */
 contract RuleConditionalTransferLightOwnable2Step is RuleConditionalTransferLightBase, Ownable2Step {
+    /*//////////////////////////////////////////////////////////////
+                             CONSTRUCTOR
+    //////////////////////////////////////////////////////////////*/
+
     constructor(address owner) Ownable(owner) {}
+
+    /*//////////////////////////////////////////////////////////////
+                          PUBLIC FUNCTIONS
+    //////////////////////////////////////////////////////////////*/
 
     function supportsInterface(bytes4 interfaceId) public view override returns (bool) {
         return interfaceId == type(IERC165).interfaceId
@@ -22,6 +30,10 @@ contract RuleConditionalTransferLightOwnable2Step is RuleConditionalTransferLigh
             || interfaceId == ERC1404ExtendInterfaceId.ERC1404EXTEND_INTERFACE_ID
             || interfaceId == RuleInterfaceId.IRULE_INTERFACE_ID;
     }
+
+    /*//////////////////////////////////////////////////////////////
+                            ACCESS CONTROL
+    //////////////////////////////////////////////////////////////*/
 
     function _authorizeTransferApproval() internal view virtual override onlyOwner {}
 

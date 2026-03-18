@@ -10,6 +10,10 @@ import {IERC3643Version} from "CMTAT/interfaces/tokenization/IERC3643Partial.sol
 abstract contract VersionModule is IERC3643Version {
     string private constant VERSION = "0.2.0";
 
+    /*//////////////////////////////////////////////////////////////
+                          PUBLIC FUNCTIONS
+    //////////////////////////////////////////////////////////////*/
+
     /// @inheritdoc IERC3643Version
     function version() public view virtual override returns (string memory version_) {
         return VERSION;

@@ -25,6 +25,10 @@ contract RuleWhitelistWrapperOwnable2Step is RuleWhitelistWrapperBase, Ownable2S
         Ownable(owner)
     {}
 
+    /*//////////////////////////////////////////////////////////////
+                            ACCESS CONTROL
+    //////////////////////////////////////////////////////////////*/
+
     function _authorizeCheckSpenderManager() internal view virtual override onlyOwner {}
 
     /**
@@ -33,7 +37,7 @@ contract RuleWhitelistWrapperOwnable2Step is RuleWhitelistWrapperBase, Ownable2S
     function _onlyRulesManager() internal view virtual override onlyOwner {}
 
     /*//////////////////////////////////////////////////////////////
-                           ERC-2771
+                        INTERNAL FUNCTIONS
     //////////////////////////////////////////////////////////////*/
 
     function _msgSender() internal view virtual override(RuleWhitelistWrapperBase, Context) returns (address sender) {

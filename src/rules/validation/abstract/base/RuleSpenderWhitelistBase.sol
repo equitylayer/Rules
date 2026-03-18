@@ -14,7 +14,48 @@ import {IRuleEngine} from "CMTAT/interfaces/engine/IRuleEngine.sol";
  * @dev Direct transfers (`transferred(from,to,value)`) are intentionally no-op.
  */
 abstract contract RuleSpenderWhitelistBase is RuleAddressSet, RuleNFTAdapter, RuleSpenderWhitelistInvariantStorage {
+    /*//////////////////////////////////////////////////////////////
+                             CONSTRUCTOR
+    //////////////////////////////////////////////////////////////*/
+
     constructor(address forwarderIrrevocable) RuleAddressSet(forwarderIrrevocable) {}
+
+    /*//////////////////////////////////////////////////////////////
+                        EXTERNAL FUNCTIONS
+    //////////////////////////////////////////////////////////////*/
+
+    function canReturnTransferRestrictionCode(uint8 restrictionCode) external pure override returns (bool) {
+        return restrictionCode == CODE_ADDRESS_SPENDER_NOT_WHITELISTED;
+    }
+
+    /*//////////////////////////////////////////////////////////////
+                        PUBLIC FUNCTIONS
+    //////////////////////////////////////////////////////////////*/
+
+    /**
+     * @dev Regular transfers are always accepted by this rule.
+     */
+    function transferred(address, address, uint256) public view override(IERC3643IComplianceContract) {}
+
+    function transferred(address spender, address from, address to, uint256 value) public view override(IRuleEngine) {
+        _transferredFrom(spender, from, to, value);
+    }
+
+    function messageForTransferRestriction(uint8 restrictionCode)
+        public
+        pure
+        override(IERC1404)
+        returns (string memory)
+    {
+        if (restrictionCode == CODE_ADDRESS_SPENDER_NOT_WHITELISTED) {
+            return TEXT_ADDRESS_SPENDER_NOT_WHITELISTED;
+        }
+        return TEXT_CODE_NOT_FOUND;
+    }
+
+    /*//////////////////////////////////////////////////////////////
+                        INTERNAL FUNCTIONS
+    //////////////////////////////////////////////////////////////*/
 
     function _detectTransferRestriction(address, address, uint256) internal pure virtual override returns (uint8) {
         return uint8(IERC1404Extend.REJECTED_CODE_BASE.TRANSFER_OK);
@@ -31,31 +72,6 @@ abstract contract RuleSpenderWhitelistBase is RuleAddressSet, RuleNFTAdapter, Ru
             return CODE_ADDRESS_SPENDER_NOT_WHITELISTED;
         }
         return uint8(IERC1404Extend.REJECTED_CODE_BASE.TRANSFER_OK);
-    }
-
-    function canReturnTransferRestrictionCode(uint8 restrictionCode) external pure override returns (bool) {
-        return restrictionCode == CODE_ADDRESS_SPENDER_NOT_WHITELISTED;
-    }
-
-    function messageForTransferRestriction(uint8 restrictionCode)
-        public
-        pure
-        override(IERC1404)
-        returns (string memory)
-    {
-        if (restrictionCode == CODE_ADDRESS_SPENDER_NOT_WHITELISTED) {
-            return TEXT_ADDRESS_SPENDER_NOT_WHITELISTED;
-        }
-        return TEXT_CODE_NOT_FOUND;
-    }
-
-    /**
-     * @dev Regular transfers are always accepted by this rule.
-     */
-    function transferred(address, address, uint256) public view override(IERC3643IComplianceContract) {}
-
-    function transferred(address spender, address from, address to, uint256 value) public view override(IRuleEngine) {
-        _transferredFrom(spender, from, to, value);
     }
 
     function _transferred(address, address, uint256) internal view virtual override {

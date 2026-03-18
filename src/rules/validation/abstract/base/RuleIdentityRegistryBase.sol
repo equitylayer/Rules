@@ -16,11 +16,39 @@ import {IIdentityRegistryVerified} from "../../../interfaces/IIdentityRegistry.s
 abstract contract RuleIdentityRegistryBase is RuleNFTAdapter, RuleIdentityRegistryInvariantStorage {
     IIdentityRegistryVerified public identityRegistry;
 
+    /*//////////////////////////////////////////////////////////////
+                             CONSTRUCTOR
+    //////////////////////////////////////////////////////////////*/
+
     constructor(address identityRegistry_) {
         if (identityRegistry_ != address(0)) {
             identityRegistry = IIdentityRegistryVerified(identityRegistry_);
         }
     }
+
+    /*//////////////////////////////////////////////////////////////
+                            ACCESS CONTROL
+    //////////////////////////////////////////////////////////////*/
+
+    modifier onlyIdentityRegistryManager() {
+        _authorizeIdentityRegistryManager();
+        _;
+    }
+
+    function _authorizeIdentityRegistryManager() internal view virtual;
+
+    /*//////////////////////////////////////////////////////////////
+                        EXTERNAL FUNCTIONS
+    //////////////////////////////////////////////////////////////*/
+
+    function canReturnTransferRestrictionCode(uint8 restrictionCode) external pure override returns (bool) {
+        return restrictionCode == CODE_ADDRESS_FROM_NOT_VERIFIED || restrictionCode == CODE_ADDRESS_TO_NOT_VERIFIED
+            || restrictionCode == CODE_ADDRESS_SPENDER_NOT_VERIFIED;
+    }
+
+    /*//////////////////////////////////////////////////////////////
+                        PUBLIC FUNCTIONS
+    //////////////////////////////////////////////////////////////*/
 
     function setIdentityRegistry(address newRegistry) public onlyIdentityRegistryManager {
         require(newRegistry != address(0), RuleIdentityRegistry_RegistryAddressZeroNotAllowed());
@@ -32,6 +60,34 @@ abstract contract RuleIdentityRegistryBase is RuleNFTAdapter, RuleIdentityRegist
         identityRegistry = IIdentityRegistryVerified(address(0));
         emit IdentityRegistryUpdated(address(0));
     }
+
+    function transferred(address from, address to, uint256 value) public view override(IERC3643IComplianceContract) {
+        _transferred(from, to, value);
+    }
+
+    function transferred(address spender, address from, address to, uint256 value) public view override(IRuleEngine) {
+        _transferredFrom(spender, from, to, value);
+    }
+
+    function messageForTransferRestriction(uint8 restrictionCode)
+        public
+        pure
+        override(IERC1404)
+        returns (string memory)
+    {
+        if (restrictionCode == CODE_ADDRESS_FROM_NOT_VERIFIED) {
+            return TEXT_ADDRESS_FROM_NOT_VERIFIED;
+        } else if (restrictionCode == CODE_ADDRESS_TO_NOT_VERIFIED) {
+            return TEXT_ADDRESS_TO_NOT_VERIFIED;
+        } else if (restrictionCode == CODE_ADDRESS_SPENDER_NOT_VERIFIED) {
+            return TEXT_ADDRESS_SPENDER_NOT_VERIFIED;
+        }
+        return TEXT_CODE_NOT_FOUND;
+    }
+
+    /*//////////////////////////////////////////////////////////////
+                        INTERNAL FUNCTIONS
+    //////////////////////////////////////////////////////////////*/
 
     function _detectTransferRestriction(
         address from,
@@ -77,14 +133,6 @@ abstract contract RuleIdentityRegistryBase is RuleNFTAdapter, RuleIdentityRegist
         return _detectTransferRestriction(from, to, value);
     }
 
-    function transferred(address from, address to, uint256 value) public view override(IERC3643IComplianceContract) {
-        _transferred(from, to, value);
-    }
-
-    function transferred(address spender, address from, address to, uint256 value) public view override(IRuleEngine) {
-        _transferredFrom(spender, from, to, value);
-    }
-
     function _transferred(address from, address to, uint256 value) internal view virtual override {
         uint8 code = _detectTransferRestriction(from, to, value);
         require(
@@ -101,35 +149,4 @@ abstract contract RuleIdentityRegistryBase is RuleNFTAdapter, RuleIdentityRegist
         );
     }
 
-    function canReturnTransferRestrictionCode(uint8 restrictionCode) external pure override returns (bool) {
-        return restrictionCode == CODE_ADDRESS_FROM_NOT_VERIFIED || restrictionCode == CODE_ADDRESS_TO_NOT_VERIFIED
-            || restrictionCode == CODE_ADDRESS_SPENDER_NOT_VERIFIED;
-    }
-
-    function messageForTransferRestriction(uint8 restrictionCode)
-        public
-        pure
-        override(IERC1404)
-        returns (string memory)
-    {
-        if (restrictionCode == CODE_ADDRESS_FROM_NOT_VERIFIED) {
-            return TEXT_ADDRESS_FROM_NOT_VERIFIED;
-        } else if (restrictionCode == CODE_ADDRESS_TO_NOT_VERIFIED) {
-            return TEXT_ADDRESS_TO_NOT_VERIFIED;
-        } else if (restrictionCode == CODE_ADDRESS_SPENDER_NOT_VERIFIED) {
-            return TEXT_ADDRESS_SPENDER_NOT_VERIFIED;
-        }
-        return TEXT_CODE_NOT_FOUND;
-    }
-
-    /*//////////////////////////////////////////////////////////////
-                            ACCESS CONTROL
-    //////////////////////////////////////////////////////////////*/
-
-    modifier onlyIdentityRegistryManager() {
-        _authorizeIdentityRegistryManager();
-        _;
-    }
-
-    function _authorizeIdentityRegistryManager() internal view virtual;
 }

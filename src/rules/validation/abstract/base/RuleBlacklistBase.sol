@@ -15,36 +15,40 @@ import {IRule} from "RuleEngine/interfaces/IRule.sol";
  * @notice Core blacklist logic without access-control policy.
  */
 abstract contract RuleBlacklistBase is RuleAddressSet, RuleNFTAdapter, RuleBlacklistInvariantStorage {
+    /*//////////////////////////////////////////////////////////////
+                             CONSTRUCTOR
+    //////////////////////////////////////////////////////////////*/
+
     constructor(address forwarderIrrevocable) RuleAddressSet(forwarderIrrevocable) {}
 
-    function _detectTransferRestriction(
-        address from,
-        address to,
-        uint256 /* value */
-    )
-        internal
+    /*//////////////////////////////////////////////////////////////
+                          PUBLIC FUNCTIONS
+    //////////////////////////////////////////////////////////////*/
+
+    /**
+     * @inheritdoc IERC3643IComplianceContract
+     * @dev Validation only; does not modify state.
+     */
+    function transferred(address from, address to, uint256 value)
+        public
         view
-        override
-        returns (uint8)
+        virtual
+        override(IERC3643IComplianceContract)
     {
-        if (isAddressListed(from)) {
-            return CODE_ADDRESS_FROM_IS_BLACKLISTED;
-        } else if (isAddressListed(to)) {
-            return CODE_ADDRESS_TO_IS_BLACKLISTED;
-        }
-        return uint8(IERC1404Extend.REJECTED_CODE_BASE.TRANSFER_OK);
+        _transferred(from, to, value);
     }
 
-    function _detectTransferRestrictionFrom(address spender, address from, address to, uint256 value)
-        internal
+    /**
+     * @inheritdoc IRuleEngine
+     * @dev Validation only; does not modify state.
+     */
+    function transferred(address spender, address from, address to, uint256 value)
+        public
         view
-        override
-        returns (uint8)
+        virtual
+        override(IRuleEngine)
     {
-        if (isAddressListed(spender)) {
-            return CODE_ADDRESS_SPENDER_IS_BLACKLISTED;
-        }
-        return _detectTransferRestriction(from, to, value);
+        _transferredFrom(spender, from, to, value);
     }
 
     function canReturnTransferRestrictionCode(uint8 restrictionCode)
@@ -80,30 +84,38 @@ abstract contract RuleBlacklistBase is RuleAddressSet, RuleNFTAdapter, RuleBlack
         return RuleTransferValidation.supportsInterface(interfaceId);
     }
 
-    /**
-     * @inheritdoc IERC3643IComplianceContract
-     * @dev Validation only; does not modify state.
-     */
-    function transferred(address from, address to, uint256 value)
-        public
+    /*//////////////////////////////////////////////////////////////
+                        INTERNAL FUNCTIONS
+    //////////////////////////////////////////////////////////////*/
+
+    function _detectTransferRestriction(
+        address from,
+        address to,
+        uint256 /* value */
+    )
+        internal
         view
-        virtual
-        override(IERC3643IComplianceContract)
+        override
+        returns (uint8)
     {
-        _transferred(from, to, value);
+        if (isAddressListed(from)) {
+            return CODE_ADDRESS_FROM_IS_BLACKLISTED;
+        } else if (isAddressListed(to)) {
+            return CODE_ADDRESS_TO_IS_BLACKLISTED;
+        }
+        return uint8(IERC1404Extend.REJECTED_CODE_BASE.TRANSFER_OK);
     }
 
-    /**
-     * @inheritdoc IRuleEngine
-     * @dev Validation only; does not modify state.
-     */
-    function transferred(address spender, address from, address to, uint256 value)
-        public
+    function _detectTransferRestrictionFrom(address spender, address from, address to, uint256 value)
+        internal
         view
-        virtual
-        override(IRuleEngine)
+        override
+        returns (uint8)
     {
-        _transferredFrom(spender, from, to, value);
+        if (isAddressListed(spender)) {
+            return CODE_ADDRESS_SPENDER_IS_BLACKLISTED;
+        }
+        return _detectTransferRestriction(from, to, value);
     }
 
     function _transferred(address from, address to, uint256 value) internal view virtual override {

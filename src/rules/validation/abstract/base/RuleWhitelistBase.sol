@@ -11,9 +11,51 @@ import {IIdentityRegistryVerified} from "../../../interfaces/IIdentityRegistry.s
  * @notice Core whitelist logic without access-control policy.
  */
 abstract contract RuleWhitelistBase is RuleAddressSet, RuleWhitelistShared, IIdentityRegistryVerified {
+    /*//////////////////////////////////////////////////////////////
+                             CONSTRUCTOR
+    //////////////////////////////////////////////////////////////*/
+
     constructor(address forwarderIrrevocable, bool checkSpender_) RuleAddressSet(forwarderIrrevocable) {
         checkSpender = checkSpender_;
     }
+
+    /*//////////////////////////////////////////////////////////////
+                          PUBLIC FUNCTIONS
+    //////////////////////////////////////////////////////////////*/
+
+    function setCheckSpender(bool value) public virtual onlyCheckSpenderManager {
+        _setCheckSpender(value);
+        emit CheckSpenderUpdated(value);
+    }
+
+    function isVerified(address targetAddress)
+        public
+        view
+        virtual
+        override(IIdentityRegistryVerified)
+        returns (bool isListed)
+    {
+        isListed = _isAddressListed(targetAddress);
+    }
+
+    function supportsInterface(bytes4 interfaceId) public view virtual override(RuleTransferValidation) returns (bool) {
+        return RuleTransferValidation.supportsInterface(interfaceId);
+    }
+
+    /*//////////////////////////////////////////////////////////////
+                            ACCESS CONTROL
+    //////////////////////////////////////////////////////////////*/
+
+    modifier onlyCheckSpenderManager() {
+        _authorizeCheckSpenderManager();
+        _;
+    }
+
+    function _authorizeCheckSpenderManager() internal view virtual;
+
+    /*//////////////////////////////////////////////////////////////
+                        INTERNAL FUNCTIONS
+    //////////////////////////////////////////////////////////////*/
 
     function _detectTransferRestriction(
         address from,
@@ -47,37 +89,7 @@ abstract contract RuleWhitelistBase is RuleAddressSet, RuleWhitelistShared, IIde
         return _detectTransferRestriction(from, to, value);
     }
 
-    function isVerified(address targetAddress)
-        public
-        view
-        virtual
-        override(IIdentityRegistryVerified)
-        returns (bool isListed)
-    {
-        isListed = _isAddressListed(targetAddress);
-    }
-
-    function setCheckSpender(bool value) public virtual onlyCheckSpenderManager {
-        _setCheckSpender(value);
-        emit CheckSpenderUpdated(value);
-    }
-
     function _setCheckSpender(bool value) internal virtual {
         checkSpender = value;
     }
-
-    function supportsInterface(bytes4 interfaceId) public view virtual override(RuleTransferValidation) returns (bool) {
-        return RuleTransferValidation.supportsInterface(interfaceId);
-    }
-
-    /*//////////////////////////////////////////////////////////////
-                            ACCESS CONTROL
-    //////////////////////////////////////////////////////////////*/
-
-    modifier onlyCheckSpenderManager() {
-        _authorizeCheckSpenderManager();
-        _;
-    }
-
-    function _authorizeCheckSpenderManager() internal view virtual;
 }

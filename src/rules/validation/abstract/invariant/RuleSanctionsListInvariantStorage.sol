@@ -6,14 +6,6 @@ import {RuleSharedInvariantStorage} from "./RuleSharedInvariantStorage.sol";
 import {ISanctionsList} from "../../../interfaces/ISanctionsList.sol";
 
 abstract contract RuleSanctionsListInvariantStorage is RuleSharedInvariantStorage {
-    /* ============ Event ============ */
-    event SetSanctionListOracle(ISanctionsList newOracle);
-    /* ============ Custom errors ============ */
-    error RuleSanctionsList_OracleAddressZeroNotAllowed();
-    error RuleSanctionsList_InvalidTransfer(address rule, address from, address to, uint256 value, uint8 code);
-    error RuleSanctionsList_InvalidTransferFrom(
-        address rule, address spender, address from, address to, uint256 value, uint8 code
-    );
     /* ============ Role ============ */
     bytes32 public constant SANCTIONLIST_ROLE = keccak256("SANCTIONLIST_ROLE");
 
@@ -27,4 +19,14 @@ abstract contract RuleSanctionsListInvariantStorage is RuleSharedInvariantStorag
     uint8 public constant CODE_ADDRESS_FROM_IS_SANCTIONED = 30;
     uint8 public constant CODE_ADDRESS_TO_IS_SANCTIONED = 31;
     uint8 public constant CODE_ADDRESS_SPENDER_IS_SANCTIONED = 32;
+
+    /* ============ Event ============ */
+    event SetSanctionListOracle(ISanctionsList newOracle);
+
+    /* ============ Custom errors ============ */
+    error RuleSanctionsList_OracleAddressZeroNotAllowed();
+    error RuleSanctionsList_InvalidTransfer(address rule, address from, address to, uint256 value, uint8 code);
+    error RuleSanctionsList_InvalidTransferFrom(
+        address rule, address spender, address from, address to, uint256 value, uint8 code
+    );
 }

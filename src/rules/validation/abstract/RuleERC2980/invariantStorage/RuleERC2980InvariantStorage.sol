@@ -4,14 +4,6 @@ pragma solidity ^0.8.20;
 import {RuleSharedInvariantStorage} from "../../invariant/RuleSharedInvariantStorage.sol";
 
 abstract contract RuleERC2980InvariantStorage is RuleSharedInvariantStorage {
-    /* ============ Custom errors ============ */
-    error RuleERC2980_InvalidTransfer(address rule, address from, address to, uint256 value, uint8 code);
-    error RuleERC2980_InvalidTransferFrom(
-        address rule, address spender, address from, address to, uint256 value, uint8 code
-    );
-    error RuleERC2980_AddressAlreadyListed();
-    error RuleERC2980_AddressNotFound();
-
     /* ============ String message ============ */
     string constant TEXT_ADDRESS_FROM_IS_FROZEN = "The sender address is frozen";
     string constant TEXT_ADDRESS_TO_IS_FROZEN = "The recipient address is frozen";
@@ -49,4 +41,12 @@ abstract contract RuleERC2980InvariantStorage is RuleSharedInvariantStorage {
     event AddFrozenlistAddress(address indexed targetAddress);
     /// @notice Emitted when a single address is removed from the frozenlist.
     event RemoveFrozenlistAddress(address indexed targetAddress);
+
+    /* ============ Custom errors ============ */
+    error RuleERC2980_InvalidTransfer(address rule, address from, address to, uint256 value, uint8 code);
+    error RuleERC2980_InvalidTransferFrom(
+        address rule, address spender, address from, address to, uint256 value, uint8 code
+    );
+    error RuleERC2980_AddressAlreadyListed();
+    error RuleERC2980_AddressNotFound();
 }

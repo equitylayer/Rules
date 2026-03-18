@@ -7,7 +7,15 @@ import {ITransferContext} from "src/rules/interfaces/ITransferContext.sol";
 contract MockERC721WithTransferContext is ERC721 {
     ITransferContext public rule;
 
+    /*//////////////////////////////////////////////////////////////
+                             CONSTRUCTOR
+    //////////////////////////////////////////////////////////////*/
+
     constructor(string memory name_, string memory symbol_) ERC721(name_, symbol_) {}
+
+    /*//////////////////////////////////////////////////////////////
+                        EXTERNAL FUNCTIONS
+    //////////////////////////////////////////////////////////////*/
 
     function setRule(address rule_) external {
         rule = ITransferContext(rule_);
@@ -17,11 +25,19 @@ contract MockERC721WithTransferContext is ERC721 {
         _mint(to, tokenId);
     }
 
+    /*//////////////////////////////////////////////////////////////
+                        PUBLIC FUNCTIONS
+    //////////////////////////////////////////////////////////////*/
+
     function transferFrom(address from, address to, uint256 tokenId) public virtual override {
         address sender = _msgSender();
         super.transferFrom(from, to, tokenId);
         _notifyRule(sender, from, to, tokenId);
     }
+
+    /*//////////////////////////////////////////////////////////////
+                        INTERNAL FUNCTIONS
+    //////////////////////////////////////////////////////////////*/
 
     function _notifyRule(address sender, address from, address to, uint256 tokenId) internal {
         if (address(rule) == address(0)) {

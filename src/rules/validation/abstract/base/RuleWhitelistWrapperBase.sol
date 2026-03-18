@@ -35,7 +35,59 @@ abstract contract RuleWhitelistWrapperBase is
         checkSpender = checkSpender_;
     }
 
-    /* ============  View Functions ============ */
+    /*//////////////////////////////////////////////////////////////
+                            ACCESS CONTROL
+    //////////////////////////////////////////////////////////////*/
+
+    modifier onlyCheckSpenderManager() {
+        _authorizeCheckSpenderManager();
+        _;
+    }
+
+    function _authorizeCheckSpenderManager() internal virtual;
+
+    /*//////////////////////////////////////////////////////////////
+                          PUBLIC FUNCTIONS
+    //////////////////////////////////////////////////////////////*/
+
+    /**
+     * @notice Sets whether the rule should enforce spender-based checks.
+     * @dev
+     *  - Restricted to holders of the manager role.
+     *  - Updates the internal `checkSpender` flag.
+     *  - Emits a {CheckSpenderUpdated} event.
+     * @param value The new state of the `checkSpender` flag.
+     */
+    function setCheckSpender(bool value) public virtual onlyCheckSpenderManager {
+        _setCheckSpender(value);
+        emit CheckSpenderUpdated(value);
+    }
+
+    function supportsInterface(bytes4 interfaceId)
+        public
+        view
+        virtual
+        override(AccessControl, RuleTransferValidation)
+        returns (bool)
+    {
+        return AccessControl.supportsInterface(interfaceId) || RuleTransferValidation.supportsInterface(interfaceId);
+    }
+
+    /**
+     * @notice Returns true if the address is listed in at least one child whitelist rule.
+     * @dev Delegates to the same child-rule scan used by transfer restriction checks.
+     */
+    function isVerified(address targetAddress) public view virtual override(IIdentityRegistryVerified) returns (bool) {
+        address[] memory targets = new address[](1);
+        targets[0] = targetAddress;
+        bool[] memory result = _detectTransferRestrictionForTargets(targets);
+        return result[0];
+    }
+
+    /*//////////////////////////////////////////////////////////////
+                        INTERNAL FUNCTIONS
+    //////////////////////////////////////////////////////////////*/
+
     /**
      * @notice Go through all the whitelist rules to know if a restriction exists on the transfer
      * @param from the origin address
@@ -99,42 +151,6 @@ abstract contract RuleWhitelistWrapperBase is
 
     // ERC-7943 tokenId overloads are provided by {RuleNFTAdapter} via RuleWhitelistShared.
 
-    function supportsInterface(bytes4 interfaceId)
-        public
-        view
-        virtual
-        override(AccessControl, RuleTransferValidation)
-        returns (bool)
-    {
-        return AccessControl.supportsInterface(interfaceId) || RuleTransferValidation.supportsInterface(interfaceId);
-    }
-
-    /**
-     * @notice Returns true if the address is listed in at least one child whitelist rule.
-     * @dev Delegates to the same child-rule scan used by transfer restriction checks.
-     */
-    function isVerified(address targetAddress) public view virtual override(IIdentityRegistryVerified) returns (bool) {
-        address[] memory targets = new address[](1);
-        targets[0] = targetAddress;
-        bool[] memory result = _detectTransferRestrictionForTargets(targets);
-        return result[0];
-    }
-
-    /* ============  Access control ============ */
-
-    /**
-     * @notice Sets whether the rule should enforce spender-based checks.
-     * @dev
-     *  - Restricted to holders of the manager role.
-     *  - Updates the internal `checkSpender` flag.
-     *  - Emits a {CheckSpenderUpdated} event.
-     * @param value The new state of the `checkSpender` flag.
-     */
-    function setCheckSpender(bool value) public virtual onlyCheckSpenderManager {
-        _setCheckSpender(value);
-        emit CheckSpenderUpdated(value);
-    }
-
     function _transferred(address from, address to, uint256 value)
         internal
         view
@@ -152,10 +168,6 @@ abstract contract RuleWhitelistWrapperBase is
     {
         RuleWhitelistShared._transferredFrom(spender, from, to, value);
     }
-
-    /*//////////////////////////////////////////////////////////////
-                            INTERNAL/PRIVATE FUNCTIONS
-    //////////////////////////////////////////////////////////////*/
 
     /**
      * @notice Evaluates target addresses across all child rules.
@@ -202,17 +214,6 @@ abstract contract RuleWhitelistWrapperBase is
     function _setCheckSpender(bool value) internal virtual {
         checkSpender = value;
     }
-
-    /*//////////////////////////////////////////////////////////////
-                            ACCESS CONTROL
-    //////////////////////////////////////////////////////////////*/
-
-    modifier onlyCheckSpenderManager() {
-        _authorizeCheckSpenderManager();
-        _;
-    }
-
-    function _authorizeCheckSpenderManager() internal virtual;
 
     /*//////////////////////////////////////////////////////////////
                            ERC-2771

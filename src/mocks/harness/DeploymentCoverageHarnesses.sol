@@ -13,7 +13,15 @@ import {RuleWhitelistWrapperOwnable2Step} from "src/rules/validation/deployment/
 import {RuleERC2980Ownable2Step} from "src/rules/validation/deployment/RuleERC2980Ownable2Step.sol";
 
 contract RuleBlacklistHarness is RuleBlacklist {
+    /*//////////////////////////////////////////////////////////////
+                             CONSTRUCTOR
+    //////////////////////////////////////////////////////////////*/
+
     constructor(address admin, address forwarderIrrevocable) RuleBlacklist(admin, forwarderIrrevocable) {}
+
+    /*//////////////////////////////////////////////////////////////
+                        EXTERNAL FUNCTIONS
+    //////////////////////////////////////////////////////////////*/
 
     function exposedMsgDataLength() external view returns (uint256) {
         return _msgData().length;
@@ -21,9 +29,17 @@ contract RuleBlacklistHarness is RuleBlacklist {
 }
 
 contract RuleWhitelistHarness is RuleWhitelist {
+    /*//////////////////////////////////////////////////////////////
+                             CONSTRUCTOR
+    //////////////////////////////////////////////////////////////*/
+
     constructor(address admin, address forwarderIrrevocable, bool checkSpender_)
         RuleWhitelist(admin, forwarderIrrevocable, checkSpender_)
     {}
+
+    /*//////////////////////////////////////////////////////////////
+                        EXTERNAL FUNCTIONS
+    //////////////////////////////////////////////////////////////*/
 
     function exposedMsgDataLength() external view returns (uint256) {
         return _msgData().length;
@@ -31,9 +47,17 @@ contract RuleWhitelistHarness is RuleWhitelist {
 }
 
 contract RuleWhitelistWrapperHarness is RuleWhitelistWrapper {
+    /*//////////////////////////////////////////////////////////////
+                             CONSTRUCTOR
+    //////////////////////////////////////////////////////////////*/
+
     constructor(address admin, address forwarderIrrevocable, bool checkSpender_)
         RuleWhitelistWrapper(admin, forwarderIrrevocable, checkSpender_)
     {}
+
+    /*//////////////////////////////////////////////////////////////
+                        EXTERNAL FUNCTIONS
+    //////////////////////////////////////////////////////////////*/
 
     function exposedMsgDataLength() external view returns (uint256) {
         return _msgData().length;
@@ -41,7 +65,15 @@ contract RuleWhitelistWrapperHarness is RuleWhitelistWrapper {
 }
 
 contract RuleERC2980Harness is RuleERC2980 {
+    /*//////////////////////////////////////////////////////////////
+                             CONSTRUCTOR
+    //////////////////////////////////////////////////////////////*/
+
     constructor(address admin, address forwarderIrrevocable) RuleERC2980(admin, forwarderIrrevocable) {}
+
+    /*//////////////////////////////////////////////////////////////
+                        EXTERNAL FUNCTIONS
+    //////////////////////////////////////////////////////////////*/
 
     function exposedMsgDataLength() external view returns (uint256) {
         return _msgData().length;
@@ -49,9 +81,17 @@ contract RuleERC2980Harness is RuleERC2980 {
 }
 
 contract RuleSanctionsListHarness is RuleSanctionsList {
+    /*//////////////////////////////////////////////////////////////
+                             CONSTRUCTOR
+    //////////////////////////////////////////////////////////////*/
+
     constructor(address admin, address forwarderIrrevocable, ISanctionsList sanctionContractOracle_)
         RuleSanctionsList(admin, forwarderIrrevocable, sanctionContractOracle_)
     {}
+
+    /*//////////////////////////////////////////////////////////////
+                        EXTERNAL FUNCTIONS
+    //////////////////////////////////////////////////////////////*/
 
     function exposedMsgDataLength() external view returns (uint256) {
         return _msgData().length;
@@ -59,7 +99,15 @@ contract RuleSanctionsListHarness is RuleSanctionsList {
 }
 
 contract RuleBlacklistOwnable2StepHarness is RuleBlacklistOwnable2Step {
+    /*//////////////////////////////////////////////////////////////
+                             CONSTRUCTOR
+    //////////////////////////////////////////////////////////////*/
+
     constructor(address owner, address forwarderIrrevocable) RuleBlacklistOwnable2Step(owner, forwarderIrrevocable) {}
+
+    /*//////////////////////////////////////////////////////////////
+                        EXTERNAL FUNCTIONS
+    //////////////////////////////////////////////////////////////*/
 
     function exposedMsgDataLength() external view returns (uint256) {
         return _msgData().length;
@@ -67,9 +115,17 @@ contract RuleBlacklistOwnable2StepHarness is RuleBlacklistOwnable2Step {
 }
 
 contract RuleWhitelistOwnable2StepHarness is RuleWhitelistOwnable2Step {
+    /*//////////////////////////////////////////////////////////////
+                             CONSTRUCTOR
+    //////////////////////////////////////////////////////////////*/
+
     constructor(address owner, address forwarderIrrevocable, bool checkSpender_)
         RuleWhitelistOwnable2Step(owner, forwarderIrrevocable, checkSpender_)
     {}
+
+    /*//////////////////////////////////////////////////////////////
+                        EXTERNAL FUNCTIONS
+    //////////////////////////////////////////////////////////////*/
 
     function exposedMsgDataLength() external view returns (uint256) {
         return _msgData().length;
@@ -77,9 +133,17 @@ contract RuleWhitelistOwnable2StepHarness is RuleWhitelistOwnable2Step {
 }
 
 contract RuleWhitelistWrapperOwnable2StepHarness is RuleWhitelistWrapperOwnable2Step {
+    /*//////////////////////////////////////////////////////////////
+                             CONSTRUCTOR
+    //////////////////////////////////////////////////////////////*/
+
     constructor(address owner, address forwarderIrrevocable, bool checkSpender_)
         RuleWhitelistWrapperOwnable2Step(owner, forwarderIrrevocable, checkSpender_)
     {}
+
+    /*//////////////////////////////////////////////////////////////
+                        EXTERNAL FUNCTIONS
+    //////////////////////////////////////////////////////////////*/
 
     function exposedMsgDataLength() external view returns (uint256) {
         return _msgData().length;
@@ -87,7 +151,15 @@ contract RuleWhitelistWrapperOwnable2StepHarness is RuleWhitelistWrapperOwnable2
 }
 
 contract RuleERC2980Ownable2StepHarness is RuleERC2980Ownable2Step {
+    /*//////////////////////////////////////////////////////////////
+                             CONSTRUCTOR
+    //////////////////////////////////////////////////////////////*/
+
     constructor(address owner, address forwarderIrrevocable) RuleERC2980Ownable2Step(owner, forwarderIrrevocable) {}
+
+    /*//////////////////////////////////////////////////////////////
+                        EXTERNAL FUNCTIONS
+    //////////////////////////////////////////////////////////////*/
 
     function exposedMsgDataLength() external view returns (uint256) {
         return _msgData().length;

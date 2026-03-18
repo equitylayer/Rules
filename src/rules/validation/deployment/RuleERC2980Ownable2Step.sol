@@ -12,7 +12,15 @@ import {RuleERC2980Base} from "../abstract/base/RuleERC2980Base.sol";
  * @dev All whitelist and frozenlist management functions are restricted to the contract owner.
  */
 contract RuleERC2980Ownable2Step is RuleERC2980Base, Ownable2Step {
+    /*//////////////////////////////////////////////////////////////
+                             CONSTRUCTOR
+    //////////////////////////////////////////////////////////////*/
+
     constructor(address owner, address forwarderIrrevocable) RuleERC2980Base(forwarderIrrevocable) Ownable(owner) {}
+
+    /*//////////////////////////////////////////////////////////////
+                            ACCESS CONTROL
+    //////////////////////////////////////////////////////////////*/
 
     function _authorizeWhitelistAdd() internal view virtual override onlyOwner {}
 
@@ -21,6 +29,10 @@ contract RuleERC2980Ownable2Step is RuleERC2980Base, Ownable2Step {
     function _authorizeFrozenlistAdd() internal view virtual override onlyOwner {}
 
     function _authorizeFrozenlistRemove() internal view virtual override onlyOwner {}
+
+    /*//////////////////////////////////////////////////////////////
+                        INTERNAL FUNCTIONS
+    //////////////////////////////////////////////////////////////*/
 
     function _msgSender() internal view virtual override(Context, RuleERC2980Base) returns (address sender) {
         return super._msgSender();

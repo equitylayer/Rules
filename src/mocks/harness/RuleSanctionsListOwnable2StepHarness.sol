@@ -5,9 +5,17 @@ import {ISanctionsList} from "src/rules/interfaces/ISanctionsList.sol";
 import {RuleSanctionsListOwnable2Step} from "src/rules/validation/deployment/RuleSanctionsListOwnable2Step.sol";
 
 contract RuleSanctionsListOwnable2StepHarness is RuleSanctionsListOwnable2Step {
+    /*//////////////////////////////////////////////////////////////
+                             CONSTRUCTOR
+    //////////////////////////////////////////////////////////////*/
+
     constructor(address owner, address forwarderIrrevocable, ISanctionsList sanctionContractOracle_)
         RuleSanctionsListOwnable2Step(owner, forwarderIrrevocable, sanctionContractOracle_)
     {}
+
+    /*//////////////////////////////////////////////////////////////
+                        EXTERNAL FUNCTIONS
+    //////////////////////////////////////////////////////////////*/
 
     function exposedMsgSender() external view returns (address) {
         return _msgSender();

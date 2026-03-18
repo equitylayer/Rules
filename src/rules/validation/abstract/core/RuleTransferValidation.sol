@@ -22,32 +22,9 @@ abstract contract RuleTransferValidation is
     IERC7551Compliance,
     IRule
 {
-    /**
-     * @notice Internal transfer restriction check.
-     * @param from the origin address
-     * @param to the destination address
-     * @param value amount to transfer
-     * @return restrictionCode The restriction code for this rule.
-     */
-    function _detectTransferRestriction(address from, address to, uint256 value)
-        internal
-        view
-        virtual
-        returns (uint8 restrictionCode);
-
-    /**
-     * @notice Internal transfer restriction check for spender-initiated transfers.
-     * @param spender the caller executing the transfer
-     * @param from the origin address
-     * @param to the destination address
-     * @param value amount to transfer
-     * @return restrictionCode The restriction code for this rule.
-     */
-    function _detectTransferRestrictionFrom(address spender, address from, address to, uint256 value)
-        internal
-        view
-        virtual
-        returns (uint8 restrictionCode);
+    /*//////////////////////////////////////////////////////////////
+                        PUBLIC FUNCTIONS
+    //////////////////////////////////////////////////////////////*/
 
     /**
      * @inheritdoc IERC1404
@@ -111,4 +88,35 @@ abstract contract RuleTransferValidation is
             || interfaceId == ERC1404ExtendInterfaceId.ERC1404EXTEND_INTERFACE_ID
             || interfaceId == RuleInterfaceId.IRULE_INTERFACE_ID;
     }
+
+    /*//////////////////////////////////////////////////////////////
+                        INTERNAL FUNCTIONS
+    //////////////////////////////////////////////////////////////*/
+
+    /**
+     * @notice Internal transfer restriction check.
+     * @param from the origin address
+     * @param to the destination address
+     * @param value amount to transfer
+     * @return restrictionCode The restriction code for this rule.
+     */
+    function _detectTransferRestriction(address from, address to, uint256 value)
+        internal
+        view
+        virtual
+        returns (uint8 restrictionCode);
+
+    /**
+     * @notice Internal transfer restriction check for spender-initiated transfers.
+     * @param spender the caller executing the transfer
+     * @param from the origin address
+     * @param to the destination address
+     * @param value amount to transfer
+     * @return restrictionCode The restriction code for this rule.
+     */
+    function _detectTransferRestrictionFrom(address spender, address from, address to, uint256 value)
+        internal
+        view
+        virtual
+        returns (uint8 restrictionCode);
 }

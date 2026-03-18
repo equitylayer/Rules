@@ -16,10 +16,18 @@ import {RuleConditionalTransferLightBase} from "./abstract/RuleConditionalTransf
  *      can be approved multiple times to allow repeated transfers.
  */
 contract RuleConditionalTransferLight is AccessControlModuleStandalone, RuleConditionalTransferLightBase {
+    /*//////////////////////////////////////////////////////////////
+                             CONSTRUCTOR
+    //////////////////////////////////////////////////////////////*/
+
     /**
      * @param admin Address of the contract admin.
      */
     constructor(address admin) AccessControlModuleStandalone(admin) {}
+
+    /*//////////////////////////////////////////////////////////////
+                          PUBLIC FUNCTIONS
+    //////////////////////////////////////////////////////////////*/
 
     function supportsInterface(bytes4 interfaceId)
         public
@@ -33,6 +41,10 @@ contract RuleConditionalTransferLight is AccessControlModuleStandalone, RuleCond
             || interfaceId == RuleInterfaceId.IRULE_INTERFACE_ID
             || AccessControlEnumerable.supportsInterface(interfaceId);
     }
+
+    /*//////////////////////////////////////////////////////////////
+                            ACCESS CONTROL
+    //////////////////////////////////////////////////////////////*/
 
     function _authorizeTransferApproval() internal view virtual override onlyRole(OPERATOR_ROLE) {}
 

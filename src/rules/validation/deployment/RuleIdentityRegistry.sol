@@ -12,10 +12,18 @@ import {RuleTransferValidation} from "../abstract/core/RuleTransferValidation.so
  * @dev Burns (to == address(0)) are allowed even if the sender is not verified.
  */
 contract RuleIdentityRegistry is AccessControlModuleStandalone, RuleIdentityRegistryBase {
+    /*//////////////////////////////////////////////////////////////
+                             CONSTRUCTOR
+    //////////////////////////////////////////////////////////////*/
+
     constructor(address admin, address identityRegistry_)
         AccessControlModuleStandalone(admin)
         RuleIdentityRegistryBase(identityRegistry_)
     {}
+
+    /*//////////////////////////////////////////////////////////////
+                          PUBLIC FUNCTIONS
+    //////////////////////////////////////////////////////////////*/
 
     function supportsInterface(bytes4 interfaceId)
         public

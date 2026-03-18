@@ -10,10 +10,18 @@ import {RuleMaxTotalSupplyBase} from "../abstract/base/RuleMaxTotalSupplyBase.so
  * @notice Ownable2Step variant of RuleMaxTotalSupply.
  */
 contract RuleMaxTotalSupplyOwnable2Step is RuleMaxTotalSupplyBase, Ownable2Step {
+    /*//////////////////////////////////////////////////////////////
+                             CONSTRUCTOR
+    //////////////////////////////////////////////////////////////*/
+
     constructor(address owner, address tokenContract_, uint256 maxTotalSupply_)
         RuleMaxTotalSupplyBase(tokenContract_, maxTotalSupply_)
         Ownable(owner)
     {}
+
+    /*//////////////////////////////////////////////////////////////
+                            ACCESS CONTROL
+    //////////////////////////////////////////////////////////////*/
 
     function _authorizeMaxTotalSupplyManager() internal view virtual override onlyOwner {}
 }

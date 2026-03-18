@@ -14,6 +14,10 @@ import {ISanctionsList} from "../../interfaces/ISanctionsList.sol";
  * @notice Compliance rule enforcing sanctions-screening for token transfers.
  */
 contract RuleSanctionsList is AccessControlModuleStandalone, RuleSanctionsListBase {
+    /*//////////////////////////////////////////////////////////////
+                             CONSTRUCTOR
+    //////////////////////////////////////////////////////////////*/
+
     /**
      * @param admin Address of the contract (Access Control)
      * @param forwarderIrrevocable Address of the forwarder, required for the gasless support
@@ -22,6 +26,10 @@ contract RuleSanctionsList is AccessControlModuleStandalone, RuleSanctionsListBa
         AccessControlModuleStandalone(admin)
         RuleSanctionsListBase(forwarderIrrevocable, sanctionContractOracle_)
     {}
+
+    /*//////////////////////////////////////////////////////////////
+                          PUBLIC FUNCTIONS
+    //////////////////////////////////////////////////////////////*/
 
     function supportsInterface(bytes4 interfaceId)
         public
@@ -41,7 +49,7 @@ contract RuleSanctionsList is AccessControlModuleStandalone, RuleSanctionsListBa
     function _authorizeSanctionListManager() internal view virtual override onlyRole(SANCTIONLIST_ROLE) {}
 
     /*//////////////////////////////////////////////////////////////
-                           ERC-2771
+                           INTERNAL FUNCTIONS
     //////////////////////////////////////////////////////////////*/
 
     function _msgSender() internal view virtual override(ERC2771Context, Context) returns (address sender) {

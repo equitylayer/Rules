@@ -6,6 +6,10 @@ import {IIdentityRegistryVerified} from "src/rules/interfaces/IIdentityRegistry.
 contract IdentityRegistryMock is IIdentityRegistryVerified {
     mapping(address => bool) private verified;
 
+    /*//////////////////////////////////////////////////////////////
+                        EXTERNAL FUNCTIONS
+    //////////////////////////////////////////////////////////////*/
+
     function setVerified(address user, bool verified_) external {
         verified[user] = verified_;
     }

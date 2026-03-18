@@ -10,7 +10,15 @@ import {RuleIdentityRegistryBase} from "../abstract/base/RuleIdentityRegistryBas
  * @notice Ownable2Step variant of RuleIdentityRegistry.
  */
 contract RuleIdentityRegistryOwnable2Step is RuleIdentityRegistryBase, Ownable2Step {
+    /*//////////////////////////////////////////////////////////////
+                             CONSTRUCTOR
+    //////////////////////////////////////////////////////////////*/
+
     constructor(address owner, address identityRegistry_) RuleIdentityRegistryBase(identityRegistry_) Ownable(owner) {}
+
+    /*//////////////////////////////////////////////////////////////
+                            ACCESS CONTROL
+    //////////////////////////////////////////////////////////////*/
 
     function _authorizeIdentityRegistryManager() internal view virtual override onlyOwner {}
 }

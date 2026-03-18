@@ -9,7 +9,11 @@ import {AccessControlEnumerable} from "OZ/access/extensions/AccessControlEnumera
 
 abstract contract AccessControlModuleStandalone is AccessControlEnumerable {
     error AccessControlModuleStandalone_AddressZeroNotAllowed();
-    /* ============ Constructor ============ */
+
+    /*//////////////////////////////////////////////////////////////
+                             CONSTRUCTOR
+    //////////////////////////////////////////////////////////////*/
+
     /**
      * @notice Assigns the provided address as the default admin.
      * @dev
@@ -20,7 +24,6 @@ abstract contract AccessControlModuleStandalone is AccessControlEnumerable {
      *
      * @param admin The address that will receive the `DEFAULT_ADMIN_ROLE`.
      */
-
     constructor(address admin) {
         require(admin != address(0), AccessControlModuleStandalone_AddressZeroNotAllowed());
         // we don't check the return value
@@ -30,8 +33,9 @@ abstract contract AccessControlModuleStandalone is AccessControlEnumerable {
     }
 
     /*//////////////////////////////////////////////////////////////
-                            PUBLIC/EXTERNAL FUNCTIONS
+                          PUBLIC FUNCTIONS
     //////////////////////////////////////////////////////////////*/
+
     /**
      * @dev Returns `true` if `account` has been granted `role`.
      */

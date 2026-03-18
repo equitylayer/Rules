@@ -23,7 +23,7 @@ abstract contract RuleAddressSetInternal {
     EnumerableSet.AddressSet private _listedAddresses;
 
     /*//////////////////////////////////////////////////////////////
-                              INTERNAL
+                          INTERNAL FUNCTIONS
     //////////////////////////////////////////////////////////////*/
 
     /**

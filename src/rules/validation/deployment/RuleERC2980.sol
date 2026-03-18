@@ -44,7 +44,7 @@ contract RuleERC2980 is RuleERC2980Base, AccessControlModuleStandalone {
     {}
 
     /*//////////////////////////////////////////////////////////////
-                           INTERFACE SUPPORT
+                           PUBLIC FUNCTIONS
     //////////////////////////////////////////////////////////////*/
 
     function supportsInterface(bytes4 interfaceId)
@@ -68,6 +68,10 @@ contract RuleERC2980 is RuleERC2980Base, AccessControlModuleStandalone {
     function _authorizeFrozenlistAdd() internal view virtual override onlyRole(FROZENLIST_ADD_ROLE) {}
 
     function _authorizeFrozenlistRemove() internal view virtual override onlyRole(FROZENLIST_REMOVE_ROLE) {}
+
+    /*//////////////////////////////////////////////////////////////
+                        INTERNAL FUNCTIONS
+    //////////////////////////////////////////////////////////////*/
 
     function _msgSender() internal view virtual override(Context, RuleERC2980Base) returns (address sender) {
         return super._msgSender();
