@@ -7,6 +7,8 @@ import {RuleInterfaceId} from "RuleEngine/modules/library/RuleInterfaceId.sol";
 import {IERC165} from "OZ/utils/introspection/IERC165.sol";
 import {ERC1404ExtendInterfaceId} from "CMTAT/library/ERC1404ExtendInterfaceId.sol";
 import {RuleEngineInterfaceId} from "CMTAT/library/RuleEngineInterfaceId.sol";
+import {IERC7551Compliance} from "CMTAT/interfaces/tokenization/draft-IERC7551.sol";
+import {IERC3643ComplianceFull} from "../../mocks/IERC3643ComplianceFull.sol";
 import {RuleConditionalTransferLightBase} from "./abstract/RuleConditionalTransferLightBase.sol";
 
 /**
@@ -28,7 +30,9 @@ contract RuleConditionalTransferLightOwnable2Step is RuleConditionalTransferLigh
         return interfaceId == type(IERC165).interfaceId
             || interfaceId == RuleEngineInterfaceId.RULE_ENGINE_INTERFACE_ID
             || interfaceId == ERC1404ExtendInterfaceId.ERC1404EXTEND_INTERFACE_ID
-            || interfaceId == RuleInterfaceId.IRULE_INTERFACE_ID;
+            || interfaceId == RuleInterfaceId.IRULE_INTERFACE_ID
+            || interfaceId == type(IERC7551Compliance).interfaceId
+            || interfaceId == type(IERC3643ComplianceFull).interfaceId;
     }
 
     /*//////////////////////////////////////////////////////////////

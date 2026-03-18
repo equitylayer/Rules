@@ -4,7 +4,7 @@ pragma solidity ^0.8.20;
 
 /* ==== CMTAT === */
 import {IERC1404, IERC1404Extend} from "CMTAT/interfaces/tokenization/draft-IERC1404.sol";
-import {IERC3643ComplianceRead} from "CMTAT/interfaces/tokenization/IERC3643Partial.sol";
+import {IERC3643ComplianceRead, IERC3643IComplianceContract} from "CMTAT/interfaces/tokenization/IERC3643Partial.sol";
 import {IERC7551Compliance} from "CMTAT/interfaces/tokenization/draft-IERC7551.sol";
 /* ==== RuleEngine === */
 import {IRule} from "RuleEngine/interfaces/IRule.sol";
@@ -86,7 +86,9 @@ abstract contract RuleTransferValidation is
     function supportsInterface(bytes4 interfaceId) public view virtual returns (bool) {
         return interfaceId == RuleEngineInterfaceId.RULE_ENGINE_INTERFACE_ID
             || interfaceId == ERC1404ExtendInterfaceId.ERC1404EXTEND_INTERFACE_ID
-            || interfaceId == RuleInterfaceId.IRULE_INTERFACE_ID;
+            || interfaceId == RuleInterfaceId.IRULE_INTERFACE_ID
+            || interfaceId == type(IERC7551Compliance).interfaceId
+            || interfaceId == type(IERC3643IComplianceContract).interfaceId;
     }
 
     /*//////////////////////////////////////////////////////////////

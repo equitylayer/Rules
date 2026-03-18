@@ -7,6 +7,8 @@ import {IERC165} from "OZ/utils/introspection/IERC165.sol";
 import {RuleInterfaceId} from "RuleEngine/modules/library/RuleInterfaceId.sol";
 import {ERC1404ExtendInterfaceId} from "CMTAT/library/ERC1404ExtendInterfaceId.sol";
 import {RuleEngineInterfaceId} from "CMTAT/library/RuleEngineInterfaceId.sol";
+import {IERC7551Compliance} from "CMTAT/interfaces/tokenization/draft-IERC7551.sol";
+import {IERC3643ComplianceFull} from "src/mocks/IERC3643ComplianceFull.sol";
 import {ISanctionsList} from "src/rules/interfaces/ISanctionsList.sol";
 import {RuleConditionalTransferLight} from "src/rules/operation/RuleConditionalTransferLight.sol";
 import {
@@ -90,6 +92,8 @@ contract OperationCoverageExtraTest is Test, HelperContract {
         assertTrue(rule.supportsInterface(RuleInterfaceId.IRULE_INTERFACE_ID));
         assertTrue(rule.supportsInterface(ERC1404ExtendInterfaceId.ERC1404EXTEND_INTERFACE_ID));
         assertTrue(rule.supportsInterface(RuleEngineInterfaceId.RULE_ENGINE_INTERFACE_ID));
+        assertTrue(rule.supportsInterface(type(IERC7551Compliance).interfaceId));
+        assertTrue(rule.supportsInterface(type(IERC3643ComplianceFull).interfaceId));
         assertFalse(rule.supportsInterface(bytes4(0xdeadbeef)));
     }
 
@@ -122,6 +126,8 @@ contract OperationCoverageExtraTest is Test, HelperContract {
         assertTrue(rule.supportsInterface(RuleInterfaceId.IRULE_INTERFACE_ID));
         assertTrue(rule.supportsInterface(ERC1404ExtendInterfaceId.ERC1404EXTEND_INTERFACE_ID));
         assertTrue(rule.supportsInterface(RuleEngineInterfaceId.RULE_ENGINE_INTERFACE_ID));
+        assertTrue(rule.supportsInterface(type(IERC7551Compliance).interfaceId));
+        assertTrue(rule.supportsInterface(type(IERC3643ComplianceFull).interfaceId));
         assertFalse(rule.supportsInterface(bytes4(0xdeadbeef)));
     }
 }

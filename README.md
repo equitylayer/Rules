@@ -1670,6 +1670,19 @@ Static analysis was performed with [Slither](https://github.com/crytic/slither).
 | unindexed-event-address | Informational | 2 | Out of scope (both in `lib/RuleEngine`); `IAddressList` events previously fixed |
 | unused-state | Informational | 60 | False positive — `RuleNFTAdapter` constants used in base dispatch logic; Slither per-contract analysis limitation |
 
+#### Wake Arena (v0.2.0)
+
+AI-assisted static analysis was performed with [Wake Arena](https://getwake.io) by Ackee Blockchain Security. The full report and the project team's feedback are available in [`doc/security/audits/tools/v0.2.0/`](./doc/security/audits/tools/v0.2.0/).
+
+*Ackee Blockchain Security, Wake Arena AI Report | CMTA: Rules, March 16, 2026 18:00 UTC.*
+
+| ID | Title | Severity | Confidence | Verdict |
+|---|---|---|---|---|
+| H-1 | ConditionalTransferLight approvals not scoped by token | High | High | Fixed — single-token binding enforced in `bindToken`; `RuleConditionalTransferLight_TokenAlreadyBound` error added |
+| M-1 | Incomplete `supportsInterface` breaks ERC-165 discovery | Medium | High | Fixed — pre-computed constants + `IERC7551Compliance` + full ERC-3643 `ICompliance` ID (`IERC3643ComplianceFull`, `0x3144991c`) added |
+| I-1 | RuleERC2980 docs omit frozen spender on `transferFrom` | Informational | High | Fixed (doc only) — README, `AGENTS.md`, and `CLAUDE.md` updated to document spender freeze path |
+| I-2 | `hasRole` override: admin implicitly passes all role checks | Informational | High | Fixed (doc only) — dedicated section added to README documenting intentional design and off-chain monitoring guidance |
+
 ## Intellectual property
 
 The code is copyright (c) Capital Market and Technology Association, 2022-2026, and is released under [Mozilla Public License 2.0](https://github.com/CMTA/CMTAT/blob/master/LICENSE.md).
