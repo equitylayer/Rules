@@ -43,9 +43,40 @@ Custom changelog tag: `Dependencies`, `Documentation`, `Testing`
   - Update surya doc by running the 3 scripts in [./doc/script](./doc/script)
   - Update changelog
 
-## v0.2.0 - TBD
+## v0.3.0 - 
 
-Commit: `TBD`
+### Security
+
+- **H1 fix** — `RuleConditionalTransferLight`: enforced single-token binding by overriding `bindToken` to revert with `RuleConditionalTransferLight_TokenAlreadyBound` if a token is already bound. Eliminates cross-token approval replay and approval-draining attacks. Use `unbindToken` first to migrate to a new token.
+- **M1 fix** — Added `IERC7551Compliance` (`0x7157797f`), `IERC3643IComplianceContract` (validation rules), and the full ERC-3643 `ICompliance` ID via flat mock `IERC3643ComplianceFull` (`0x3144991c`) to all `supportsInterface` implementations. Silent `false` on ERC-165 introspection no longer occurs for compliant callers.
+
+### Added
+
+- `RuleConditionalTransferLightApprovalBase` — new abstract contract holding the pure approval state machine (approval counts, `approveTransfer`, `cancelTransferApproval`, `approvedCount`, and the `transferred` callback). No ERC-3643 / IRule knowledge.
+- `IERC3643ComplianceFull` (`src/mocks/IERC3643ComplianceFull.sol`) — flat mock interface redeclaring all eight ERC-3643 `ICompliance` functions; used to compute the correct ERC-165 ID (`0x3144991c`) since `type(IERC3643Compliance).interfaceId` only XORs directly-defined selectors.
+
+### Changed
+
+- `RuleConditionalTransferLightBase` refactored into two layers: `RuleConditionalTransferLightApprovalBase` (state machine) + `RuleConditionalTransferLightBase` (ERC-3643 / IRule compliance integration). Eliminates code duplication between the AccessControl and Ownable2Step variants.
+- `RuleConditionalTransferLightOwnable2Step` now inherits `ERC3643ComplianceModule` via the base (consistent with the AccessControl variant); `_authorizeTransferExecution` consolidated into the base and checks `isTokenBound(_msgSender())`.
+- `approveAndTransferIfAllowed` no longer takes a `token` parameter — bound token is retrieved directly via `getTokenBound()`.
+- Custom error `RuleConditionalTransferLight_TokenAddressZeroNotAllowed` renamed to `RuleConditionalTransferLight_TokenNotBound` for clarity.
+- Solidity style guide ordering (type declarations → state variables → events → errors → modifiers → functions; constructor → external → public → internal → private) enforced across all `src/` contracts.
+- `supportsInterface` in `RuleConditionalTransferLight` and `RuleConditionalTransferLightOwnable2Step` now advertises `IERC7551Compliance` and the full ERC-3643 `ICompliance` interface ID instead of the narrow `IERC3643IComplianceContract`.
+- `supportsInterface` in `RuleTransferValidation` (cascades to all validation rules) now also advertises `IERC7551Compliance` and `IERC3643IComplianceContract`.
+- Update contract version to `0.3.0`
+
+### Documentation
+
+- Wake Arena (Ackee Blockchain Security) AI-assisted static analysis report and project feedback added to `doc/security/audits/tools/v0.2.0/`.
+- README Security section updated with Wake Arena findings summary table.
+- README Access Control section updated to document intentional `DEFAULT_ADMIN_ROLE` implicit-role behaviour, `grantRole` no-op semantics, and off-chain monitoring guidance (I2).
+- `RuleERC2980` documentation updated to clarify that a frozen address acting as `transferFrom` spender is also blocked (code 62) (I1).
+- `CLAUDE.md` / `AGENTS.md` convention added: always use pre-computed library constants for ERC-165 IDs; use a flat mock interface when no constant exists.
+
+## v0.2.0 - 2026-03-10
+
+Commit: [`d72a98a`](https://github.com/CMTA/Rules/commit/d72a98abbba29cd82a7056b59104e82ac65389e7) 
 
 ### Added
 
