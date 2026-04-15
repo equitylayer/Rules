@@ -61,6 +61,7 @@ Custom changelog tag: `Dependencies`, `Documentation`, `Testing`
 - `RuleConditionalTransferLightOwnable2Step` now inherits `ERC3643ComplianceModule` via the base (consistent with the AccessControl variant); `_authorizeTransferExecution` consolidated into the base and checks `isTokenBound(_msgSender())`.
 - `approveAndTransferIfAllowed` no longer takes a `token` parameter — bound token is retrieved directly via `getTokenBound()`.
 - Custom error `RuleConditionalTransferLight_TokenAddressZeroNotAllowed` renamed to `RuleConditionalTransferLight_TokenNotBound` for clarity.
+- `RuleERC2980` and `RuleERC2980Ownable2Step` constructors now include `allowBurn` and whitelist `address(0)` at deployment when enabled.
 - Solidity style guide ordering (type declarations → state variables → events → errors → modifiers → functions; constructor → external → public → internal → private) enforced across all `src/` contracts.
 - `supportsInterface` in `RuleConditionalTransferLight` and `RuleConditionalTransferLightOwnable2Step` now advertises `IERC7551Compliance` and the full ERC-3643 `ICompliance` interface ID instead of the narrow `IERC3643IComplianceContract`.
 - `supportsInterface` in `RuleTransferValidation` (cascades to all validation rules) now also advertises `IERC7551Compliance` and `IERC3643IComplianceContract`.
@@ -72,7 +73,12 @@ Custom changelog tag: `Dependencies`, `Documentation`, `Testing`
 - README Security section updated with Wake Arena findings summary table.
 - README Access Control section updated to document intentional `DEFAULT_ADMIN_ROLE` implicit-role behaviour, `grantRole` no-op semantics, and off-chain monitoring guidance (I2).
 - `RuleERC2980` documentation updated to clarify that a frozen address acting as `transferFrom` spender is also blocked (code 62) (I1).
+- `RuleERC2980` documentation and README updated to document burn/redemption behavior and the new constructor `allowBurn` option.
 - `CLAUDE.md` / `AGENTS.md` convention added: always use pre-computed library constants for ERC-165 IDs; use a flat mock interface when no constant exists.
+
+### Testing
+
+- Added `RuleERC2980` constructor tests covering default burn-blocked behavior and `allowBurn=true` zero-address whitelisting.
 
 ## v0.2.0 - 2026-03-10
 

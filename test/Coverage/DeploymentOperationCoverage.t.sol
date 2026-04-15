@@ -31,7 +31,7 @@ contract DeploymentCoverageExtraTest is Test, HelperContract {
         RuleBlacklistHarness blacklist = new RuleBlacklistHarness(DEFAULT_ADMIN_ADDRESS, ZERO_ADDRESS);
         RuleWhitelistHarness whitelist = new RuleWhitelistHarness(DEFAULT_ADMIN_ADDRESS, ZERO_ADDRESS, true);
         RuleWhitelistWrapperHarness wrapper = new RuleWhitelistWrapperHarness(DEFAULT_ADMIN_ADDRESS, ZERO_ADDRESS, true);
-        RuleERC2980Harness erc2980 = new RuleERC2980Harness(DEFAULT_ADMIN_ADDRESS, ZERO_ADDRESS);
+        RuleERC2980Harness erc2980 = new RuleERC2980Harness(DEFAULT_ADMIN_ADDRESS, ZERO_ADDRESS, false);
         RuleSanctionsListHarness sanctions =
             new RuleSanctionsListHarness(DEFAULT_ADMIN_ADDRESS, ZERO_ADDRESS, ISanctionsList(ZERO_ADDRESS));
 
@@ -42,7 +42,7 @@ contract DeploymentCoverageExtraTest is Test, HelperContract {
         RuleWhitelistWrapperOwnable2StepHarness wrapperOwnable =
             new RuleWhitelistWrapperOwnable2StepHarness(DEFAULT_ADMIN_ADDRESS, ZERO_ADDRESS, true);
         RuleERC2980Ownable2StepHarness erc2980Ownable =
-            new RuleERC2980Ownable2StepHarness(DEFAULT_ADMIN_ADDRESS, ZERO_ADDRESS);
+            new RuleERC2980Ownable2StepHarness(DEFAULT_ADMIN_ADDRESS, ZERO_ADDRESS, false);
 
         assertGe(blacklist.exposedMsgDataLength(), 4);
         assertGe(whitelist.exposedMsgDataLength(), 4);

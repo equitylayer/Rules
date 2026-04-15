@@ -12,7 +12,7 @@ contract RuleERC2980OwnableAccessControl is Test, HelperContract {
     address constant OWNER = WHITELIST_OPERATOR_ADDRESS;
 
     function setUp() public {
-        rule = new RuleERC2980Ownable2Step(OWNER, ZERO_ADDRESS);
+        rule = new RuleERC2980Ownable2Step(OWNER, ZERO_ADDRESS, false);
     }
 
     /*//////////////////////////////////////////////////////////////
@@ -131,5 +131,10 @@ contract RuleERC2980OwnableAccessControl is Test, HelperContract {
         vm.prank(ATTACKER);
         vm.expectRevert(abi.encodeWithSelector(OwnableUnauthorizedAccount.selector, ATTACKER));
         rule.addFrozenlistAddresses(addrs);
+    }
+
+    function testAllowBurnConstructorWhitelistsZeroAddress() public {
+        RuleERC2980Ownable2Step burnEnabled = new RuleERC2980Ownable2Step(OWNER, ZERO_ADDRESS, true);
+        assertTrue(burnEnabled.isWhitelisted(ZERO_ADDRESS));
     }
 }

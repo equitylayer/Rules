@@ -16,7 +16,15 @@ contract RuleERC2980Ownable2Step is RuleERC2980Base, Ownable2Step {
                              CONSTRUCTOR
     //////////////////////////////////////////////////////////////*/
 
-    constructor(address owner, address forwarderIrrevocable) RuleERC2980Base(forwarderIrrevocable) Ownable(owner) {}
+    /**
+     * @param owner Contract owner.
+     * @param forwarderIrrevocable Address of the ERC-2771 forwarder for meta-transactions.
+     * @param allowBurn If true, whitelists `address(0)` at deployment to allow burn/redemption flows.
+     */
+    constructor(address owner, address forwarderIrrevocable, bool allowBurn)
+        RuleERC2980Base(forwarderIrrevocable, allowBurn)
+        Ownable(owner)
+    {}
 
     /*//////////////////////////////////////////////////////////////
                             ACCESS CONTROL

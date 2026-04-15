@@ -37,9 +37,10 @@ contract RuleERC2980 is RuleERC2980Base, AccessControlModuleStandalone {
     /**
      * @param admin Address that receives `DEFAULT_ADMIN_ROLE` (implicitly holds all roles).
      * @param forwarderIrrevocable Address of the ERC-2771 forwarder for meta-transactions.
+     * @param allowBurn If true, whitelists `address(0)` at deployment to allow burn/redemption flows.
      */
-    constructor(address admin, address forwarderIrrevocable)
-        RuleERC2980Base(forwarderIrrevocable)
+    constructor(address admin, address forwarderIrrevocable, bool allowBurn)
+        RuleERC2980Base(forwarderIrrevocable, allowBurn)
         AccessControlModuleStandalone(admin)
     {}
 

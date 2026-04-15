@@ -38,7 +38,12 @@ abstract contract RuleERC2980Base is
                               CONSTRUCTOR
     //////////////////////////////////////////////////////////////*/
 
-    constructor(address forwarderIrrevocable) MetaTxModuleStandalone(forwarderIrrevocable) {}
+    constructor(address forwarderIrrevocable, bool allowBurn) MetaTxModuleStandalone(forwarderIrrevocable) {
+        if (allowBurn) {
+            _addWhitelistAddress(address(0));
+            emit AddWhitelistAddress(address(0));
+        }
+    }
 
     /*//////////////////////////////////////////////////////////////
                             ACCESS CONTROL

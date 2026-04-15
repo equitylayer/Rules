@@ -69,7 +69,9 @@ contract RuleERC2980Harness is RuleERC2980 {
                              CONSTRUCTOR
     //////////////////////////////////////////////////////////////*/
 
-    constructor(address admin, address forwarderIrrevocable) RuleERC2980(admin, forwarderIrrevocable) {}
+    constructor(address admin, address forwarderIrrevocable, bool allowBurn)
+        RuleERC2980(admin, forwarderIrrevocable, allowBurn)
+    {}
 
     /*//////////////////////////////////////////////////////////////
                         EXTERNAL FUNCTIONS
@@ -155,7 +157,9 @@ contract RuleERC2980Ownable2StepHarness is RuleERC2980Ownable2Step {
                              CONSTRUCTOR
     //////////////////////////////////////////////////////////////*/
 
-    constructor(address owner, address forwarderIrrevocable) RuleERC2980Ownable2Step(owner, forwarderIrrevocable) {}
+    constructor(address owner, address forwarderIrrevocable, bool allowBurn)
+        RuleERC2980Ownable2Step(owner, forwarderIrrevocable, allowBurn)
+    {}
 
     /*//////////////////////////////////////////////////////////////
                         EXTERNAL FUNCTIONS

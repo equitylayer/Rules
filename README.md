@@ -492,6 +492,12 @@ Implements the [ERC-2980](https://eips.ethereum.org/EIPS/eip-2980) Swiss Complia
 - **Whitelist**: only whitelisted addresses may *receive* tokens. Senders do not need to be whitelisted and may freely transfer tokens they already hold.
 - **Frozenlist**: frozen addresses are completely blocked — they can neither send nor receive tokens. Additionally, a frozen address acting as a `transferFrom` spender will have the transfer rejected (code 62), even if `from` and `to` are not frozen.
 - **Priority**: frozenlist is checked first. If `from`, `to`, or `spender` is frozen, the transfer is rejected regardless of whitelist membership.
+- **Burn/redemption handling**: burns (`to == address(0)`) follow the same recipient whitelist check. Constructor parameter `allowBurn` controls whether `address(0)` is whitelisted at deployment.
+  - `allowBurn = false` (default-safe): burns are blocked with code 63.
+  - `allowBurn = true`: burns are allowed because `address(0)` is whitelisted.
+- Constructors:
+  - `RuleERC2980(address admin, address forwarderIrrevocable, bool allowBurn)`
+  - `RuleERC2980Ownable2Step(address owner, address forwarderIrrevocable, bool allowBurn)`
 
 ![surya_inheritance_RuleERC2980.sol](./doc/surya/surya_inheritance/surya_inheritance_RuleERC2980.sol.png)
 
@@ -508,7 +514,7 @@ Restriction codes:
 
 **Usage scenario**
 
-The operator deploys `RuleERC2980`. The issuer whitelists Alice with `addWhitelistAddress(Alice)`. A transfer to Alice succeeds. The compliance officer freezes Bob with `addFrozenlistAddress(Bob)`. Any transfer from or to Bob is now rejected even if Bob was previously whitelisted.
+The operator deploys `RuleERC2980` and chooses `allowBurn` according to the redemption policy. The issuer whitelists Alice with `addWhitelistAddress(Alice)`. A transfer to Alice succeeds. The compliance officer freezes Bob with `addFrozenlistAddress(Bob)`. Any transfer from or to Bob is now rejected even if Bob was previously whitelisted.
 
 #### Sanction list with Chainalysis
 

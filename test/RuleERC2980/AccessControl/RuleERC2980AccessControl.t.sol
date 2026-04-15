@@ -20,7 +20,7 @@ contract RuleERC2980AccessControlTest is Test, HelperContract {
 
     function setUp() public {
         vm.startPrank(DEFAULT_ADMIN_ADDRESS);
-        ruleERC2980 = new RuleERC2980(DEFAULT_ADMIN_ADDRESS, ZERO_ADDRESS);
+        ruleERC2980 = new RuleERC2980(DEFAULT_ADMIN_ADDRESS, ZERO_ADDRESS, false);
         ruleERC2980.grantRole(WHITELIST_ADD, WHITELIST_OPERATOR);
         ruleERC2980.grantRole(WHITELIST_REMOVE, WHITELIST_OPERATOR);
         ruleERC2980.grantRole(FROZENLIST_ADD, FROZENLIST_OPERATOR);
