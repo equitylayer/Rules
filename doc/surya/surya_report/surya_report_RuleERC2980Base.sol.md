@@ -5,7 +5,7 @@
 
 |  File Name  |  SHA-1 Hash  |
 |-------------|--------------|
-| ./rules/validation/abstract/base/RuleERC2980Base.sol | d50ea84a4570130dffdd7940cd40004b6f6a2eb0 |
+| ./rules/validation/abstract/base/RuleERC2980Base.sol | 8cffbdad2d3c9179d43521bd57610ee8f3a47178 |
 
 
 ### Contracts Description Table
@@ -17,36 +17,36 @@
 ||||||
 | **RuleERC2980Base** | Implementation | MetaTxModuleStandalone, RuleERC2980Internal, RuleERC2980InvariantStorage, RuleNFTAdapter, IERC2980, IIdentityRegistryVerified |||
 | └ | <Constructor> | Public ❗️ | 🛑  | MetaTxModuleStandalone |
-| └ | _detectTransferRestriction | Internal 🔒 |   | |
-| └ | _detectTransferRestrictionFrom | Internal 🔒 |   | |
-| └ | transferred | Public ❗️ |   |NO❗️ |
-| └ | transferred | Public ❗️ |   |NO❗️ |
-| └ | _transferred | Internal 🔒 |   | |
-| └ | _transferredFrom | Internal 🔒 |   | |
-| └ | canReturnTransferRestrictionCode | Public ❗️ |   |NO❗️ |
-| └ | messageForTransferRestriction | Public ❗️ |   |NO❗️ |
+| └ | _authorizeWhitelistAdd | Internal 🔒 |   | |
+| └ | _authorizeWhitelistRemove | Internal 🔒 |   | |
+| └ | _authorizeFrozenlistAdd | Internal 🔒 |   | |
+| └ | _authorizeFrozenlistRemove | Internal 🔒 |   | |
 | └ | addWhitelistAddresses | Public ❗️ | 🛑  | onlyWhitelistAdd |
 | └ | removeWhitelistAddresses | Public ❗️ | 🛑  | onlyWhitelistRemove |
 | └ | addWhitelistAddress | Public ❗️ | 🛑  | onlyWhitelistAdd |
 | └ | removeWhitelistAddress | Public ❗️ | 🛑  | onlyWhitelistRemove |
+| └ | addFrozenlistAddresses | Public ❗️ | 🛑  | onlyFrozenlistAdd |
+| └ | removeFrozenlistAddresses | Public ❗️ | 🛑  | onlyFrozenlistRemove |
+| └ | addFrozenlistAddress | Public ❗️ | 🛑  | onlyFrozenlistAdd |
+| └ | removeFrozenlistAddress | Public ❗️ | 🛑  | onlyFrozenlistRemove |
+| └ | transferred | Public ❗️ |   |NO❗️ |
+| └ | transferred | Public ❗️ |   |NO❗️ |
+| └ | canReturnTransferRestrictionCode | Public ❗️ |   |NO❗️ |
+| └ | messageForTransferRestriction | Public ❗️ |   |NO❗️ |
+| └ | supportsInterface | Public ❗️ |   |NO❗️ |
 | └ | whitelistAddressCount | Public ❗️ |   |NO❗️ |
 | └ | isWhitelisted | Public ❗️ |   |NO❗️ |
 | └ | whitelist | Public ❗️ |   |NO❗️ |
 | └ | isVerified | Public ❗️ |   |NO❗️ |
 | └ | areWhitelisted | Public ❗️ |   |NO❗️ |
-| └ | addFrozenlistAddresses | Public ❗️ | 🛑  | onlyFrozenlistAdd |
-| └ | removeFrozenlistAddresses | Public ❗️ | 🛑  | onlyFrozenlistRemove |
-| └ | addFrozenlistAddress | Public ❗️ | 🛑  | onlyFrozenlistAdd |
-| └ | removeFrozenlistAddress | Public ❗️ | 🛑  | onlyFrozenlistRemove |
 | └ | frozenlistAddressCount | Public ❗️ |   |NO❗️ |
 | └ | isFrozen | Public ❗️ |   |NO❗️ |
 | └ | frozenlist | Public ❗️ |   |NO❗️ |
 | └ | areFrozen | Public ❗️ |   |NO❗️ |
-| └ | supportsInterface | Public ❗️ |   |NO❗️ |
-| └ | _authorizeWhitelistAdd | Internal 🔒 |   | |
-| └ | _authorizeWhitelistRemove | Internal 🔒 |   | |
-| └ | _authorizeFrozenlistAdd | Internal 🔒 |   | |
-| └ | _authorizeFrozenlistRemove | Internal 🔒 |   | |
+| └ | _detectTransferRestriction | Internal 🔒 |   | |
+| └ | _detectTransferRestrictionFrom | Internal 🔒 |   | |
+| └ | _transferred | Internal 🔒 |   | |
+| └ | _transferredFrom | Internal 🔒 |   | |
 | └ | _msgSender | Internal 🔒 |   | |
 | └ | _msgData | Internal 🔒 |   | |
 | └ | _contextSuffixLength | Internal 🔒 |   | |

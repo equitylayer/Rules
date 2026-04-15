@@ -5,7 +5,7 @@
 
 |  File Name  |  SHA-1 Hash  |
 |-------------|--------------|
-| ./rules/operation/RuleConditionalTransferLight.sol | 81491b418d569b10e02f08058beea7080fb943f6 |
+| ./rules/operation/RuleConditionalTransferLight.sol | a39d30fcc7c8735243513da2c981a550d66e4713 |
 
 
 ### Contracts Description Table
@@ -15,13 +15,10 @@
 |:----------:|:-------------------:|:----------------:|:----------------:|:---------------:|
 |     └      |  **Function Name**  |  **Visibility**  |  **Mutability**  |  **Modifiers**  |
 ||||||
-| **RuleConditionalTransferLight** | Implementation | AccessControlModuleStandalone, ERC3643ComplianceModule, RuleConditionalTransferLightBase |||
+| **RuleConditionalTransferLight** | Implementation | AccessControlModuleStandalone, RuleConditionalTransferLightBase |||
 | └ | <Constructor> | Public ❗️ | 🛑  | AccessControlModuleStandalone |
 | └ | supportsInterface | Public ❗️ |   |NO❗️ |
-| └ | created | External ❗️ | 🛑  | onlyBoundToken |
-| └ | destroyed | External ❗️ | 🛑  | onlyBoundToken |
 | └ | _authorizeTransferApproval | Internal 🔒 |   | onlyRole |
-| └ | _authorizeTransferExecution | Internal 🔒 |   | |
 | └ | _onlyComplianceManager | Internal 🔒 | 🛑  | onlyRole |
 
 

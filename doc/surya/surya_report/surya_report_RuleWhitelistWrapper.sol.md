@@ -5,7 +5,7 @@
 
 |  File Name  |  SHA-1 Hash  |
 |-------------|--------------|
-| ./rules/validation/deployment/RuleWhitelistWrapper.sol | b3a545c03fcd77815fe7ed2675827303ecc734d3 |
+| ./rules/validation/deployment/RuleWhitelistWrapper.sol | 57947566cf30dabf148061c8a5e933fa09e4a2ab |
 
 
 ### Contracts Description Table
@@ -18,12 +18,12 @@
 | **RuleWhitelistWrapper** | Implementation | RuleWhitelistWrapperBase, AccessControlModuleStandalone |||
 | └ | <Constructor> | Public ❗️ | 🛑  | RuleWhitelistWrapperBase AccessControlModuleStandalone |
 | └ | hasRole | Public ❗️ |   |NO❗️ |
+| └ | supportsInterface | Public ❗️ |   |NO❗️ |
 | └ | _authorizeCheckSpenderManager | Internal 🔒 | 🛑  | onlyRole |
 | └ | _onlyRulesManager | Internal 🔒 | 🛑  | onlyRole |
 | └ | _msgSender | Internal 🔒 |   | |
 | └ | _msgData | Internal 🔒 |   | |
 | └ | _contextSuffixLength | Internal 🔒 |   | |
-| └ | supportsInterface | Public ❗️ |   |NO❗️ |
 | └ | _grantRole | Internal 🔒 | 🛑  | |
 | └ | _revokeRole | Internal 🔒 | 🛑  | |
 

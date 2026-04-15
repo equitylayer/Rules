@@ -5,7 +5,7 @@
 
 |  File Name  |  SHA-1 Hash  |
 |-------------|--------------|
-| ./mocks/MockERC20WithTransferContext.sol | fa64b379e094097f646856ba2ea52463112c3555 |
+| ./mocks/MockERC20WithTransferContext.sol | abef7fce156c4d359fe8c275d10c4f50e583e62e |
 
 
 ### Contracts Description Table
@@ -19,10 +19,10 @@
 | └ | <Constructor> | Public ❗️ | 🛑  | ERC20 |
 | └ | setRule | External ❗️ | 🛑  |NO❗️ |
 | └ | mint | External ❗️ | 🛑  |NO❗️ |
-| └ | transfer | Public ❗️ | 🛑  |NO❗️ |
-| └ | transferFrom | Public ❗️ | 🛑  |NO❗️ |
 | └ | transferWithContext | External ❗️ | 🛑  |NO❗️ |
 | └ | transferFromWithContext | External ❗️ | 🛑  |NO❗️ |
+| └ | transfer | Public ❗️ | 🛑  |NO❗️ |
+| └ | transferFrom | Public ❗️ | 🛑  |NO❗️ |
 | └ | _notifyFungible | Internal 🔒 | 🛑  | |
 | └ | _notifyMultiToken | Internal 🔒 | 🛑  | |
 

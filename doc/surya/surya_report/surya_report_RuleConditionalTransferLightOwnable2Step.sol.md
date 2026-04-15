@@ -5,7 +5,7 @@
 
 |  File Name  |  SHA-1 Hash  |
 |-------------|--------------|
-| ./rules/operation/RuleConditionalTransferLightOwnable2Step.sol | 8687e3c3162af3f4863d713cf56b5895a724dc97 |
+| ./rules/operation/RuleConditionalTransferLightOwnable2Step.sol | 418393526edd0ac9d04e7af11fbf84b6473b5485 |
 
 
 ### Contracts Description Table
@@ -19,7 +19,7 @@
 | └ | <Constructor> | Public ❗️ | 🛑  | Ownable |
 | └ | supportsInterface | Public ❗️ |   |NO❗️ |
 | └ | _authorizeTransferApproval | Internal 🔒 |   | onlyOwner |
-| └ | _authorizeTransferExecution | Internal 🔒 |   | onlyOwner |
+| └ | _onlyComplianceManager | Internal 🔒 | 🛑  | onlyOwner |
 
 
 ### Legend

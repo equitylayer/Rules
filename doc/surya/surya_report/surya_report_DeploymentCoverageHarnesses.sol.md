@@ -5,7 +5,7 @@
 
 |  File Name  |  SHA-1 Hash  |
 |-------------|--------------|
-| ./mocks/harness/DeploymentCoverageHarnesses.sol | efef241e157c319d20144f266ca0228a74ddb8b2 |
+| ./mocks/harness/DeploymentCoverageHarnesses.sol | 51b794406806bfd8380bb4177ab3272724702184 |
 
 
 ### Contracts Description Table
