@@ -20,8 +20,6 @@ Each rule can be used **standalone**, directly plugged into a CMTAT token, **or*
 
 [TOC]
 
-
-
 ## Overview
 
 The **RuleEngine** is an external smart contract that applies transfer restrictions to security tokens such as **CMTAT** or [ERC-3643](https://eips.ethereum.org/EIPS/eip-3643)-compatible tokens through a RuleEngine.
@@ -64,17 +62,13 @@ forge test
 
 | Component        | Compatible Versions                       |
 | ---------------- | ----------------------------------------- |
-| **Rules v0.1.0** | CMTAT ≥ v3.0.0<br />RuleEngine v3.0.0-rc1 |
+| **Rules v0.1.0** | CMTAT ≥ v3.0.0<br />RuleEngine v3.0.0-rc2 |
 
 Each Rule implements the interface `IRuleEngine` defined in CMTAT.
 
 This interface declares the ERC-3643 functions `transferred`(read-write) and `canTransfer`(read-only) with several other functions related to [ERC-1404](https://github.com/ethereum/eips/issues/1404), [ERC-7551](https://ethereum-magicians.org/t/erc-7551-crypto-security-token-smart-contract-interface-ewpg-reworked/25477) and [ERC-3643](https://eips.ethereum.org/EIPS/eip-3643).
 
 ## Specifications
-
-Draft ERC specifications maintained in this repository:
-
-- `ERCSpecification/erc-XXXX-transfer-context.md` - transfer context hook (fungible and non-fungible).
 
 ### ERC-3643
 
@@ -85,9 +79,9 @@ function canTransfer(address _from, address _to, uint256 _amount) external view 
 function transferred(address _from, address _to, uint256 _amount) external;
 ```
 
-However, contrary to the RuleEngine, the whole interface is currently not implemented (e.g. `created`and `destroyed`) and as a result, the rule can not directly supported ERC-3643 token.
+However, contrary to the RuleEngine, the whole interface is currently not implemented (e.g. `created`and `destroyed`) and as a result, the rule can not directly support ERC-3643 token.
 
-The alternative to use a Rule with an ERC-3643 token is trough the RuleEngine, which implements the whole `ICompliance` interface.
+The alternative to use a Rule with an ERC-3643 token is through the RuleEngine, which implements the whole `ICompliance` interface.
 
 ### ERC-721/ERC-1155
 
@@ -136,9 +130,9 @@ function transferred(address spender, address from, address to, uint256 tokenId,
 
 ### Rule - Code list
 
-> It is very important that each rule uses an unique code
+> It is very important that each rule uses a unique code
 
-Here the list of codes used by the different rules
+Here is the list of codes used by the different rules
 
 | Contract                | Constant name                        | Value |
 | ----------------------- | ------------------------------------ | ----- |
@@ -245,7 +239,7 @@ The RuleEngine can then:
 
 Each rule can be directly plugged to a CMTAT token similar to a RuleEngine.
 
-Indeed, each rules implements the required interface (`IRuleEngine`) with notably the following function as entrypoint.
+Indeed, each rule implements the required interface (`IRuleEngine`) with notably the following function as entrypoint.
 
 ```solidity
 function transferred(address from,address to,uint256 value)
@@ -278,7 +272,7 @@ interface IRuleEngine is IERC1404Extend, IERC7551Compliance,  IERC3643IComplianc
 
 #### RuleEngine
 
-For a RuleEngine, each rule implements also the required entry point similar to CMTAT, and as well some specific interface for the RuleEngine through the implementation of `IRule`interface dfeined in the RuleEngine repository
+For a RuleEngine, each rule implements also the required entry point similar to CMTAT, and as well some specific interface for the RuleEngine through the implementation of `IRule` interface defined in the RuleEngine repository.
 
 ```solidity
 interface IRule is IRuleEngine {
@@ -391,25 +385,50 @@ Detailed technical documentation for each rule is available in [`doc/technical/`
 
 ### Operational Notes
 
-- `RuleIdentityRegistry` allows burns (`to == address(0)`) even if the sender is not verified. This matters only if the token allows self-burn.
-- `RuleSanctionsList` rejects zero address in `setSanctionListOracle`. Use `clearSanctionListOracle()` to disable checks.
-- `RuleIdentityRegistry` can be disabled with `clearIdentityRegistry()`, which allows all transfers to pass this rule.
-- Constructors for `RuleSanctionsList` and `RuleIdentityRegistry` accept a zero address to start in a disabled state.
-- `RuleMaxTotalSupply` trusts the configured `tokenContract` to return an accurate `totalSupply()`.
-- `RuleMaxTotalSupply` does not allow clearing the token contract; disable the rule by removing it from the RuleEngine or token.
-- `RuleWhitelistWrapper` requires child rules that implement `IAddressList`. Gas cost grows with the number of rules, and a wrapper with zero rules will reject all transfers.
-- `RuleSpenderWhitelist` only checks the spender in `transferFrom`; direct transfers always pass this rule.
-- Read-only rules still implement `transferred()` to comply with ERC-3643 and RuleEngine interfaces, but they do not change state.
-- `RuleConditionalTransferLight` approvals are keyed by `(from, to, value)` and are not nonce-based.
-- `RuleConditionalTransferLight` provides `approveAndTransferIfAllowed` to approve and immediately execute `transferFrom` when this rule has allowance; it assumes the token calls back `transferred()` during the transfer.
-- `RuleConditionalTransferLight` restricts `transferred()` to the single token bound via `bindToken`. Only one token can be bound at a time: a second `bindToken` call reverts with `RuleConditionalTransferLight_TokenAlreadyBound`. The token can be unbound with `unbindToken`, after which a new token may be bound.
-- `RuleConditionalTransferLight` exempts mints (`from == address(0)`) and burns (`to == address(0)`) from the approval requirement; `created` and `destroyed` delegate to `_transferred`, which returns early for those cases.
-- AccessControl variants use `onlyRole(ROLE)` in `_authorize*()` and internal helpers are marked `virtual`.
-- AccessControl variants use `AccessControlEnumerable`, so role members can be enumerated with `getRoleMember` / `getRoleMemberCount`. The default admin is treated as having all roles via `hasRole`, but may not appear in role member lists unless explicitly granted.
-- `forwarderIrrevocable` is accepted as-is (including `address(0)`), and is not validated against ERC-165 because some forwarders do not implement it.
-- `RuleERC2980` frozenlist takes priority over the whitelist: an address that is both whitelisted and frozen will be rejected. A frozen address acting as a `transferFrom` spender is also blocked (code 62), even if `from` and `to` are not frozen.
-- `RuleERC2980` sender (`from`) does not need to be whitelisted; only the recipient (`to`) must be whitelisted for a transfer to succeed.
-- All rules implement `IERC3643Version` via `VersionModule` and expose a `version()` function returning `"0.2.0"`.
+#### RuleIdentityRegistry
+
+- `RuleIdentityRegistry`: allows burns (`to == address(0)`) even if the sender is not verified. This matters only if the token allows self-burn.
+- `RuleIdentityRegistry`: can be disabled with `clearIdentityRegistry()`, which allows all transfers to pass this rule.
+- `RuleIdentityRegistry`: constructor accepts `address(0)` to start in a disabled state.
+
+#### RuleSanctionsList
+
+- `RuleSanctionsList`: rejects zero address in `setSanctionListOracle`. Use `clearSanctionListOracle()` to disable checks.
+- `RuleSanctionsList`: constructor accepts `address(0)` to start in a disabled state.
+
+#### RuleMaxTotalSupply
+
+- `RuleMaxTotalSupply`: trusts the configured `tokenContract` to return an accurate `totalSupply()`.
+- `RuleMaxTotalSupply`: does not allow clearing the token contract; disable the rule by removing it from the RuleEngine or token.
+
+#### RuleWhitelistWrapper
+
+- `RuleWhitelistWrapper`: requires child rules that implement `IAddressList`. Gas cost grows with the number of rules, and a wrapper with zero rules rejects all transfers.
+
+#### RuleSpenderWhitelist
+
+- `RuleSpenderWhitelist`: only checks the spender in `transferFrom`; direct transfers always pass this rule.
+
+#### RuleERC2980
+
+- `RuleERC2980`: frozenlist takes priority over whitelist; an address that is both whitelisted and frozen is rejected.
+- `RuleERC2980`: a frozen address acting as `transferFrom` spender is also blocked (code 62), even if `from` and `to` are not frozen.
+- `RuleERC2980`: sender (`from`) does not need to be whitelisted; only recipient (`to`) must be whitelisted.
+
+#### RuleConditionalTransferLight
+
+- `RuleConditionalTransferLight`: approvals are keyed by `(from, to, value)` and are not nonce-based.
+- `RuleConditionalTransferLight`: `approveAndTransferIfAllowed` approves and immediately executes `transferFrom` when this rule has allowance; it assumes token callback to `transferred()`.
+- `RuleConditionalTransferLight`: `transferred()` is restricted to the single token bound via `bindToken`; second bind reverts with `RuleConditionalTransferLight_TokenAlreadyBound` until `unbindToken`.
+- `RuleConditionalTransferLight`: mints (`from == address(0)`) and burns (`to == address(0)`) are exempt from approval checks; `created` and `destroyed` delegate to `_transferred`.
+
+#### General notes
+
+- All validation rules: read-only rules still implement `transferred()` for ERC-3643 and RuleEngine compatibility, but do not change state.
+- All AccessControl variants: use `onlyRole(ROLE)` in `_authorize*()` and mark internal helpers `virtual`.
+- All AccessControl variants: use `AccessControlEnumerable`, so role members can be enumerated with `getRoleMember` / `getRoleMemberCount`; default admin is treated as having all roles via `hasRole`, but may not appear in role member lists unless explicitly granted.
+- All meta-tx-enabled rules: `forwarderIrrevocable` is accepted as-is (including `address(0)`) and is not validated against ERC-165 because some forwarders do not implement it.
+- All rules: implement `IERC3643Version` via `VersionModule` and expose `version()` returning `"0.3.0"`.
 
 ### Read-only (validation) rule
 
@@ -526,7 +545,7 @@ Uses the [Chainalysis](https://www.chainalysis.com/) Oracle to reject transfers 
 - Documentation: *Chainalysis Oracle for sanctions screening*
 - If `from` or `to` is sanctioned, transfer is rejected.
 
-Documentation and the contracts addresses are available here: [Chainalysis oracle for sanctions screening](https://go.chainalysis.com/chainalysis-oracle-docs.html).
+The documentation and contract addresses are available here: [Chainalysis oracle for sanctions screening](https://go.chainalysis.com/chainalysis-oracle-docs.html).
 
 ![surya_inheritance_RuleSanctionsList.sol](./doc/surya/surya_inheritance/surya_inheritance_RuleSanctionsList.sol.png)
 
@@ -585,8 +604,8 @@ Each rule implements its own access control by inheriting from `AccessControlMod
 Practical consequences integrators must be aware of:
 
 - **`grantRole` to a default admin is a no-op.** `_grantRole` checks `!hasRole(role, account)` before writing storage; since the admin already returns `true` via the override, the storage write and the `RoleGranted` event are skipped. The admin will **not** appear in `getRoleMember` / `getRoleMemberCount` enumerations for non-default roles unless the role was explicitly granted before the admin was set.
-- **`revokeRole` / `renounceRole` on a non-default role for a default admin are misleading.** They emit `RoleRevoked` and clear the storage flag, but `hasRole` continues to return `true` because the account still holds `DEFAULT_ADMIN_ROLE`. The effective privilege is unchanged. To fully remove access, `DEFAULT_ADMIN_ROLE` itself must be revoked.
-- **Off-chain monitoring should use `hasRole` queries**, not role-membership events or enumeration, to determine the effective privileges of admin accounts.
+- **`revokeRole` / `renounceRole`** on a non-default role for a default admin are misleading. They emit `RoleRevoked` and clear the storage flag, but `hasRole` continues to return `true` because the account still holds `DEFAULT_ADMIN_ROLE`. The effective privilege is unchanged. To fully remove access, `DEFAULT_ADMIN_ROLE` itself must be revoked.
+- **Off-chain monitoring** should use `hasRole` queries, not role-membership events or enumeration, to determine the effective privileges of admin accounts.
 
 See also [docs.openzeppelin.com - AccessControl](https://docs.openzeppelin.com/contracts/5.x/api/access#AccessControl)
 
@@ -653,15 +672,19 @@ Here are the settings for [Hardhat](https://hardhat.org) and [Foundry](https://g
 
   - Forge std [v1.12.0](https://github.com/foundry-rs/forge-std/releases/tag/v1.12.0  )  
 
-  - OpenZeppelin Contracts (submodule) [v5.6.0](https://github.com/OpenZeppelin/openzeppelin-contracts/releases/tag/v5.6.0)
+  - OpenZeppelin Contracts (submodule) [v5.6.1](https://github.com/OpenZeppelin/openzeppelin-contracts/releases/tag/v5.6.1)
+
+  - OpenZeppelin Contracts Upgradeable (submodule) [v5.6.1](https://github.com/OpenZeppelin/openzeppelin-contracts-upgradeable/releases/tag/v5.6.1)
 
   - CMTAT [v3.2.0](https://github.com/CMTA/CMTAT/releases/tag/v3.2.0)
 
-  - RuleEngine [v3.0.0-rc1](https://github.com/CMTA/RuleEngine/releases/tag/v3.0.0-rc1)
+  - RuleEngine [v3.0.0-rc2](https://github.com/CMTA/RuleEngine/releases/tag/v3.0.0-rc2)
 
 ### Toolchain installation
 
-The contracts are developed and tested with [Foundry](https://book.getfoundry.sh), a smart contract development toolchain.
+This repository is primarily developed and tested with [Foundry](https://book.getfoundry.sh), a smart contract development toolchain.
+
+Hardhat configuration is also present to support contract compilation and a small smoke test with Hardhat.
 
 To install the Foundry suite, please refer to the official instructions in the [Foundry book](https://book.getfoundry.sh/getting-started/installation).
 
@@ -691,6 +714,12 @@ The official documentation is available in the Foundry [website](https://book.ge
  forge build
 ```
 
+Hardhat compilation (optional):
+
+```bash
+npm run hardhat:compile
+```
+
 ### Contract size
 
 ```bash
@@ -703,6 +732,12 @@ You can run the tests with
 
 ```bash
 forge test
+```
+
+Hardhat smoke test (optional):
+
+```bash
+npm run hardhat:test:smoke
 ```
 
 To run a specific test, use
@@ -743,6 +778,8 @@ Gas usage is tracked in two complementary files:
 
 ### Coverage
 
+![coverage](./doc/coverage/coverage.png)
+
 A code coverage is available in [index.html](./doc/coverage/coverage/index.html).
 
 * Perform a code coverage
@@ -760,14 +797,14 @@ forge coverage --report lcov
 - Generate `index.html`
 
 ```bash
-forge coverage --no-match-coverage "(script|mocks|test)" --report lcov && genhtml lcov.info --branch-coverage --output-dir coverage
+forge coverage --no-match-coverage "(script|mocks|test)" --report lcov && genhtml lcov.info --branch-coverage --prefix "$PWD/" --output-dir coverage
 ```
 
 See [Solidity Coverage in VS Code with Foundry](https://mirror.xyz/devanon.eth/RrDvKPnlD-pmpuW7hQeR5wWdVjklrpOgPCOA-PJkWFU) & [Foundry forge coverage](
 
 ### Other
 
-Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.*
+Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.
 
 Foundry consists of:
 
@@ -1260,7 +1297,7 @@ For `RuleWhitelist`, you can also pre-list `0x0` at deployment using the constru
 **addAddress**
 If the address already exists, the transaction is reverted to save gas.
 **addAddresses**
-If one of addresses already exist, there is no change for this address. The transaction remains valid (no revert).
+If one of the addresses already exist, there is no change for this address. The transaction remains valid (no revert).
 
 ##### NonExistent Address
 
@@ -1639,8 +1676,6 @@ function approvedCount(address from, address to, uint256 value)
 ```
 
 Returns the number of approvals for the transfer hash.
-
-
 
 ## Security
 

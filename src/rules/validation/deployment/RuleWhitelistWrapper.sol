@@ -3,9 +3,8 @@
 pragma solidity ^0.8.20;
 
 /* ==== OpenZeppelin === */
-import {AccessControl} from "OZ/access/AccessControl.sol";
-import {AccessControlEnumerable} from "OZ/access/extensions/AccessControlEnumerable.sol";
-import {Context} from "OZ/utils/Context.sol";
+import {AccessControlEnumerable} from "@openzeppelin/contracts/access/extensions/AccessControlEnumerable.sol";
+import {Context} from "@openzeppelin/contracts/utils/Context.sol";
 /* ==== Abstract contracts === */
 import {AccessControlModuleStandalone} from "../../../modules/AccessControlModuleStandalone.sol";
 import {RuleWhitelistWrapperBase} from "../abstract/base/RuleWhitelistWrapperBase.sol";
@@ -37,7 +36,7 @@ contract RuleWhitelistWrapper is RuleWhitelistWrapperBase, AccessControlModuleSt
         public
         view
         virtual
-        override(AccessControl, AccessControlModuleStandalone)
+        override
         returns (bool)
     {
         return AccessControlModuleStandalone.hasRole(role, account);
@@ -90,7 +89,7 @@ contract RuleWhitelistWrapper is RuleWhitelistWrapperBase, AccessControlModuleSt
     function _grantRole(bytes32 role, address account)
         internal
         virtual
-        override(AccessControl, AccessControlEnumerable)
+        override
         returns (bool)
     {
         return AccessControlEnumerable._grantRole(role, account);
@@ -99,7 +98,7 @@ contract RuleWhitelistWrapper is RuleWhitelistWrapperBase, AccessControlModuleSt
     function _revokeRole(bytes32 role, address account)
         internal
         virtual
-        override(AccessControl, AccessControlEnumerable)
+        override
         returns (bool)
     {
         return AccessControlEnumerable._revokeRole(role, account);

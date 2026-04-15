@@ -5,7 +5,7 @@ import {Test} from "forge-std/Test.sol";
 import {HelperContract} from "../HelperContract.sol";
 import {RuleWhitelist} from "src/rules/validation/deployment/RuleWhitelist.sol";
 import {RuleWhitelistWrapper} from "src/rules/validation/deployment/RuleWhitelistWrapper.sol";
-import {RuleEngine} from "RuleEngine/RuleEngine.sol";
+import {RuleEngine} from "RuleEngine/deployment/RuleEngine.sol";
 
 /**
  * @title Integration test between RuleEngine and RuleWhitelistWrapper

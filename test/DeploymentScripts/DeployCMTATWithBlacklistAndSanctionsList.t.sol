@@ -3,7 +3,7 @@ pragma solidity ^0.8.20;
 
 import {Test} from "forge-std/Test.sol";
 import {CMTATStandalone} from "CMTAT/deployment/CMTATStandalone.sol";
-import {RuleEngine} from "RuleEngine/RuleEngine.sol";
+import {RuleEngine} from "RuleEngine/deployment/RuleEngine.sol";
 import {RuleBlacklist} from "src/rules/validation/deployment/RuleBlacklist.sol";
 import {RuleSanctionsList} from "src/rules/validation/deployment/RuleSanctionsList.sol";
 import {ISanctionsList} from "src/rules/interfaces/ISanctionsList.sol";

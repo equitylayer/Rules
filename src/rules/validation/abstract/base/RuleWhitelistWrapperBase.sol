@@ -2,11 +2,8 @@
 
 pragma solidity ^0.8.20;
 
-/* ==== OpenZeppelin === */
-import {AccessControl} from "OZ/access/AccessControl.sol";
 /* ==== Abstract contracts === */
 import {MetaTxModuleStandalone, ERC2771Context} from "../../../../modules/MetaTxModuleStandalone.sol";
-import {Context} from "OZ/utils/Context.sol";
 import {RuleWhitelistShared} from "../core/RuleWhitelistShared.sol";
 import {RuleTransferValidation} from "../core/RuleTransferValidation.sol";
 /* ==== RuleEngine === */
@@ -67,10 +64,10 @@ abstract contract RuleWhitelistWrapperBase is
         public
         view
         virtual
-        override(AccessControl, RuleTransferValidation)
+        override(RuleTransferValidation)
         returns (bool)
     {
-        return AccessControl.supportsInterface(interfaceId) || RuleTransferValidation.supportsInterface(interfaceId);
+        return RuleTransferValidation.supportsInterface(interfaceId);
     }
 
     /**
@@ -222,21 +219,21 @@ abstract contract RuleWhitelistWrapperBase is
     /**
      * @dev This surcharge is not necessary if you do not use the MetaTxModule
      */
-    function _msgSender() internal view virtual override(ERC2771Context, Context) returns (address sender) {
+    function _msgSender() internal view virtual override(ERC2771Context) returns (address sender) {
         return ERC2771Context._msgSender();
     }
 
     /**
      * @dev This surcharge is not necessary if you do not use the MetaTxModule
      */
-    function _msgData() internal view virtual override(ERC2771Context, Context) returns (bytes calldata) {
+    function _msgData() internal view virtual override(ERC2771Context) returns (bytes calldata) {
         return ERC2771Context._msgData();
     }
 
     /**
      * @dev This surcharge is not necessary if you do not use the MetaTxModule
      */
-    function _contextSuffixLength() internal view virtual override(ERC2771Context, Context) returns (uint256) {
+    function _contextSuffixLength() internal view virtual override(ERC2771Context) returns (uint256) {
         return ERC2771Context._contextSuffixLength();
     }
 }

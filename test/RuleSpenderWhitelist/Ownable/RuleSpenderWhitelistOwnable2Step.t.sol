@@ -3,7 +3,7 @@ pragma solidity ^0.8.20;
 
 import {Test} from "forge-std/Test.sol";
 import {HelperContract} from "../../HelperContract.sol";
-import {Ownable} from "OZ/access/Ownable.sol";
+import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {RuleSpenderWhitelistOwnable2Step} from "src/rules/validation/deployment/RuleSpenderWhitelistOwnable2Step.sol";
 import {RuleSpenderWhitelistOwnable2StepHarness} from "src/mocks/harness/RuleSpenderWhitelistHarnesses.sol";
 

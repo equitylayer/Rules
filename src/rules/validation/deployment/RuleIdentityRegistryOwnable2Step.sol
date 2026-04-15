@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MPL-2.0
 pragma solidity ^0.8.20;
 
-import {Ownable} from "OZ/access/Ownable.sol";
-import {Ownable2Step} from "OZ/access/Ownable2Step.sol";
+import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
+import {Ownable2Step} from "@openzeppelin/contracts/access/Ownable2Step.sol";
 import {RuleIdentityRegistryBase} from "../abstract/base/RuleIdentityRegistryBase.sol";
 
 /**

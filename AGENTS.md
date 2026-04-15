@@ -33,9 +33,10 @@ Modular compliance-rule library for CMTAT / ERC-3643 security tokens. Each rule 
 | `VersionModule` | Implements `IERC3643Version`; returns the contract version string |
 
 ## Dependencies (lib/)
-- `openzeppelin-contracts` v5.5.0 — `AccessControl`, `Ownable2Step`, `EnumerableSet`, `ERC2771Context`
+- `openzeppelin-contracts` v5.6.1 — `AccessControl`, `Ownable2Step`, `EnumerableSet`, `ERC2771Context`
+- `openzeppelin-contracts-upgradeable` v5.6.1
 - `CMTAT` v3.0.0 — `IERC1404`, `IERC3643`, `IRuleEngine` interfaces
-- `RuleEngine` v3.0.0-rc0 — `IRule`, `RulesManagementModule`
+- `RuleEngine` v3.0.0-rc2 — `IRule`, `RulesManagementModule`
 - `forge-std` — Foundry test utilities
 
 Remappings are in `remappings.txt`; aliases used in source: `OZ/`, `CMTAT/`, `RuleEngine/`.

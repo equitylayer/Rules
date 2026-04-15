@@ -3,9 +3,9 @@
 pragma solidity ^0.8.20;
 
 /* ==== OpenZeppelin === */
-import {AccessControl} from "OZ/access/AccessControl.sol";
-import {IAccessControl} from "OZ/access/IAccessControl.sol";
-import {AccessControlEnumerable} from "OZ/access/extensions/AccessControlEnumerable.sol";
+import {AccessControl} from "@openzeppelin/contracts/access/AccessControl.sol";
+import {IAccessControl} from "@openzeppelin/contracts/access/IAccessControl.sol";
+import {AccessControlEnumerable} from "@openzeppelin/contracts/access/extensions/AccessControlEnumerable.sol";
 
 abstract contract AccessControlModuleStandalone is AccessControlEnumerable {
     error AccessControlModuleStandalone_AddressZeroNotAllowed();

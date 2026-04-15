@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MPL-2.0
 pragma solidity ^0.8.20;
 
-import {AccessControlEnumerable} from "OZ/access/extensions/AccessControlEnumerable.sol";
-import {Context} from "OZ/utils/Context.sol";
+import {AccessControlEnumerable} from "@openzeppelin/contracts/access/extensions/AccessControlEnumerable.sol";
+import {Context} from "@openzeppelin/contracts/utils/Context.sol";
 /* ==== Abstract contracts === */
 import {AccessControlModuleStandalone} from "../../../modules/AccessControlModuleStandalone.sol";
 import {RuleWhitelistBase} from "../abstract/base/RuleWhitelistBase.sol";

@@ -6,7 +6,7 @@ import {HelperContract} from "../HelperContract.sol";
 import {CMTATDeployment} from "RuleEngine/../test/utils/CMTATDeployment.sol";
 import {RuleWhitelist} from "src/rules/validation/deployment/RuleWhitelist.sol";
 import {RuleWhitelistWrapper} from "src/rules/validation/deployment/RuleWhitelistWrapper.sol";
-import {RuleEngine} from "RuleEngine/RuleEngine.sol";
+import {RuleEngine} from "RuleEngine/deployment/RuleEngine.sol";
 import {AccessControlModuleStandalone} from "../../src/modules/AccessControlModuleStandalone.sol";
 /**
  * @title Integration test with the CMTAT

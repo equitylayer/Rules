@@ -7,7 +7,7 @@ import {IERC3643ComplianceRead, IERC3643IComplianceContract} from "CMTAT/interfa
 import {IERC7551Compliance} from "CMTAT/interfaces/tokenization/draft-IERC7551.sol";
 import {IRule} from "RuleEngine/interfaces/IRule.sol";
 import {ERC3643ComplianceModule} from "RuleEngine/modules/ERC3643ComplianceModule.sol";
-import {IERC20} from "OZ/token/ERC20/IERC20.sol";
+import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {RuleConditionalTransferLightApprovalBase} from "./RuleConditionalTransferLightApprovalBase.sol";
 import {VersionModule} from "../../../modules/VersionModule.sol";
 

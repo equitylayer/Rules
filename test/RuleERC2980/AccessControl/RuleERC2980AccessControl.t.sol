@@ -2,7 +2,7 @@
 pragma solidity ^0.8.20;
 
 import {Test} from "forge-std/Test.sol";
-import {IAccessControl} from "OZ/access/IAccessControl.sol";
+import {IAccessControl} from "@openzeppelin/contracts/access/IAccessControl.sol";
 import {HelperContract} from "../../HelperContract.sol";
 import {RuleERC2980} from "src/rules/validation/deployment/RuleERC2980.sol";
 

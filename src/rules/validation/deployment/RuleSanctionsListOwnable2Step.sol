@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MPL-2.0
 pragma solidity ^0.8.20;
 
-import {Ownable} from "OZ/access/Ownable.sol";
-import {Ownable2Step} from "OZ/access/Ownable2Step.sol";
-import {Context} from "OZ/utils/Context.sol";
+import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
+import {Ownable2Step} from "@openzeppelin/contracts/access/Ownable2Step.sol";
+import {Context} from "@openzeppelin/contracts/utils/Context.sol";
 import {ERC2771Context} from "../../../modules/MetaTxModuleStandalone.sol";
 import {RuleSanctionsListBase} from "../abstract/base/RuleSanctionsListBase.sol";
 import {ISanctionsList} from "../../interfaces/ISanctionsList.sol";

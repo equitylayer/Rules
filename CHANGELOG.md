@@ -68,6 +68,12 @@ Custom changelog tag: `Dependencies`, `Documentation`, `Testing`
 - `supportsInterface` in `RuleTransferValidation` (cascades to all validation rules) now also advertises `IERC7551Compliance` and `IERC3643IComplianceContract`.
 - Update contract version to `0.3.0`
 
+### Dependencies
+
+- Update RuleEngine to `v3.0.0-rc2`.
+- Update OpenZeppelin Contracts to `v5.6.1`.
+- Update OpenZeppelin Contracts Upgradeable to `v5.6.1`.
+
 ### Documentation
 
 - Wake Arena (Ackee Blockchain Security) AI-assisted static analysis report and project feedback added to `doc/security/audits/tools/v0.2.0/`.
@@ -76,12 +82,14 @@ Custom changelog tag: `Dependencies`, `Documentation`, `Testing`
 - `RuleERC2980` documentation updated to clarify that a frozen address acting as `transferFrom` spender is also blocked (code 62) (I1).
 - `RuleERC2980` documentation and README updated to document burn/redemption behavior and the new constructor `allowBurn` option.
 - `RuleWhitelist` documentation and README updated to document constructor `allowMintBurn` and zero-address mint/burn handling.
+- README updated to document Hardhat support for optional compilation and smoke testing alongside Foundry-first workflows.
 - `CLAUDE.md` / `AGENTS.md` convention added: always use pre-computed library constants for ERC-165 IDs; use a flat mock interface when no constant exists.
 
 ### Testing
 
 - Added `RuleERC2980` constructor tests covering default burn-blocked behavior and `allowBurn=true` zero-address whitelisting.
 - Added `RuleWhitelist` constructor tests covering `allowMintBurn=true` zero-address pre-listing.
+- Added a Hardhat smoke test (`test/hardhat/smoke.test.js`) and npm scripts for Hardhat compile/smoke execution.
 
 ## v0.2.0 - 2026-03-10
 

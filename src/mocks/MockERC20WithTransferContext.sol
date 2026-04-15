@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MPL-2.0
 pragma solidity ^0.8.20;
 
-import {ERC20} from "OZ/token/ERC20/ERC20.sol";
+import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import {ITransferContext} from "src/rules/interfaces/ITransferContext.sol";
 
 contract MockERC20WithTransferContext is ERC20 {
