@@ -15,8 +15,14 @@ abstract contract RuleWhitelistBase is RuleAddressSet, RuleWhitelistShared, IIde
                              CONSTRUCTOR
     //////////////////////////////////////////////////////////////*/
 
-    constructor(address forwarderIrrevocable, bool checkSpender_) RuleAddressSet(forwarderIrrevocable) {
+    constructor(address forwarderIrrevocable, bool checkSpender_, bool allowMintBurn)
+        RuleAddressSet(forwarderIrrevocable)
+    {
         checkSpender = checkSpender_;
+        if (allowMintBurn) {
+            _addAddress(address(0));
+            emit AddAddress(address(0));
+        }
     }
 
     /*//////////////////////////////////////////////////////////////

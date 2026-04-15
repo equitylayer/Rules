@@ -15,7 +15,7 @@ contract CMTATRuleEngineIntegration is Test, HelperContract {
 
     function setUp() public {
         vm.prank(DEFAULT_ADMIN_ADDRESS);
-        ruleWhitelist = new RuleWhitelist(DEFAULT_ADMIN_ADDRESS, ZERO_ADDRESS, true);
+        ruleWhitelist = new RuleWhitelist(DEFAULT_ADMIN_ADDRESS, ZERO_ADDRESS, true, false);
 
         cmtatDeployment = new CMTATDeployment();
         cmtatContract = cmtatDeployment.cmtat();

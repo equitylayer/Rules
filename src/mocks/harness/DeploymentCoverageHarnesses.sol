@@ -33,8 +33,8 @@ contract RuleWhitelistHarness is RuleWhitelist {
                              CONSTRUCTOR
     //////////////////////////////////////////////////////////////*/
 
-    constructor(address admin, address forwarderIrrevocable, bool checkSpender_)
-        RuleWhitelist(admin, forwarderIrrevocable, checkSpender_)
+    constructor(address admin, address forwarderIrrevocable, bool checkSpender_, bool allowMintBurn)
+        RuleWhitelist(admin, forwarderIrrevocable, checkSpender_, allowMintBurn)
     {}
 
     /*//////////////////////////////////////////////////////////////
@@ -121,8 +121,8 @@ contract RuleWhitelistOwnable2StepHarness is RuleWhitelistOwnable2Step {
                              CONSTRUCTOR
     //////////////////////////////////////////////////////////////*/
 
-    constructor(address owner, address forwarderIrrevocable, bool checkSpender_)
-        RuleWhitelistOwnable2Step(owner, forwarderIrrevocable, checkSpender_)
+    constructor(address owner, address forwarderIrrevocable, bool checkSpender_, bool allowMintBurn)
+        RuleWhitelistOwnable2Step(owner, forwarderIrrevocable, checkSpender_, allowMintBurn)
     {}
 
     /*//////////////////////////////////////////////////////////////

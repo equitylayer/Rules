@@ -9,7 +9,8 @@ import {
 contract RuleWhitelistOwnable2StepTest is Ownable2StepTestBase {
     function _deployOwnable2Step() internal override returns (IOwnable2StepLike, address) {
         address ownerAddr = WHITELIST_OPERATOR_ADDRESS;
-        RuleWhitelistOwnable2StepContract rule = new RuleWhitelistOwnable2StepContract(ownerAddr, ZERO_ADDRESS, true);
+        RuleWhitelistOwnable2StepContract rule =
+            new RuleWhitelistOwnable2StepContract(ownerAddr, ZERO_ADDRESS, true, false);
         return (IOwnable2StepLike(address(rule)), ownerAddr);
     }
 }

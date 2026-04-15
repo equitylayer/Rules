@@ -29,7 +29,7 @@ import {
 contract DeploymentCoverageExtraTest is Test, HelperContract {
     function testDeploymentWrappersAndHooksCoverage() public {
         RuleBlacklistHarness blacklist = new RuleBlacklistHarness(DEFAULT_ADMIN_ADDRESS, ZERO_ADDRESS);
-        RuleWhitelistHarness whitelist = new RuleWhitelistHarness(DEFAULT_ADMIN_ADDRESS, ZERO_ADDRESS, true);
+        RuleWhitelistHarness whitelist = new RuleWhitelistHarness(DEFAULT_ADMIN_ADDRESS, ZERO_ADDRESS, true, false);
         RuleWhitelistWrapperHarness wrapper = new RuleWhitelistWrapperHarness(DEFAULT_ADMIN_ADDRESS, ZERO_ADDRESS, true);
         RuleERC2980Harness erc2980 = new RuleERC2980Harness(DEFAULT_ADMIN_ADDRESS, ZERO_ADDRESS, false);
         RuleSanctionsListHarness sanctions =
@@ -38,7 +38,7 @@ contract DeploymentCoverageExtraTest is Test, HelperContract {
         RuleBlacklistOwnable2StepHarness blacklistOwnable =
             new RuleBlacklistOwnable2StepHarness(DEFAULT_ADMIN_ADDRESS, ZERO_ADDRESS);
         RuleWhitelistOwnable2StepHarness whitelistOwnable =
-            new RuleWhitelistOwnable2StepHarness(DEFAULT_ADMIN_ADDRESS, ZERO_ADDRESS, true);
+            new RuleWhitelistOwnable2StepHarness(DEFAULT_ADMIN_ADDRESS, ZERO_ADDRESS, true, false);
         RuleWhitelistWrapperOwnable2StepHarness wrapperOwnable =
             new RuleWhitelistWrapperOwnable2StepHarness(DEFAULT_ADMIN_ADDRESS, ZERO_ADDRESS, true);
         RuleERC2980Ownable2StepHarness erc2980Ownable =

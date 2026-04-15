@@ -16,8 +16,14 @@ contract RuleWhitelistOwnable2Step is RuleWhitelistBase, Ownable2Step {
                              CONSTRUCTOR
     //////////////////////////////////////////////////////////////*/
 
-    constructor(address owner, address forwarderIrrevocable, bool checkSpender_)
-        RuleWhitelistBase(forwarderIrrevocable, checkSpender_)
+    /**
+     * @param owner Contract owner.
+     * @param forwarderIrrevocable Address of the ERC-2771 forwarder.
+     * @param checkSpender_ Enables spender checks for transferFrom when true.
+     * @param allowMintBurn Pre-lists `address(0)` at deployment when true.
+     */
+    constructor(address owner, address forwarderIrrevocable, bool checkSpender_, bool allowMintBurn)
+        RuleWhitelistBase(forwarderIrrevocable, checkSpender_, allowMintBurn)
         Ownable(owner)
     {}
 

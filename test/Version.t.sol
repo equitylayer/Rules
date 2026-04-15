@@ -16,7 +16,7 @@ contract VersionTest is Test, HelperContract {
     string constant EXPECTED_VERSION = "0.3.0";
 
     function testVersionRuleWhitelist() public {
-        RuleWhitelist rule = new RuleWhitelist(DEFAULT_ADMIN_ADDRESS, ZERO_ADDRESS, true);
+        RuleWhitelist rule = new RuleWhitelist(DEFAULT_ADMIN_ADDRESS, ZERO_ADDRESS, true, false);
         assertEq(rule.version(), EXPECTED_VERSION);
     }
 

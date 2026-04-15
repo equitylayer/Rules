@@ -10,7 +10,7 @@ import {RuleWhitelist} from "src/rules/validation/deployment/RuleWhitelist.sol";
 contract RuleWhitelistAccessControlRoleMembers is AccessControlEnumerableTestBase {
     function _deployAccessControl() internal override returns (IAccessControlEnumerableLike, address) {
         address adminAddr = DEFAULT_ADMIN_ADDRESS;
-        RuleWhitelist rule = new RuleWhitelist(adminAddr, ZERO_ADDRESS, true);
+        RuleWhitelist rule = new RuleWhitelist(adminAddr, ZERO_ADDRESS, true, false);
         return (IAccessControlEnumerableLike(address(rule)), adminAddr);
     }
 

@@ -15,7 +15,7 @@ contract RuleWhitelistWrapperRuleEngineIntegration is Test, HelperContract {
 
     function setUp() public {
         vm.prank(DEFAULT_ADMIN_ADDRESS);
-        ruleWhitelist = new RuleWhitelist(DEFAULT_ADMIN_ADDRESS, ZERO_ADDRESS, true);
+        ruleWhitelist = new RuleWhitelist(DEFAULT_ADMIN_ADDRESS, ZERO_ADDRESS, true, false);
         vm.prank(DEFAULT_ADMIN_ADDRESS);
         ruleWhitelistWrapper = new RuleWhitelistWrapper(DEFAULT_ADMIN_ADDRESS, ZERO_ADDRESS, true);
         vm.prank(DEFAULT_ADMIN_ADDRESS);

@@ -18,7 +18,7 @@ contract CMTATIntegration is Test, HelperContract {
     // Arrange
     function setUp() public {
         vm.prank(DEFAULT_ADMIN_ADDRESS);
-        ruleWhitelist = new RuleWhitelist(DEFAULT_ADMIN_ADDRESS, ZERO_ADDRESS, true);
+        ruleWhitelist = new RuleWhitelist(DEFAULT_ADMIN_ADDRESS, ZERO_ADDRESS, true, false);
         // global arrange
         cmtatDeployment = new CMTATDeployment();
         cmtatContract = cmtatDeployment.cmtat();

@@ -8,7 +8,13 @@ import {RuleWhitelistOwnable2Step} from "src/rules/validation/deployment/RuleWhi
 contract RuleWhitelistOwnable2StepAccessControl is OwnableAddressListTestBase {
     function _deployAddressList() internal override returns (IAddressList, address) {
         address ownerAddr = WHITELIST_OPERATOR_ADDRESS;
-        RuleWhitelistOwnable2Step rule = new RuleWhitelistOwnable2Step(ownerAddr, ZERO_ADDRESS, true);
+        RuleWhitelistOwnable2Step rule = new RuleWhitelistOwnable2Step(ownerAddr, ZERO_ADDRESS, true, false);
         return (IAddressList(address(rule)), ownerAddr);
+    }
+
+    function testAllowMintBurnConstructorListsZeroAddress() public {
+        address ownerAddr = WHITELIST_OPERATOR_ADDRESS;
+        RuleWhitelistOwnable2Step rule = new RuleWhitelistOwnable2Step(ownerAddr, ZERO_ADDRESS, true, true);
+        assertTrue(rule.isAddressListed(ZERO_ADDRESS));
     }
 }

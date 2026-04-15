@@ -12,7 +12,7 @@ contract RuleWhitelistTest is Test, HelperContract {
     // Arrange
     function setUp() public {
         vm.prank(WHITELIST_OPERATOR_ADDRESS);
-        ruleWhitelist = new RuleWhitelist(WHITELIST_OPERATOR_ADDRESS, ZERO_ADDRESS, true);
+        ruleWhitelist = new RuleWhitelist(WHITELIST_OPERATOR_ADDRESS, ZERO_ADDRESS, true, false);
     }
 
     function _addAddresses() internal {
@@ -62,6 +62,12 @@ contract RuleWhitelistTest is Test, HelperContract {
         // Assert
         resBool = ruleWhitelist.isAddressListed(ADDRESS1);
         assertEq(resBool, true);
+    }
+
+    function testAllowMintBurnConstructorListsZeroAddress() public {
+        vm.prank(WHITELIST_OPERATOR_ADDRESS);
+        RuleWhitelist burnEnabledRule = new RuleWhitelist(WHITELIST_OPERATOR_ADDRESS, ZERO_ADDRESS, true, true);
+        assertTrue(burnEnabledRule.isAddressListed(ZERO_ADDRESS));
     }
 
     function testContainsReflectsListingStatus() public {

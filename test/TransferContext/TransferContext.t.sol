@@ -16,7 +16,7 @@ contract TransferContextTest is Test, HelperContract {
 
     function _deployWhitelistRule() internal returns (RuleWhitelist) {
         vm.prank(WHITELIST_OPERATOR_ADDRESS);
-        RuleWhitelist rule = new RuleWhitelist(WHITELIST_OPERATOR_ADDRESS, ZERO_ADDRESS, false);
+        RuleWhitelist rule = new RuleWhitelist(WHITELIST_OPERATOR_ADDRESS, ZERO_ADDRESS, false, false);
         vm.prank(WHITELIST_OPERATOR_ADDRESS);
         rule.addAddress(ADDRESS1);
         vm.prank(WHITELIST_OPERATOR_ADDRESS);

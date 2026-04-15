@@ -11,7 +11,7 @@ contract RuleWhitelistOwnable2StepCheckSpender is Test, HelperContract {
     RuleWhitelistOwnable2Step rule;
 
     function setUp() public {
-        rule = new RuleWhitelistOwnable2Step(WHITELIST_OPERATOR_ADDRESS, ZERO_ADDRESS, true);
+        rule = new RuleWhitelistOwnable2Step(WHITELIST_OPERATOR_ADDRESS, ZERO_ADDRESS, true, false);
     }
 
     function testOnlyOwnerCanSetCheckSpender() public {

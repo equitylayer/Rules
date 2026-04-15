@@ -424,6 +424,8 @@ Only whitelisted addresses may hold or receive tokens.
 - `to` is not whitelisted
 
 The rule is read-only: it only checks stored state.
+- Constructor parameter `allowMintBurn` can pre-list `address(0)` for mint/burn flows.
+- `allowMintBurn = false` keeps legacy behavior (operator adds `address(0)` manually if needed).
 
 **Example**
 
@@ -1251,6 +1253,7 @@ Checks the listing status of multiple addresses in a single call.
 ##### Null address
 
 It is possible to add the null address (0x0) to the address list. In a whitelist, this enables mint/burn flows (since `from`/`to` can be zero). In a blacklist, adding `0x0` blocks mint/burn.
+For `RuleWhitelist`, you can also pre-list `0x0` at deployment using the constructor parameter `allowMintBurn=true`.
 
 ##### Duplicate address
 
