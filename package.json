@@ -1,5 +1,7 @@
 {
   "scripts": {
+    "hardhat:compile": "npx hardhat compile",
+    "hardhat:test:smoke": "npx hardhat test test/hardhat/smoke.test.js",
     "lint:sol": "npx solium -d src",
     "lint:sol:fix": "npx solium -d src --fix",
     "lint:sol:test": "npx solium -d test",
@@ -12,7 +14,9 @@
     "uml:test": "npx sol2uml class test"
   },
   "devDependencies": {
-    "@nomicfoundation/hardhat-foundry": "^1.0.1",
+    "@nomicfoundation/hardhat-foundry": "^1.2.1",
+    "@nomicfoundation/hardhat-toolbox": "^6.1.2",
+    "hardhat": "^2.28.6",
     "sol2uml": "^2.5.20",
     "surya": "^0.4.6"
   }
