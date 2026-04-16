@@ -8,6 +8,7 @@ import {IERC7551Compliance} from "CMTAT/interfaces/tokenization/draft-IERC7551.s
 import {IRule} from "RuleEngine/interfaces/IRule.sol";
 import {ERC3643ComplianceModule} from "RuleEngine/modules/ERC3643ComplianceModule.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import {RuleConditionalTransferLightApprovalBase} from "./RuleConditionalTransferLightApprovalBase.sol";
 import {VersionModule} from "../../../modules/VersionModule.sol";
 
@@ -22,6 +23,8 @@ abstract contract RuleConditionalTransferLightBase is
     RuleConditionalTransferLightApprovalBase,
     IRule
 {
+    using SafeERC20 for IERC20;
+
     /*//////////////////////////////////////////////////////////////
                         EXTERNAL FUNCTIONS
     //////////////////////////////////////////////////////////////*/
@@ -73,8 +76,7 @@ abstract contract RuleConditionalTransferLightBase is
         uint256 allowed = IERC20(token).allowance(from, address(this));
         require(allowed >= value, RuleConditionalTransferLight_InsufficientAllowance(token, from, allowed, value));
 
-        bool success = IERC20(token).transferFrom(from, to, value);
-        require(success, RuleConditionalTransferLight_TransferFailed());
+        IERC20(token).safeTransferFrom(from, to, value);
         return true;
     }
 

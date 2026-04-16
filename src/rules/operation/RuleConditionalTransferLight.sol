@@ -3,7 +3,6 @@ pragma solidity ^0.8.20;
 
 import {AccessControlEnumerable} from "@openzeppelin/contracts/access/extensions/AccessControlEnumerable.sol";
 import {IERC165} from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
-import {IRule} from "RuleEngine/interfaces/IRule.sol";
 import {RuleInterfaceId} from "RuleEngine/modules/library/RuleInterfaceId.sol";
 import {ERC1404ExtendInterfaceId} from "CMTAT/library/ERC1404ExtendInterfaceId.sol";
 import {RuleEngineInterfaceId} from "CMTAT/library/RuleEngineInterfaceId.sol";

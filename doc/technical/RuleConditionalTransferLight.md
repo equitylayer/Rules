@@ -45,9 +45,9 @@ Increments the approval count for the `(from, to, value)` hash by 1. Restricted 
 
 Decrements the approval count for the `(from, to, value)` hash by 1. Reverts if no approval exists. Restricted to `OPERATOR_ROLE`. Emits `TransferApprovalCancelled`.
 
-### `approveAndTransferIfAllowed(address token, address from, address to, uint256 value) → bool`
+### `approveAndTransferIfAllowed(address from, address to, uint256 value) → bool`
 
-Approves the transfer and immediately calls `IERC20(token).transferFrom(from, to, value)` using this rule contract as the spender. Requires `from` to have previously approved this contract for at least `value` tokens. Restricted to `OPERATOR_ROLE`.
+Approves the transfer and immediately calls `SafeERC20.safeTransferFrom` on the currently bound token, using this rule contract as the spender. Requires `from` to have previously approved this contract for at least `value` tokens. Restricted to `OPERATOR_ROLE`.
 
 ### `approvedCount(address from, address to, uint256 value) → uint256`
 

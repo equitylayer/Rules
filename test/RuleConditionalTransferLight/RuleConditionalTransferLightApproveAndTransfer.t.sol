@@ -6,6 +6,7 @@ import {HelperContract} from "../HelperContract.sol";
 import {RuleConditionalTransferLight} from "src/rules/operation/RuleConditionalTransferLight.sol";
 import {MockERC20WithTransferContext} from "src/mocks/MockERC20WithTransferContext.sol";
 import {MockERC20TransferFromFalse} from "src/mocks/MockERC20TransferFromFalse.sol";
+import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
 contract RuleConditionalTransferLightApproveAndTransfer is Test, HelperContract {
     RuleConditionalTransferLight private rule;
@@ -61,7 +62,7 @@ contract RuleConditionalTransferLightApproveAndTransfer is Test, HelperContract 
         rule.bindToken(address(failingToken));
         vm.stopPrank();
 
-        vm.expectRevert(RuleConditionalTransferLight_TransferFailed.selector);
+        vm.expectRevert(abi.encodeWithSelector(SafeERC20.SafeERC20FailedOperation.selector, address(failingToken)));
         vm.prank(DEFAULT_ADMIN_ADDRESS);
         rule.approveAndTransferIfAllowed(ADDRESS1, ADDRESS2, 10);
     }

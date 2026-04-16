@@ -1658,13 +1658,13 @@ Removes one approval for the transfer.
 #### approveAndTransferIfAllowed
 
 ```solidity
-function approveAndTransferIfAllowed(address token, address from, address to, uint256 value)
+function approveAndTransferIfAllowed(address from, address to, uint256 value)
     public
     onlyTransferApprover
     returns (bool)
 ```
 
-Approves then calls `transferFrom` using this rule as spender.
+Approves then calls `SafeERC20.safeTransferFrom` on the bound token using this rule as spender.
 
 #### approvedCount
 
