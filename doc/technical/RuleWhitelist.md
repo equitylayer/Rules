@@ -13,6 +13,7 @@ This rule restricts transfers so that only whitelisted addresses may send and re
 | `admin` | Address granted `DEFAULT_ADMIN_ROLE` (implicitly holds all roles) |
 | `forwarderIrrevocable` | ERC-2771 trusted forwarder address for meta-transactions (use `address(0)` to disable) |
 | `checkSpender_` | If `true`, `transferFrom` spender address is also verified against the whitelist |
+| `allowMintBurn` | If `true`, pre-lists `address(0)` at deployment to allow mint/burn flows without a post-deploy `addAddress(address(0))` call |
 
 ### `checkSpender` flag
 
@@ -81,7 +82,7 @@ Enables or disables spender checks for `transferFrom`. Restricted to `DEFAULT_AD
 
 ### Zero address
 
-The zero address (`address(0)`) may be added to the whitelist. This is required by CMTAT to allow minting (mints are `transfer(address(0), to, value)`). OpenZeppelin prevents actual ERC-20 transfers to or from the zero address, so this does not create a security issue.
+The zero address (`address(0)`) may be added to the whitelist. This is required by CMTAT to allow minting (mints are `transfer(address(0), to, value)`) and burning (`to == address(0)`). You can either set `allowMintBurn=true` in the constructor to pre-list `address(0)`, or add it later with `addAddress(address(0))`. OpenZeppelin prevents actual ERC-20 transfers to or from the zero address, so this does not create a security issue.
 
 ### Batch vs single operations
 

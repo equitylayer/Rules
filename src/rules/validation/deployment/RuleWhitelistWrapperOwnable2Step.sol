@@ -3,9 +3,9 @@
 pragma solidity ^0.8.20;
 
 /* ==== OpenZeppelin === */
-import {Ownable} from "OZ/access/Ownable.sol";
-import {Ownable2Step} from "OZ/access/Ownable2Step.sol";
-import {Context} from "OZ/utils/Context.sol";
+import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
+import {Ownable2Step} from "@openzeppelin/contracts/access/Ownable2Step.sol";
+import {Context} from "@openzeppelin/contracts/utils/Context.sol";
 /* ==== Abstract contracts === */
 import {RuleWhitelistWrapperBase} from "../abstract/base/RuleWhitelistWrapperBase.sol";
 
@@ -25,6 +25,10 @@ contract RuleWhitelistWrapperOwnable2Step is RuleWhitelistWrapperBase, Ownable2S
         Ownable(owner)
     {}
 
+    /*//////////////////////////////////////////////////////////////
+                            ACCESS CONTROL
+    //////////////////////////////////////////////////////////////*/
+
     function _authorizeCheckSpenderManager() internal view virtual override onlyOwner {}
 
     /**
@@ -33,7 +37,7 @@ contract RuleWhitelistWrapperOwnable2Step is RuleWhitelistWrapperBase, Ownable2S
     function _onlyRulesManager() internal view virtual override onlyOwner {}
 
     /*//////////////////////////////////////////////////////////////
-                           ERC-2771
+                        INTERNAL FUNCTIONS
     //////////////////////////////////////////////////////////////*/
 
     function _msgSender() internal view virtual override(RuleWhitelistWrapperBase, Context) returns (address sender) {

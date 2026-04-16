@@ -6,6 +6,10 @@ import {ISanctionsList} from "src/rules/interfaces/ISanctionsList.sol";
 contract SanctionListOracle is ISanctionsList {
     mapping(address => bool) private sanctionedAddresses;
 
+    /*//////////////////////////////////////////////////////////////
+                        PUBLIC FUNCTIONS
+    //////////////////////////////////////////////////////////////*/
+
     function addToSanctionsList(address newSanction) public {
         sanctionedAddresses[newSanction] = true;
     }

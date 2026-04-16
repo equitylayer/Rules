@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MPL-2.0
 pragma solidity ^0.8.20;
 
-import {Ownable} from "OZ/access/Ownable.sol";
-import {Ownable2Step} from "OZ/access/Ownable2Step.sol";
+import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
+import {Ownable2Step} from "@openzeppelin/contracts/access/Ownable2Step.sol";
 import {RuleMaxTotalSupplyBase} from "../abstract/base/RuleMaxTotalSupplyBase.sol";
 
 /**
@@ -10,10 +10,18 @@ import {RuleMaxTotalSupplyBase} from "../abstract/base/RuleMaxTotalSupplyBase.so
  * @notice Ownable2Step variant of RuleMaxTotalSupply.
  */
 contract RuleMaxTotalSupplyOwnable2Step is RuleMaxTotalSupplyBase, Ownable2Step {
+    /*//////////////////////////////////////////////////////////////
+                             CONSTRUCTOR
+    //////////////////////////////////////////////////////////////*/
+
     constructor(address owner, address tokenContract_, uint256 maxTotalSupply_)
         RuleMaxTotalSupplyBase(tokenContract_, maxTotalSupply_)
         Ownable(owner)
     {}
+
+    /*//////////////////////////////////////////////////////////////
+                            ACCESS CONTROL
+    //////////////////////////////////////////////////////////////*/
 
     function _authorizeMaxTotalSupplyManager() internal view virtual override onlyOwner {}
 }

@@ -5,7 +5,7 @@ import {Test} from "forge-std/Test.sol";
 import {HelperContract} from "../HelperContract.sol";
 import {CMTATDeployment} from "RuleEngine/../test/utils/CMTATDeployment.sol";
 import {RuleWhitelist} from "src/rules/validation/deployment/RuleWhitelist.sol";
-import {RuleEngine} from "RuleEngine/RuleEngine.sol";
+import {RuleEngine} from "RuleEngine/deployment/RuleEngine.sol";
 
 /**
  * @title Integration test with the CMTAT
@@ -18,7 +18,7 @@ contract CMTATIntegration is Test, HelperContract {
     // Arrange
     function setUp() public {
         vm.prank(DEFAULT_ADMIN_ADDRESS);
-        ruleWhitelist = new RuleWhitelist(DEFAULT_ADMIN_ADDRESS, ZERO_ADDRESS, true);
+        ruleWhitelist = new RuleWhitelist(DEFAULT_ADMIN_ADDRESS, ZERO_ADDRESS, true, false);
         // global arrange
         cmtatDeployment = new CMTATDeployment();
         cmtatContract = cmtatDeployment.cmtat();

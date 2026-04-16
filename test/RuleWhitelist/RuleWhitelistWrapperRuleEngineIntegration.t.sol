@@ -5,7 +5,7 @@ import {Test} from "forge-std/Test.sol";
 import {HelperContract} from "../HelperContract.sol";
 import {RuleWhitelist} from "src/rules/validation/deployment/RuleWhitelist.sol";
 import {RuleWhitelistWrapper} from "src/rules/validation/deployment/RuleWhitelistWrapper.sol";
-import {RuleEngine} from "RuleEngine/RuleEngine.sol";
+import {RuleEngine} from "RuleEngine/deployment/RuleEngine.sol";
 
 /**
  * @title Integration test between RuleEngine and RuleWhitelistWrapper
@@ -15,7 +15,7 @@ contract RuleWhitelistWrapperRuleEngineIntegration is Test, HelperContract {
 
     function setUp() public {
         vm.prank(DEFAULT_ADMIN_ADDRESS);
-        ruleWhitelist = new RuleWhitelist(DEFAULT_ADMIN_ADDRESS, ZERO_ADDRESS, true);
+        ruleWhitelist = new RuleWhitelist(DEFAULT_ADMIN_ADDRESS, ZERO_ADDRESS, true, false);
         vm.prank(DEFAULT_ADMIN_ADDRESS);
         ruleWhitelistWrapper = new RuleWhitelistWrapper(DEFAULT_ADMIN_ADDRESS, ZERO_ADDRESS, true);
         vm.prank(DEFAULT_ADMIN_ADDRESS);

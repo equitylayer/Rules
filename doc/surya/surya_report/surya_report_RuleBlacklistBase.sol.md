@@ -5,7 +5,7 @@
 
 |  File Name  |  SHA-1 Hash  |
 |-------------|--------------|
-| ./rules/validation/abstract/base/RuleBlacklistBase.sol | ec66a18aa4908019e16c6d570202260524c44904 |
+| ./rules/validation/abstract/base/RuleBlacklistBase.sol | a9e7acac4f30169f321bcc9b36a932a8e100da63 |
 
 
 ### Contracts Description Table
@@ -17,13 +17,13 @@
 ||||||
 | **RuleBlacklistBase** | Implementation | RuleAddressSet, RuleNFTAdapter, RuleBlacklistInvariantStorage |||
 | └ | <Constructor> | Public ❗️ | 🛑  | RuleAddressSet |
-| └ | _detectTransferRestriction | Internal 🔒 |   | |
-| └ | _detectTransferRestrictionFrom | Internal 🔒 |   | |
+| └ | transferred | Public ❗️ |   |NO❗️ |
+| └ | transferred | Public ❗️ |   |NO❗️ |
 | └ | canReturnTransferRestrictionCode | Public ❗️ |   |NO❗️ |
 | └ | messageForTransferRestriction | Public ❗️ |   |NO❗️ |
 | └ | supportsInterface | Public ❗️ |   |NO❗️ |
-| └ | transferred | Public ❗️ |   |NO❗️ |
-| └ | transferred | Public ❗️ |   |NO❗️ |
+| └ | _detectTransferRestriction | Internal 🔒 |   | |
+| └ | _detectTransferRestrictionFrom | Internal 🔒 |   | |
 | └ | _transferred | Internal 🔒 |   | |
 | └ | _transferredFrom | Internal 🔒 |   | |
 

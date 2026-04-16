@@ -5,8 +5,10 @@ import {Test} from "forge-std/Test.sol";
 import {HelperContract} from "../HelperContract.sol";
 import {RuleSpenderWhitelist} from "src/rules/validation/deployment/RuleSpenderWhitelist.sol";
 import {AccessControlModuleStandalone} from "src/modules/AccessControlModuleStandalone.sol";
-import {IAccessControl} from "OZ/access/IAccessControl.sol";
-import {IRule} from "RuleEngine/interfaces/IRule.sol";
+import {IAccessControl} from "@openzeppelin/contracts/access/IAccessControl.sol";
+import {RuleInterfaceId} from "RuleEngine/modules/library/RuleInterfaceId.sol";
+import {ERC1404ExtendInterfaceId} from "CMTAT/library/ERC1404ExtendInterfaceId.sol";
+import {RuleEngineInterfaceId} from "CMTAT/library/RuleEngineInterfaceId.sol";
 import {RuleSpenderWhitelistHarness} from "src/mocks/harness/RuleSpenderWhitelistHarnesses.sol";
 
 contract RuleSpenderWhitelistTest is Test, HelperContract {
@@ -88,7 +90,10 @@ contract RuleSpenderWhitelistTest is Test, HelperContract {
 
     function testSupportsInterface() public view {
         assertTrue(rule.supportsInterface(type(IAccessControl).interfaceId));
-        assertTrue(rule.supportsInterface(type(IRule).interfaceId));
+        assertTrue(rule.supportsInterface(RuleInterfaceId.IRULE_INTERFACE_ID));
+        assertTrue(rule.supportsInterface(ERC1404ExtendInterfaceId.ERC1404EXTEND_INTERFACE_ID));
+        assertTrue(rule.supportsInterface(RuleEngineInterfaceId.RULE_ENGINE_INTERFACE_ID));
+        assertFalse(rule.supportsInterface(bytes4(0xdeadbeef)));
     }
 
     function testMetaTxOverridesAreReachable() public view {

@@ -5,7 +5,7 @@
 
 |  File Name  |  SHA-1 Hash  |
 |-------------|--------------|
-| ./mocks/IdentityRegistryMock.sol | 81a48dbb5b0f632020ce23003bc49e31f79e2e37 |
+| ./mocks/IdentityRegistryMock.sol | 52729f353f3783df05156fb7703e84d39b84167e |
 
 
 ### Contracts Description Table

@@ -24,18 +24,19 @@ Modular compliance-rule library for CMTAT / ERC-3643 security tokens. Each rule 
 | `RuleMaxTotalSupply` | Cap minting so total supply never exceeds a maximum |
 | `RuleIdentityRegistry` | Check ERC-3643 identity registry for participant verification |
 | `RuleSpenderWhitelist` / `RuleSpenderWhitelistOwnable2Step` | Allow `transferFrom` only when spender is whitelisted; direct transfers are always allowed |
-| `RuleERC2980` | ERC-2980 Swiss Compliant rule: whitelist (recipient-only) + frozenlist (blocks sender and recipient); frozenlist takes priority |
+| `RuleERC2980` | ERC-2980 Swiss Compliant rule: whitelist (recipient-only) + frozenlist (blocks sender, recipient, and spender for `transferFrom`); frozenlist takes priority |
 | `RuleERC2980Ownable2Step` | Ownable2Step variant of RuleERC2980 |
-| `RuleConditionalTransferLight` | Require operator approval before each transfer |
+| `RuleConditionalTransferLight` | Require operator approval before each transfer; bound to exactly one token at a time (`bindToken` reverts if a token is already bound; use `unbindToken` first to migrate) |
 | `RuleConditionalTransferLightOwnable2Step` | Owner-only approval and execution for conditional transfers |
 | `AccessControlModuleStandalone` | Base RBAC module; admin implicitly holds all roles |
 | `MetaTxModuleStandalone` | ERC-2771 meta-transaction support |
 | `VersionModule` | Implements `IERC3643Version`; returns the contract version string |
 
 ## Dependencies (lib/)
-- `openzeppelin-contracts` v5.5.0 — `AccessControl`, `Ownable2Step`, `EnumerableSet`, `ERC2771Context`
+- `openzeppelin-contracts` v5.6.1 — `AccessControl`, `Ownable2Step`, `EnumerableSet`, `ERC2771Context`
+- `openzeppelin-contracts-upgradeable` v5.6.1
 - `CMTAT` v3.0.0 — `IERC1404`, `IERC3643`, `IRuleEngine` interfaces
-- `RuleEngine` v3.0.0-rc0 — `IRule`, `RulesManagementModule`
+- `RuleEngine` v3.0.0-rc2 — `IRule`, `RulesManagementModule`
 - `forge-std` — Foundry test utilities
 
 Remappings are in `remappings.txt`; aliases used in source: `OZ/`, `CMTAT/`, `RuleEngine/`.
@@ -66,6 +67,7 @@ Foundry config: `foundry.toml` (solc 0.8.34, EVM prague, optimizer 200 runs).
 - AccessControl variants must use `onlyRole(ROLE)` in `_authorize*()` methods (avoid direct `_checkRole`).
 - AccessControl variants treat the default admin as having all roles via `hasRole`, but the admin may not appear in role member enumerations unless explicitly granted.
 - All rules implement `IERC3643Version` via `VersionModule`; the current version string is `"0.2.0"`.
+- **ERC-165 interface IDs**: `type(IFoo).interfaceId` only XORs selectors defined directly on `IFoo` and does NOT include selectors from inherited interfaces. Always use the pre-computed library constants instead: `ERC1404ExtendInterfaceId.ERC1404EXTEND_INTERFACE_ID` (from `CMTAT/library/`), `RuleEngineInterfaceId.RULE_ENGINE_INTERFACE_ID` (from `CMTAT/library/`), and `RuleInterfaceId.IRULE_INTERFACE_ID` (from `RuleEngine/modules/library/`). If no pre-computed constant exists for an interface, define a flat mock interface that redeclares all functions from the full inheritance tree and use `type(IFooFlattened).interfaceId` to compute the correct value (see `lib/RuleEngine/src/mocks/IRuleInterfaceIdHelper.sol` for the established pattern).
 - Batch add/remove operations are non-reverting (skip duplicates); single-item operations revert on invalid input.
 - All `internal` functions should be marked `virtual`.
 - Do not create git commits; provide commit messages only when requested.

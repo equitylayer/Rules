@@ -5,7 +5,7 @@
 
 |  File Name  |  SHA-1 Hash  |
 |-------------|--------------|
-| ./rules/validation/abstract/RuleAddressSet/RuleAddressSet.sol | a3c3be817c875ac39b08a0c7b06b97f1d3a4c440 |
+| ./rules/validation/abstract/RuleAddressSet/RuleAddressSet.sol | 2b2c138a17fd651aa8bc8346df863c7fc08ffeb3 |
 
 
 ### Contracts Description Table
@@ -17,12 +17,12 @@
 ||||||
 | **RuleAddressSet** | Implementation | MetaTxModuleStandalone, RuleAddressSetInternal, RuleAddressSetInvariantStorage, IAddressList |||
 | └ | <Constructor> | Public ❗️ | 🛑  | MetaTxModuleStandalone |
+| └ | _authorizeAddressListAdd | Internal 🔒 |   | |
+| └ | _authorizeAddressListRemove | Internal 🔒 |   | |
 | └ | addAddresses | Public ❗️ | 🛑  | onlyAddressListAdd |
 | └ | removeAddresses | Public ❗️ | 🛑  | onlyAddressListRemove |
 | └ | addAddress | Public ❗️ | 🛑  | onlyAddressListAdd |
 | └ | removeAddress | Public ❗️ | 🛑  | onlyAddressListRemove |
-| └ | _authorizeAddressListAdd | Internal 🔒 |   | |
-| └ | _authorizeAddressListRemove | Internal 🔒 |   | |
 | └ | listedAddressCount | Public ❗️ |   |NO❗️ |
 | └ | contains | Public ❗️ |   |NO❗️ |
 | └ | isAddressListed | Public ❗️ |   |NO❗️ |

@@ -5,12 +5,7 @@ pragma solidity ^0.8.20;
 import {RuleSharedInvariantStorage} from "../../invariant/RuleSharedInvariantStorage.sol";
 
 abstract contract RuleBlacklistInvariantStorage is RuleSharedInvariantStorage {
-    error RuleBlacklist_InvalidTransfer(address rule, address from, address to, uint256 value, uint8 code);
-    error RuleBlacklist_InvalidTransferFrom(
-        address rule, address spender, address from, address to, uint256 value, uint8 code
-    );
     /* ============ String message ============ */
-
     string constant TEXT_ADDRESS_FROM_IS_BLACKLISTED = "The sender is blacklisted";
     string constant TEXT_ADDRESS_TO_IS_BLACKLISTED = "The recipient is blacklisted";
     string constant TEXT_ADDRESS_SPENDER_IS_BLACKLISTED = "The spender is blacklisted";
@@ -20,4 +15,9 @@ abstract contract RuleBlacklistInvariantStorage is RuleSharedInvariantStorage {
     uint8 public constant CODE_ADDRESS_FROM_IS_BLACKLISTED = 36;
     uint8 public constant CODE_ADDRESS_TO_IS_BLACKLISTED = 37;
     uint8 public constant CODE_ADDRESS_SPENDER_IS_BLACKLISTED = 38;
+
+    error RuleBlacklist_InvalidTransfer(address rule, address from, address to, uint256 value, uint8 code);
+    error RuleBlacklist_InvalidTransferFrom(
+        address rule, address spender, address from, address to, uint256 value, uint8 code
+    );
 }

@@ -37,6 +37,14 @@ This rule implements the [ERC-2980](https://eips.ethereum.org/EIPS/eip-2980) Swi
 | `FROZENLIST_ADD_ROLE` | May add addresses to the frozenlist |
 | `FROZENLIST_REMOVE_ROLE` | May remove addresses from the frozenlist |
 
+## Constructor burn configuration
+
+- `RuleERC2980(address admin, address forwarderIrrevocable, bool allowBurn)`
+- `RuleERC2980Ownable2Step(address owner, address forwarderIrrevocable, bool allowBurn)`
+
+If `allowBurn` is `true`, the constructor whitelists `address(0)` so burn/redemption transfers to `address(0)` are allowed.
+If `allowBurn` is `false`, `address(0)` is not whitelisted by default and burn/redemption transfers revert with `CODE_ADDRESS_TO_NOT_WHITELISTED` (`63`).
+
 
 ## Whitelist methods
 

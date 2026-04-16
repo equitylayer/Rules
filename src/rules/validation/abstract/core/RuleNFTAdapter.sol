@@ -23,15 +23,10 @@ abstract contract RuleNFTAdapter is RuleTransferValidation, IERC7943NonFungibleC
         bytes4(keccak256("transferred(address,address,uint256,uint256)"));
     bytes4 internal constant TRANSFERRED_SELECTOR_ERC7943_FROM =
         bytes4(keccak256("transferred(address,address,address,uint256,uint256)"));
-    /**
-     * @notice Internal hook for post-transfer validation or state updates.
-     */
-    function _transferred(address from, address to, uint256 value) internal virtual;
 
-    /**
-     * @notice Internal hook for post-transfer validation or state updates (spender-aware).
-     */
-    function _transferredFrom(address spender, address from, address to, uint256 value) internal virtual;
+    /*//////////////////////////////////////////////////////////////
+                        PUBLIC FUNCTIONS
+    //////////////////////////////////////////////////////////////*/
 
     /**
      * @inheritdoc IERC7943NonFungibleComplianceExtend
@@ -161,4 +156,18 @@ abstract contract RuleNFTAdapter is RuleTransferValidation, IERC7943NonFungibleC
             _transferred(ctx.from, ctx.to, ctx.value);
         }
     }
+
+    /*//////////////////////////////////////////////////////////////
+                        INTERNAL FUNCTIONS
+    //////////////////////////////////////////////////////////////*/
+
+    /**
+     * @notice Internal hook for post-transfer validation or state updates.
+     */
+    function _transferred(address from, address to, uint256 value) internal virtual;
+
+    /**
+     * @notice Internal hook for post-transfer validation or state updates (spender-aware).
+     */
+    function _transferredFrom(address spender, address from, address to, uint256 value) internal virtual;
 }

@@ -5,7 +5,7 @@
 
 |  File Name  |  SHA-1 Hash  |
 |-------------|--------------|
-| ./rules/operation/abstract/RuleConditionalTransferLightBase.sol | 649f37246378014573f7368fa573f21c4b15d679 |
+| ./rules/operation/abstract/RuleConditionalTransferLightBase.sol | 32e9a0425e0706764501785c3a4220b65ddeaec7 |
 
 
 ### Contracts Description Table
@@ -15,24 +15,19 @@
 |:----------:|:-------------------:|:----------------:|:----------------:|:---------------:|
 |     └      |  **Function Name**  |  **Visibility**  |  **Mutability**  |  **Modifiers**  |
 ||||||
-| **RuleConditionalTransferLightBase** | Implementation | VersionModule, RuleConditionalTransferLightInvariantStorage, IRule |||
-| └ | approveTransfer | Public ❗️ | 🛑  | onlyTransferApprover |
-| └ | cancelTransferApproval | Public ❗️ | 🛑  | onlyTransferApprover |
+| **RuleConditionalTransferLightBase** | Implementation | VersionModule, ERC3643ComplianceModule, RuleConditionalTransferLightApprovalBase, IRule |||
+| └ | canReturnTransferRestrictionCode | External ❗️ |   |NO❗️ |
+| └ | messageForTransferRestriction | External ❗️ |   |NO❗️ |
+| └ | created | External ❗️ | 🛑  | onlyBoundToken |
+| └ | destroyed | External ❗️ | 🛑  | onlyBoundToken |
 | └ | approveAndTransferIfAllowed | Public ❗️ | 🛑  | onlyTransferApprover |
-| └ | approvedCount | Public ❗️ |   |NO❗️ |
 | └ | transferred | Public ❗️ | 🛑  | onlyTransferExecutor |
 | └ | transferred | Public ❗️ | 🛑  | onlyTransferExecutor |
+| └ | bindToken | Public ❗️ | 🛑  | onlyComplianceManager |
 | └ | detectTransferRestriction | Public ❗️ |   |NO❗️ |
 | └ | detectTransferRestrictionFrom | Public ❗️ |   |NO❗️ |
 | └ | canTransfer | Public ❗️ |   |NO❗️ |
 | └ | canTransferFrom | Public ❗️ |   |NO❗️ |
-| └ | canReturnTransferRestrictionCode | External ❗️ |   |NO❗️ |
-| └ | messageForTransferRestriction | External ❗️ |   |NO❗️ |
-| └ | transferred | External ❗️ | 🛑  | onlyTransferExecutor |
-| └ | _transferredFromContext | Internal 🔒 | 🛑  | |
-| └ | _transferred | Internal 🔒 | 🛑  | |
-| └ | _transferHash | Internal 🔒 |   | |
-| └ | _authorizeTransferApproval | Internal 🔒 |   | |
 | └ | _authorizeTransferExecution | Internal 🔒 |   | |
 
 

@@ -26,7 +26,7 @@ This library implements compliance rules for regulated security tokens (CMTAT / 
 
 ## L-2: Unsafe ERC20 Operation
 
-**Verdict: Acknowledged — low impact**
+**Verdict: Fixed (patched in v0.3.0)**
 
 Flagged location: `RuleConditionalTransferLightBase.sol` line 59:
 
@@ -35,7 +35,8 @@ bool success = IERC20(token).transferFrom(from, to, value);
 require(success, RuleConditionalTransferLight_TransferFailed());
 ```
 
-The return value **is** explicitly checked with `require`. Aderyn flags any direct `.transferFrom` call that does not use `SafeERC20`, but the concern for `SafeERC20` is tokens that return no value (e.g. USDT on mainnet). The token bound to this rule is expected to be a CMTAT-compatible token, which correctly returns a `bool`. The check is already present, so the risk is negligible. `SafeERC20` could be adopted for defence-in-depth; recorded as a potential future hardening item.
+Originally, the return value was explicitly checked with `require`, and the residual risk was considered low for CMTAT-compatible tokens.  
+This finding has now been patched in `v0.3.0`: `RuleConditionalTransferLightBase.approveAndTransferIfAllowed` uses OpenZeppelin `SafeERC20.safeTransferFrom`, which safely handles non-standard ERC-20 return behavior.
 
 ---
 
@@ -116,7 +117,7 @@ All flagged loops perform `EnumerableSet.add` / `EnumerableSet.remove` calls, ea
 | ID | Title | Verdict |
 |---|---|---|
 | L-1 | Centralization Risk | Acknowledged — by design |
-| L-2 | Unsafe ERC20 Operation | Acknowledged — low impact |
+| L-2 | Unsafe ERC20 Operation | Fixed (patched in v0.3.0) |
 | L-3 | Unspecific Solidity Pragma | Acknowledged — by design |
 | L-4 | Address State Variable Set Without Checks | False positive |
 | L-5 | PUSH0 Opcode | Acknowledged — not applicable |

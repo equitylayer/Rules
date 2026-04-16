@@ -2,7 +2,7 @@
 pragma solidity ^0.8.20;
 
 /* ==== OpenZeppelin === */
-import {EnumerableSet} from "OZ/utils/structs/EnumerableSet.sol";
+import {EnumerableSet} from "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
 
 /**
  * @title Rule Address Set (Internal)
@@ -23,7 +23,7 @@ abstract contract RuleAddressSetInternal {
     EnumerableSet.AddressSet private _listedAddresses;
 
     /*//////////////////////////////////////////////////////////////
-                              INTERNAL
+                          INTERNAL FUNCTIONS
     //////////////////////////////////////////////////////////////*/
 
     /**

@@ -22,7 +22,10 @@ abstract contract RuleWhitelistShared is RuleNFTAdapter, RuleWhitelistInvariantS
      */
     bool public checkSpender;
 
-    /* ============  View Functions ============ */
+    /*//////////////////////////////////////////////////////////////
+                        EXTERNAL FUNCTIONS
+    //////////////////////////////////////////////////////////////*/
+
     /**
      * @notice Checks whether a restriction code is recognized by this rule.
      * @dev
@@ -60,7 +63,9 @@ abstract contract RuleWhitelistShared is RuleNFTAdapter, RuleWhitelistInvariantS
         }
     }
 
-    /* ============  State Functions ============ */
+    /*//////////////////////////////////////////////////////////////
+                        PUBLIC FUNCTIONS
+    //////////////////////////////////////////////////////////////*/
 
     /**
      * @notice ERC-3643 hook called when a transfer occurs.
@@ -91,6 +96,10 @@ abstract contract RuleWhitelistShared is RuleNFTAdapter, RuleWhitelistInvariantS
     function transferred(address spender, address from, address to, uint256 value) public view override(IRuleEngine) {
         _transferredFrom(spender, from, to, value);
     }
+
+    /*//////////////////////////////////////////////////////////////
+                        INTERNAL FUNCTIONS
+    //////////////////////////////////////////////////////////////*/
 
     function _transferred(address from, address to, uint256 value) internal view virtual override {
         uint8 code = _detectTransferRestriction(from, to, value);

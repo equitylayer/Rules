@@ -20,8 +20,6 @@ Each rule can be used **standalone**, directly plugged into a CMTAT token, **or*
 
 [TOC]
 
-
-
 ## Overview
 
 The **RuleEngine** is an external smart contract that applies transfer restrictions to security tokens such as **CMTAT** or [ERC-3643](https://eips.ethereum.org/EIPS/eip-3643)-compatible tokens through a RuleEngine.
@@ -64,17 +62,13 @@ forge test
 
 | Component        | Compatible Versions                       |
 | ---------------- | ----------------------------------------- |
-| **Rules v0.1.0** | CMTAT ≥ v3.0.0<br />RuleEngine v3.0.0-rc1 |
+| **Rules v0.1.0** | CMTAT ≥ v3.0.0<br />RuleEngine v3.0.0-rc2 |
 
 Each Rule implements the interface `IRuleEngine` defined in CMTAT.
 
 This interface declares the ERC-3643 functions `transferred`(read-write) and `canTransfer`(read-only) with several other functions related to [ERC-1404](https://github.com/ethereum/eips/issues/1404), [ERC-7551](https://ethereum-magicians.org/t/erc-7551-crypto-security-token-smart-contract-interface-ewpg-reworked/25477) and [ERC-3643](https://eips.ethereum.org/EIPS/eip-3643).
 
 ## Specifications
-
-Draft ERC specifications maintained in this repository:
-
-- `ERCSpecification/erc-XXXX-transfer-context.md` - transfer context hook (fungible and non-fungible).
 
 ### ERC-3643
 
@@ -85,9 +79,9 @@ function canTransfer(address _from, address _to, uint256 _amount) external view 
 function transferred(address _from, address _to, uint256 _amount) external;
 ```
 
-However, contrary to the RuleEngine, the whole interface is currently not implemented (e.g. `created`and `destroyed`) and as a result, the rule can not directly supported ERC-3643 token.
+However, contrary to the RuleEngine, the whole interface is currently not implemented (e.g. `created`and `destroyed`) and as a result, the rule can not directly support ERC-3643 token.
 
-The alternative to use a Rule with an ERC-3643 token is trough the RuleEngine, which implements the whole `ICompliance` interface.
+The alternative to use a Rule with an ERC-3643 token is through the RuleEngine, which implements the whole `ICompliance` interface.
 
 ### ERC-721/ERC-1155
 
@@ -136,9 +130,9 @@ function transferred(address spender, address from, address to, uint256 tokenId,
 
 ### Rule - Code list
 
-> It is very important that each rule uses an unique code
+> It is very important that each rule uses a unique code
 
-Here the list of codes used by the different rules
+Here is the list of codes used by the different rules
 
 | Contract                | Constant name                        | Value |
 | ----------------------- | ------------------------------------ | ----- |
@@ -245,7 +239,7 @@ The RuleEngine can then:
 
 Each rule can be directly plugged to a CMTAT token similar to a RuleEngine.
 
-Indeed, each rules implements the required interface (`IRuleEngine`) with notably the following function as entrypoint.
+Indeed, each rule implements the required interface (`IRuleEngine`) with notably the following function as entrypoint.
 
 ```solidity
 function transferred(address from,address to,uint256 value)
@@ -278,7 +272,7 @@ interface IRuleEngine is IERC1404Extend, IERC7551Compliance,  IERC3643IComplianc
 
 #### RuleEngine
 
-For a RuleEngine, each rule implements also the required entry point similar to CMTAT, and as well some specific interface for the RuleEngine through the implementation of `IRule`interface dfeined in the RuleEngine repository
+For a RuleEngine, each rule implements also the required entry point similar to CMTAT, and as well some specific interface for the RuleEngine through the implementation of `IRule` interface defined in the RuleEngine repository.
 
 ```solidity
 interface IRule is IRuleEngine {
@@ -366,7 +360,7 @@ Several rules are available in multiple access-control variants. Use the simples
 | RuleMaxTotalSupply                                           | Read-Only                          | <strong><span style="color: #b00020;">&#x2718;</span></strong> | <strong><span style="color: #1e7e34;">&#x2714;</span></strong> | <strong><span style="color: #1e7e34;">&#x2714;</span></strong> | This rule limits minting so that the total supply never exceeds a configured maximum. |
 | RuleIdentityRegistry                                         | Read-Only                          | <strong><span style="color: #1e7e34;">&#x2714;</span></strong> | <strong><span style="color: #1e7e34;">&#x2714;</span></strong> | <strong><span style="color: #1e7e34;">&#x2714;</span></strong> | This rule checks the ERC-3643 Identity Registry for transfer participants when configured. |
 | RuleSpenderWhitelist                                         | Read-Only                          | <strong><span style="color: #1e7e34;">&#x2714;</span></strong> | <strong><span style="color: #1e7e34;">&#x2714;</span></strong> | <strong><span style="color: #1e7e34;">&#x2714;</span></strong> | This rule blocks `transferFrom` when the spender is not in the whitelist. Direct transfers are always allowed. |
-| RuleERC2980                                                  | Read-Only                          | <strong><span style="color: #1e7e34;">&#x2714;</span></strong> | <strong><span style="color: #1e7e34;">&#x2714;</span></strong> | <strong><span style="color: #1e7e34;">&#x2714;</span></strong> | ERC-2980 Swiss Compliant rule combining a whitelist (recipient-only) and a frozenlist (blocks both sender and recipient). Frozenlist takes priority over whitelist. |
+| RuleERC2980                                                  | Read-Only                          | <strong><span style="color: #1e7e34;">&#x2714;</span></strong> | <strong><span style="color: #1e7e34;">&#x2714;</span></strong> | <strong><span style="color: #1e7e34;">&#x2714;</span></strong> | ERC-2980 Swiss Compliant rule combining a whitelist (recipient-only) and a frozenlist (blocks sender, recipient, and spender for `transferFrom`). Frozenlist takes priority over whitelist. |
 | RuleConditionalTransferLight                                | Read-Write                          | <strong><span style="color: #b00020;">&#x2718;</span></strong> | <strong><span style="color: #1e7e34;">&#x2714;</span></strong> | <strong><span style="color: #1e7e34;">&#x2714;</span></strong> | This rule requires that transfers have to be approved by an operator before being executed. Each approval is consumed once and the same transfer can be approved multiple times. |
 | [RuleConditionalTransfer](https://github.com/CMTA/RuleConditionalTransfer) (external) | Read-Write | <strong><span style="color: #b00020;">&#x2718;</span></strong> | <strong><span style="color: #1e7e34;">&#x2714;</span></strong> | <strong><span style="color: #b00020;">&#x2718;</span></strong><br /> (experimental rule) | Full-featured approval-based transfer rule implementing Swiss law *Vinkulierung*. Supports automatic approval after three months, automatic transfer execution, and a conditional whitelist for address pairs that bypass approval. Maintained in a separate repository. |
 | [RuleSelf](https://github.com/rya-sge/ruleself) (community) | — | <strong><span style="color: #b00020;">&#x2718;</span></strong> | — | <strong><span style="color: #b00020;">&#x2718;</span></strong><br /> (community project) | Use [Self](https://self.xyz), a zero-knowledge identity  solution to determine which is allowed to interact with the token.<br />Community-maintained rule project. Not developed or maintained by CMTA. |
@@ -391,25 +385,50 @@ Detailed technical documentation for each rule is available in [`doc/technical/`
 
 ### Operational Notes
 
-- `RuleIdentityRegistry` allows burns (`to == address(0)`) even if the sender is not verified. This matters only if the token allows self-burn.
-- `RuleSanctionsList` rejects zero address in `setSanctionListOracle`. Use `clearSanctionListOracle()` to disable checks.
-- `RuleIdentityRegistry` can be disabled with `clearIdentityRegistry()`, which allows all transfers to pass this rule.
-- Constructors for `RuleSanctionsList` and `RuleIdentityRegistry` accept a zero address to start in a disabled state.
-- `RuleMaxTotalSupply` trusts the configured `tokenContract` to return an accurate `totalSupply()`.
-- `RuleMaxTotalSupply` does not allow clearing the token contract; disable the rule by removing it from the RuleEngine or token.
-- `RuleWhitelistWrapper` requires child rules that implement `IAddressList`. Gas cost grows with the number of rules, and a wrapper with zero rules will reject all transfers.
-- `RuleSpenderWhitelist` only checks the spender in `transferFrom`; direct transfers always pass this rule.
-- Read-only rules still implement `transferred()` to comply with ERC-3643 and RuleEngine interfaces, but they do not change state.
-- `RuleConditionalTransferLight` approvals are keyed by `(from, to, value)` and are not nonce-based.
-- `RuleConditionalTransferLight` provides `approveAndTransferIfAllowed` to approve and immediately execute `transferFrom` when this rule has allowance; it assumes the token calls back `transferred()` during the transfer.
-- `RuleConditionalTransferLight` restricts `transferred()` to tokens bound via `bindToken` (ERC3643ComplianceModule).
-- `RuleConditionalTransferLight` exempts mints (`from == address(0)`) and burns (`to == address(0)`) from the approval requirement; `created` and `destroyed` delegate to `_transferred`, which returns early for those cases.
-- AccessControl variants use `onlyRole(ROLE)` in `_authorize*()` and internal helpers are marked `virtual`.
-- AccessControl variants use `AccessControlEnumerable`, so role members can be enumerated with `getRoleMember` / `getRoleMemberCount`. The default admin is treated as having all roles via `hasRole`, but may not appear in role member lists unless explicitly granted.
-- `forwarderIrrevocable` is accepted as-is (including `address(0)`), and is not validated against ERC-165 because some forwarders do not implement it.
-- `RuleERC2980` frozenlist takes priority over the whitelist: an address that is both whitelisted and frozen will be rejected.
-- `RuleERC2980` sender (`from`) does not need to be whitelisted; only the recipient (`to`) must be whitelisted for a transfer to succeed.
-- All rules implement `IERC3643Version` via `VersionModule` and expose a `version()` function returning `"0.2.0"`.
+#### RuleIdentityRegistry
+
+- `RuleIdentityRegistry`: allows burns (`to == address(0)`) even if the sender is not verified. This matters only if the token allows self-burn.
+- `RuleIdentityRegistry`: can be disabled with `clearIdentityRegistry()`, which allows all transfers to pass this rule.
+- `RuleIdentityRegistry`: constructor accepts `address(0)` to start in a disabled state.
+
+#### RuleSanctionsList
+
+- `RuleSanctionsList`: rejects zero address in `setSanctionListOracle`. Use `clearSanctionListOracle()` to disable checks.
+- `RuleSanctionsList`: constructor accepts `address(0)` to start in a disabled state.
+
+#### RuleMaxTotalSupply
+
+- `RuleMaxTotalSupply`: trusts the configured `tokenContract` to return an accurate `totalSupply()`.
+- `RuleMaxTotalSupply`: does not allow clearing the token contract; disable the rule by removing it from the RuleEngine or token.
+
+#### RuleWhitelistWrapper
+
+- `RuleWhitelistWrapper`: requires child rules that implement `IAddressList`. Gas cost grows with the number of rules, and a wrapper with zero rules rejects all transfers.
+
+#### RuleSpenderWhitelist
+
+- `RuleSpenderWhitelist`: only checks the spender in `transferFrom`; direct transfers always pass this rule.
+
+#### RuleERC2980
+
+- `RuleERC2980`: frozenlist takes priority over whitelist; an address that is both whitelisted and frozen is rejected.
+- `RuleERC2980`: a frozen address acting as `transferFrom` spender is also blocked (code 62), even if `from` and `to` are not frozen.
+- `RuleERC2980`: sender (`from`) does not need to be whitelisted; only recipient (`to`) must be whitelisted.
+
+#### RuleConditionalTransferLight
+
+- `RuleConditionalTransferLight`: approvals are keyed by `(from, to, value)` and are not nonce-based.
+- `RuleConditionalTransferLight`: `approveAndTransferIfAllowed` approves and immediately executes `transferFrom` when this rule has allowance; it assumes token callback to `transferred()`.
+- `RuleConditionalTransferLight`: `transferred()` is restricted to the single token bound via `bindToken`; second bind reverts with `RuleConditionalTransferLight_TokenAlreadyBound` until `unbindToken`.
+- `RuleConditionalTransferLight`: mints (`from == address(0)`) and burns (`to == address(0)`) are exempt from approval checks; `created` and `destroyed` delegate to `_transferred`.
+
+#### General notes
+
+- All validation rules: read-only rules still implement `transferred()` for ERC-3643 and RuleEngine compatibility, but do not change state.
+- All AccessControl variants: use `onlyRole(ROLE)` in `_authorize*()` and mark internal helpers `virtual`.
+- All AccessControl variants: use `AccessControlEnumerable`, so role members can be enumerated with `getRoleMember` / `getRoleMemberCount`; default admin is treated as having all roles via `hasRole`, but may not appear in role member lists unless explicitly granted.
+- All meta-tx-enabled rules: `forwarderIrrevocable` is accepted as-is (including `address(0)`) and is not validated against ERC-165 because some forwarders do not implement it.
+- All rules: implement `IERC3643Version` via `VersionModule` and expose `version()` returning `"0.3.0"`.
 
 ### Read-only (validation) rule
 
@@ -424,6 +443,8 @@ Only whitelisted addresses may hold or receive tokens.
 - `to` is not whitelisted
 
 The rule is read-only: it only checks stored state.
+- Constructor parameter `allowMintBurn` can pre-list `address(0)` for mint/burn flows.
+- `allowMintBurn = false` keeps legacy behavior (operator adds `address(0)` manually if needed).
 
 **Example**
 
@@ -490,8 +511,14 @@ The operator sets `RuleBlacklist` on the token. The issuer tries to transfer to 
 Implements the [ERC-2980](https://eips.ethereum.org/EIPS/eip-2980) Swiss Compliant Asset Token transfer restriction using two independent address lists managed in a single rule:
 
 - **Whitelist**: only whitelisted addresses may *receive* tokens. Senders do not need to be whitelisted and may freely transfer tokens they already hold.
-- **Frozenlist**: frozen addresses are completely blocked — they can neither send nor receive tokens.
-- **Priority**: frozenlist is checked first. If `from` or `to` is frozen, the transfer is rejected regardless of whitelist membership.
+- **Frozenlist**: frozen addresses are completely blocked — they can neither send nor receive tokens. Additionally, a frozen address acting as a `transferFrom` spender will have the transfer rejected (code 62), even if `from` and `to` are not frozen.
+- **Priority**: frozenlist is checked first. If `from`, `to`, or `spender` is frozen, the transfer is rejected regardless of whitelist membership.
+- **Burn/redemption handling**: burns (`to == address(0)`) follow the same recipient whitelist check. Constructor parameter `allowBurn` controls whether `address(0)` is whitelisted at deployment.
+  - `allowBurn = false` (default-safe): burns are blocked with code 63.
+  - `allowBurn = true`: burns are allowed because `address(0)` is whitelisted.
+- Constructors:
+  - `RuleERC2980(address admin, address forwarderIrrevocable, bool allowBurn)`
+  - `RuleERC2980Ownable2Step(address owner, address forwarderIrrevocable, bool allowBurn)`
 
 ![surya_inheritance_RuleERC2980.sol](./doc/surya/surya_inheritance/surya_inheritance_RuleERC2980.sol.png)
 
@@ -508,7 +535,7 @@ Restriction codes:
 
 **Usage scenario**
 
-The operator deploys `RuleERC2980`. The issuer whitelists Alice with `addWhitelistAddress(Alice)`. A transfer to Alice succeeds. The compliance officer freezes Bob with `addFrozenlistAddress(Bob)`. Any transfer from or to Bob is now rejected even if Bob was previously whitelisted.
+The operator deploys `RuleERC2980` and chooses `allowBurn` according to the redemption policy. The issuer whitelists Alice with `addWhitelistAddress(Alice)`. A transfer to Alice succeeds. The compliance officer freezes Bob with `addFrozenlistAddress(Bob)`. Any transfer from or to Bob is now rejected even if Bob was previously whitelisted.
 
 #### Sanction list with Chainalysis
 
@@ -518,7 +545,7 @@ Uses the [Chainalysis](https://www.chainalysis.com/) Oracle to reject transfers 
 - Documentation: *Chainalysis Oracle for sanctions screening*
 - If `from` or `to` is sanctioned, transfer is rejected.
 
-Documentation and the contracts addresses are available here: [Chainalysis oracle for sanctions screening](https://go.chainalysis.com/chainalysis-oracle-docs.html).
+The documentation and contract addresses are available here: [Chainalysis oracle for sanctions screening](https://go.chainalysis.com/chainalysis-oracle-docs.html).
 
 ![surya_inheritance_RuleSanctionsList.sol](./doc/surya/surya_inheritance/surya_inheritance_RuleSanctionsList.sol.png)
 
@@ -562,17 +589,23 @@ This rule requires that transfers must be approved by an operator before being e
 
 **Usage scenario**
 
-An operator calls `approveTransfer(from, to, value)`. The compliance manager binds the token with `bindToken(token)`. The token calls `detectTransferRestriction` (passes) and later `transferred` to consume the approval. Without approval, `detectTransferRestriction` returns code 46 and the transfer is rejected. The operator can revoke with `cancelTransferApproval`.
+An operator calls `approveTransfer(from, to, value)`. The compliance manager binds exactly one token with `bindToken(token)`; attempting to bind a second token reverts. The token calls `detectTransferRestriction` (passes) and later `transferred` to consume the approval. Without approval, `detectTransferRestriction` returns code 46 and the transfer is rejected. The operator can revoke with `cancelTransferApproval`. To migrate to a different token, the compliance manager must first call `unbindToken` before binding the new one.
 
 ## Access Control
 
-The modules `AccessControlModuleStandalone` allows to implement RBAC access control by  inheriting from the contract `AccessControl`from OpenZeppelin. 
+The module `AccessControlModuleStandalone` implements RBAC access control by inheriting from OpenZeppelin's `AccessControlEnumerable`.
 
-This module overrides the OpenZeppelin function `hasRole`to give by default all the roles to the `admin`.
+Each rule implements its own access control by inheriting from `AccessControlModuleStandalone`. The default admin is the address passed as `admin` to the constructor at deployment.
 
-Each rule implements its own access control by inheriting from the module `AccessControlModuleStandalone`.
+#### `DEFAULT_ADMIN_ROLE` implicit role behaviour
 
-For all rules, the default admin is the address put in argument(`admin`) inside the constructor and set when the contract is deployed.
+`AccessControlModuleStandalone` overrides OpenZeppelin's `hasRole` so that any account holding `DEFAULT_ADMIN_ROLE` returns `true` for **every** role check. This is intentional: the OpenZeppelin `DEFAULT_ADMIN_ROLE` holder can already grant itself any role at any time, so treating it as implicitly holding all roles from the start removes unnecessary ceremony and makes access management easier in practice.
+
+Practical consequences integrators must be aware of:
+
+- **`grantRole` to a default admin is a no-op.** `_grantRole` checks `!hasRole(role, account)` before writing storage; since the admin already returns `true` via the override, the storage write and the `RoleGranted` event are skipped. The admin will **not** appear in `getRoleMember` / `getRoleMemberCount` enumerations for non-default roles unless the role was explicitly granted before the admin was set.
+- **`revokeRole` / `renounceRole`** on a non-default role for a default admin are misleading. They emit `RoleRevoked` and clear the storage flag, but `hasRole` continues to return `true` because the account still holds `DEFAULT_ADMIN_ROLE`. The effective privilege is unchanged. To fully remove access, `DEFAULT_ADMIN_ROLE` itself must be revoked.
+- **Off-chain monitoring** should use `hasRole` queries, not role-membership events or enumeration, to determine the effective privileges of admin accounts.
 
 See also [docs.openzeppelin.com - AccessControl](https://docs.openzeppelin.com/contracts/5.x/api/access#AccessControl)
 
@@ -639,15 +672,19 @@ Here are the settings for [Hardhat](https://hardhat.org) and [Foundry](https://g
 
   - Forge std [v1.12.0](https://github.com/foundry-rs/forge-std/releases/tag/v1.12.0  )  
 
-  - OpenZeppelin Contracts (submodule) [v5.6.0](https://github.com/OpenZeppelin/openzeppelin-contracts/releases/tag/v5.6.0)
+  - OpenZeppelin Contracts (submodule) [v5.6.1](https://github.com/OpenZeppelin/openzeppelin-contracts/releases/tag/v5.6.1)
+
+  - OpenZeppelin Contracts Upgradeable (submodule) [v5.6.1](https://github.com/OpenZeppelin/openzeppelin-contracts-upgradeable/releases/tag/v5.6.1)
 
   - CMTAT [v3.2.0](https://github.com/CMTA/CMTAT/releases/tag/v3.2.0)
 
-  - RuleEngine [v3.0.0-rc1](https://github.com/CMTA/RuleEngine/releases/tag/v3.0.0-rc1)
+  - RuleEngine [v3.0.0-rc2](https://github.com/CMTA/RuleEngine/releases/tag/v3.0.0-rc2)
 
 ### Toolchain installation
 
-The contracts are developed and tested with [Foundry](https://book.getfoundry.sh), a smart contract development toolchain.
+This repository is primarily developed and tested with [Foundry](https://book.getfoundry.sh), a smart contract development toolchain.
+
+Hardhat configuration is also present to support contract compilation and a small smoke test with Hardhat.
 
 To install the Foundry suite, please refer to the official instructions in the [Foundry book](https://book.getfoundry.sh/getting-started/installation).
 
@@ -677,6 +714,12 @@ The official documentation is available in the Foundry [website](https://book.ge
  forge build
 ```
 
+Hardhat compilation (optional):
+
+```bash
+npm run hardhat:compile
+```
+
 ### Contract size
 
 ```bash
@@ -689,6 +732,12 @@ You can run the tests with
 
 ```bash
 forge test
+```
+
+Hardhat smoke test (optional):
+
+```bash
+npm run hardhat:test:smoke
 ```
 
 To run a specific test, use
@@ -729,6 +778,8 @@ Gas usage is tracked in two complementary files:
 
 ### Coverage
 
+![coverage](./doc/coverage/coverage.png)
+
 A code coverage is available in [index.html](./doc/coverage/coverage/index.html).
 
 * Perform a code coverage
@@ -746,14 +797,14 @@ forge coverage --report lcov
 - Generate `index.html`
 
 ```bash
-forge coverage --no-match-coverage "(script|mocks|test)" --report lcov && genhtml lcov.info --branch-coverage --output-dir coverage
+forge coverage --no-match-coverage "(script|mocks|test)" --report lcov && genhtml lcov.info --branch-coverage --prefix "$PWD/" --output-dir coverage
 ```
 
-See [Solidity Coverage in VS Code with Foundry](https://mirror.xyz/devanon.eth/RrDvKPnlD-pmpuW7hQeR5wWdVjklrpOgPCOA-PJkWFU) & [Foundry forge coverage](
+See [Solidity Coverage in VS Code with Foundry](https://mirror.xyz/devanon.eth/RrDvKPnlD-pmpuW7hQeR5wWdVjklrpOgPCOA-PJkWFU) & [Foundry forge coverage](https://www.rareskills.io/post/foundry-forge-coverage)
 
 ### Other
 
-Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.*
+Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.
 
 Foundry consists of:
 
@@ -1239,13 +1290,14 @@ Checks the listing status of multiple addresses in a single call.
 ##### Null address
 
 It is possible to add the null address (0x0) to the address list. In a whitelist, this enables mint/burn flows (since `from`/`to` can be zero). In a blacklist, adding `0x0` blocks mint/burn.
+For `RuleWhitelist`, you can also pre-list `0x0` at deployment using the constructor parameter `allowMintBurn=true`.
 
 ##### Duplicate address
 
 **addAddress**
 If the address already exists, the transaction is reverted to save gas.
 **addAddresses**
-If one of addresses already exist, there is no change for this address. The transaction remains valid (no revert).
+If one of the addresses already exist, there is no change for this address. The transaction remains valid (no revert).
 
 ##### NonExistent Address
 
@@ -1606,13 +1658,13 @@ Removes one approval for the transfer.
 #### approveAndTransferIfAllowed
 
 ```solidity
-function approveAndTransferIfAllowed(address token, address from, address to, uint256 value)
+function approveAndTransferIfAllowed(address from, address to, uint256 value)
     public
     onlyTransferApprover
     returns (bool)
 ```
 
-Approves then calls `transferFrom` using this rule as spender.
+Approves then calls `SafeERC20.safeTransferFrom` on the bound token using this rule as spender.
 
 #### approvedCount
 
@@ -1625,33 +1677,33 @@ function approvedCount(address from, address to, uint256 value)
 
 Returns the number of approvals for the transfer hash.
 
-
-
 ## Security
 
 ### Automated Analysis
 
-#### Aderyn (v0.2.0)
+Latest tool outputs for this release cycle (including feedback documents) are available in [`doc/security/audits/tools/v0.3.0/`](./doc/security/audits/tools/v0.3.0/).
+`v0.3.0` cleanup: removed unused `RuleConditionalTransferLight_TransferFailed` custom error after SafeERC20 migration.
 
-Static analysis was performed with [Aderyn](https://github.com/Cyfrin/aderyn). The full report and the project team's feedback are available in [`doc/security/audits/tools/v0.2.0/`](./doc/security/audits/tools/v0.2.0/).
+#### Aderyn (v0.3.0)
+
+Static analysis was performed with [Aderyn](https://github.com/Cyfrin/aderyn). The full report and the project team's feedback are available in [`doc/security/audits/tools/v0.3.0/`](./doc/security/audits/tools/v0.3.0/).
 
 | ID | Title | Instances | Verdict |
 |---|---|---|---|
-| L-1 | Centralization Risk | 41 | Acknowledged — by design (regulated token issuer model) |
-| L-2 | Unsafe ERC20 Operation | 1 | Acknowledged — return value already checked with `require` |
-| L-3 | Unspecific Solidity Pragma | 48 | Acknowledged — intentional for a library |
-| L-4 | Address State Variable Set Without Checks | 1 | False positive — check enforced in public-facing function |
-| L-5 | PUSH0 Opcode | 48 | Acknowledged — project targets Prague EVM |
-| L-6 | Modifier Invoked Only Once | 2 | Acknowledged — template method pattern; inlining would break abstraction |
-| L-7 | Empty Block | 34 | Acknowledged — `_authorize*()` hooks use modifier; `created()`/`destroyed()` are intentional no-ops |
-| L-8 | Costly Operations Inside Loop | 6 | Acknowledged — unavoidable (`EnumerableSet` requires one `SSTORE` per element) |
-| L-9 | Unchecked Return | 13 | False positive — all instances are `void` calls, checked in caller, or intentionally ignored |
+| L-1 | Centralization Risk | 46 | Acknowledged — by design (regulated token issuer model) |
+| L-2 | Unspecific Solidity Pragma | 54 | Acknowledged — intentional for a library |
+| L-3 | Address State Variable Set Without Checks | 1 | False positive — check enforced in public-facing function |
+| L-4 | PUSH0 Opcode | 54 | Acknowledged — project targets Prague EVM |
+| L-5 | Modifier Invoked Only Once | 2 | Acknowledged — template method pattern; inlining would break abstraction |
+| L-6 | Empty Block | 38 | Acknowledged — `_authorize*()` hooks use modifiers; intentional no-op implementations in required interface paths |
+| L-7 | Costly operations inside loop | 6 | Acknowledged — unavoidable (`EnumerableSet` requires one `SSTORE` per element) |
+| L-8 | Unchecked Return | 13 | Mixed — mostly false positives (`void` helpers or pre-checked single-item paths); constructor `_grantRole` intentionally ignored |
 
 No high-severity issues were reported.
 
-#### Slither (v0.2.0)
+#### Slither (v0.3.0)
 
-Static analysis was performed with [Slither](https://github.com/crytic/slither). The full report and the project team's feedback are available in [`doc/security/audits/tools/v0.2.0/`](./doc/security/audits/tools/v0.2.0/).
+Static analysis was performed with [Slither](https://github.com/crytic/slither). The full report and the project team's feedback are available in [`doc/security/audits/tools/v0.3.0/`](./doc/security/audits/tools/v0.3.0/).
 
 | Category | Severity | Instances | Verdict |
 |---|---|---|---|
@@ -1659,10 +1711,22 @@ Static analysis was performed with [Slither](https://github.com/crytic/slither).
 | unused-return | Medium | 6 | False positive — existence pre-checked at public layer before calling internal helper |
 | calls-loop | Low | 16 | Acknowledged — by design; wrapper must query each child rule; child rules are read-only |
 | assembly | Informational | 1 | Acknowledged — intentional gas optimisation in `_transferHash`; minimal and well-scoped |
-| missing-inheritance | Informational | 1 | Acknowledged — `TotalSupplyMock` is a test-only mock; strict interface declaration unnecessary |
 | naming-convention | Informational | 2 | Acknowledged — parameter names match ERC-2980 spec |
 | unindexed-event-address | Informational | 2 | Out of scope (both in `lib/RuleEngine`); `IAddressList` events previously fixed |
-| unused-state | Informational | 60 | False positive — `RuleNFTAdapter` constants used in base dispatch logic; Slither per-contract analysis limitation |
+| unused-state | Informational | 8 | False positive — `RuleNFTAdapter` constants used in base dispatch logic; Slither per-contract analysis limitation |
+
+#### Wake Arena (v0.2.0)
+
+AI-assisted static analysis was performed with [Wake Arena](https://getwake.io) by Ackee Blockchain Security. The full report and the project team's feedback are available in [`doc/security/audits/tools/v0.2.0/`](./doc/security/audits/tools/v0.2.0/).
+
+*Ackee Blockchain Security, Wake Arena AI Report | CMTA: Rules, March 16, 2026 18:00 UTC.*
+
+| ID | Title | Severity | Confidence | Verdict |
+|---|---|---|---|---|
+| H-1 | ConditionalTransferLight approvals not scoped by token | High | High | Fixed — single-token binding enforced in `bindToken`; `RuleConditionalTransferLight_TokenAlreadyBound` error added |
+| M-1 | Incomplete `supportsInterface` breaks ERC-165 discovery | Medium | High | Fixed — pre-computed constants + `IERC7551Compliance` + full ERC-3643 `ICompliance` ID (`IERC3643ComplianceFull`, `0x3144991c`) added |
+| I-1 | RuleERC2980 docs omit frozen spender on `transferFrom` | Informational | High | Fixed (doc only) — README, `AGENTS.md`, and `CLAUDE.md` updated to document spender freeze path |
+| I-2 | `hasRole` override: admin implicitly passes all role checks | Informational | High | Fixed (doc only) — dedicated section added to README documenting intentional design and off-chain monitoring guidance |
 
 ## Intellectual property
 

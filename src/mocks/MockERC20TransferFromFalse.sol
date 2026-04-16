@@ -4,6 +4,10 @@ pragma solidity ^0.8.20;
 contract MockERC20TransferFromFalse {
     mapping(address => mapping(address => uint256)) private _allowances;
 
+    /*//////////////////////////////////////////////////////////////
+                        EXTERNAL FUNCTIONS
+    //////////////////////////////////////////////////////////////*/
+
     function setAllowance(address owner, address spender, uint256 value) external {
         _allowances[owner][spender] = value;
     }

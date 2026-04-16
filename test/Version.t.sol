@@ -13,10 +13,10 @@ import {RuleERC2980} from "src/rules/validation/deployment/RuleERC2980.sol";
 import {RuleConditionalTransferLight} from "src/rules/operation/RuleConditionalTransferLight.sol";
 
 contract VersionTest is Test, HelperContract {
-    string constant EXPECTED_VERSION = "0.2.0";
+    string constant EXPECTED_VERSION = "0.3.0";
 
     function testVersionRuleWhitelist() public {
-        RuleWhitelist rule = new RuleWhitelist(DEFAULT_ADMIN_ADDRESS, ZERO_ADDRESS, true);
+        RuleWhitelist rule = new RuleWhitelist(DEFAULT_ADMIN_ADDRESS, ZERO_ADDRESS, true, false);
         assertEq(rule.version(), EXPECTED_VERSION);
     }
 
@@ -42,7 +42,7 @@ contract VersionTest is Test, HelperContract {
     }
 
     function testVersionRuleERC2980() public {
-        RuleERC2980 rule = new RuleERC2980(DEFAULT_ADMIN_ADDRESS, ZERO_ADDRESS);
+        RuleERC2980 rule = new RuleERC2980(DEFAULT_ADMIN_ADDRESS, ZERO_ADDRESS, false);
         assertEq(rule.version(), EXPECTED_VERSION);
     }
 

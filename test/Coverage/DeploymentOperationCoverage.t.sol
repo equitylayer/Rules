@@ -3,9 +3,12 @@ pragma solidity ^0.8.20;
 
 import {Test} from "forge-std/Test.sol";
 import {HelperContract} from "../HelperContract.sol";
-import {IERC165} from "OZ/utils/introspection/IERC165.sol";
-import {IRule} from "RuleEngine/interfaces/IRule.sol";
+import {IERC165} from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 import {RuleInterfaceId} from "RuleEngine/modules/library/RuleInterfaceId.sol";
+import {ERC1404ExtendInterfaceId} from "CMTAT/library/ERC1404ExtendInterfaceId.sol";
+import {RuleEngineInterfaceId} from "CMTAT/library/RuleEngineInterfaceId.sol";
+import {IERC7551Compliance} from "CMTAT/interfaces/tokenization/draft-IERC7551.sol";
+import {IERC3643ComplianceFull} from "src/mocks/IERC3643ComplianceFull.sol";
 import {ISanctionsList} from "src/rules/interfaces/ISanctionsList.sol";
 import {RuleConditionalTransferLight} from "src/rules/operation/RuleConditionalTransferLight.sol";
 import {
@@ -26,20 +29,20 @@ import {
 contract DeploymentCoverageExtraTest is Test, HelperContract {
     function testDeploymentWrappersAndHooksCoverage() public {
         RuleBlacklistHarness blacklist = new RuleBlacklistHarness(DEFAULT_ADMIN_ADDRESS, ZERO_ADDRESS);
-        RuleWhitelistHarness whitelist = new RuleWhitelistHarness(DEFAULT_ADMIN_ADDRESS, ZERO_ADDRESS, true);
+        RuleWhitelistHarness whitelist = new RuleWhitelistHarness(DEFAULT_ADMIN_ADDRESS, ZERO_ADDRESS, true, false);
         RuleWhitelistWrapperHarness wrapper = new RuleWhitelistWrapperHarness(DEFAULT_ADMIN_ADDRESS, ZERO_ADDRESS, true);
-        RuleERC2980Harness erc2980 = new RuleERC2980Harness(DEFAULT_ADMIN_ADDRESS, ZERO_ADDRESS);
+        RuleERC2980Harness erc2980 = new RuleERC2980Harness(DEFAULT_ADMIN_ADDRESS, ZERO_ADDRESS, false);
         RuleSanctionsListHarness sanctions =
             new RuleSanctionsListHarness(DEFAULT_ADMIN_ADDRESS, ZERO_ADDRESS, ISanctionsList(ZERO_ADDRESS));
 
         RuleBlacklistOwnable2StepHarness blacklistOwnable =
             new RuleBlacklistOwnable2StepHarness(DEFAULT_ADMIN_ADDRESS, ZERO_ADDRESS);
         RuleWhitelistOwnable2StepHarness whitelistOwnable =
-            new RuleWhitelistOwnable2StepHarness(DEFAULT_ADMIN_ADDRESS, ZERO_ADDRESS, true);
+            new RuleWhitelistOwnable2StepHarness(DEFAULT_ADMIN_ADDRESS, ZERO_ADDRESS, true, false);
         RuleWhitelistWrapperOwnable2StepHarness wrapperOwnable =
             new RuleWhitelistWrapperOwnable2StepHarness(DEFAULT_ADMIN_ADDRESS, ZERO_ADDRESS, true);
         RuleERC2980Ownable2StepHarness erc2980Ownable =
-            new RuleERC2980Ownable2StepHarness(DEFAULT_ADMIN_ADDRESS, ZERO_ADDRESS);
+            new RuleERC2980Ownable2StepHarness(DEFAULT_ADMIN_ADDRESS, ZERO_ADDRESS, false);
 
         assertGe(blacklist.exposedMsgDataLength(), 4);
         assertGe(whitelist.exposedMsgDataLength(), 4);
@@ -86,8 +89,11 @@ contract OperationCoverageExtraTest is Test, HelperContract {
         rule.created(ADDRESS1, 1);
         rule.destroyed(ADDRESS1, 1);
 
-        assertTrue(rule.supportsInterface(type(IRule).interfaceId));
         assertTrue(rule.supportsInterface(RuleInterfaceId.IRULE_INTERFACE_ID));
+        assertTrue(rule.supportsInterface(ERC1404ExtendInterfaceId.ERC1404EXTEND_INTERFACE_ID));
+        assertTrue(rule.supportsInterface(RuleEngineInterfaceId.RULE_ENGINE_INTERFACE_ID));
+        assertTrue(rule.supportsInterface(type(IERC7551Compliance).interfaceId));
+        assertTrue(rule.supportsInterface(type(IERC3643ComplianceFull).interfaceId));
         assertFalse(rule.supportsInterface(bytes4(0xdeadbeef)));
     }
 
@@ -96,9 +102,12 @@ contract OperationCoverageExtraTest is Test, HelperContract {
             new RuleConditionalTransferLightOwnable2Step(CONDITIONAL_TRANSFER_OPERATOR_ADDRESS);
 
         vm.prank(CONDITIONAL_TRANSFER_OPERATOR_ADDRESS);
-        rule.approveTransfer(ADDRESS1, ADDRESS2, 77);
+        rule.bindToken(ADDRESS3);
 
         vm.prank(CONDITIONAL_TRANSFER_OPERATOR_ADDRESS);
+        rule.approveTransfer(ADDRESS1, ADDRESS2, 77);
+
+        vm.prank(ADDRESS3);
         rule.transferred(ADDRESS3, ADDRESS1, ADDRESS2, 77);
 
         assertEq(rule.approvedCount(ADDRESS1, ADDRESS2, 77), 0);
@@ -114,8 +123,11 @@ contract OperationCoverageExtraTest is Test, HelperContract {
         assertEq(rule.messageForTransferRestriction(CODE_NONEXISTENT), TEXT_CODE_NOT_FOUND);
 
         assertTrue(rule.supportsInterface(type(IERC165).interfaceId));
-        assertTrue(rule.supportsInterface(type(IRule).interfaceId));
         assertTrue(rule.supportsInterface(RuleInterfaceId.IRULE_INTERFACE_ID));
+        assertTrue(rule.supportsInterface(ERC1404ExtendInterfaceId.ERC1404EXTEND_INTERFACE_ID));
+        assertTrue(rule.supportsInterface(RuleEngineInterfaceId.RULE_ENGINE_INTERFACE_ID));
+        assertTrue(rule.supportsInterface(type(IERC7551Compliance).interfaceId));
+        assertTrue(rule.supportsInterface(type(IERC3643ComplianceFull).interfaceId));
         assertFalse(rule.supportsInterface(bytes4(0xdeadbeef)));
     }
 }

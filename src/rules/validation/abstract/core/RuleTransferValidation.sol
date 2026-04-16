@@ -4,11 +4,14 @@ pragma solidity ^0.8.20;
 
 /* ==== CMTAT === */
 import {IERC1404, IERC1404Extend} from "CMTAT/interfaces/tokenization/draft-IERC1404.sol";
-import {IERC3643ComplianceRead} from "CMTAT/interfaces/tokenization/IERC3643Partial.sol";
+import {IERC3643ComplianceRead, IERC3643IComplianceContract} from "CMTAT/interfaces/tokenization/IERC3643Partial.sol";
 import {IERC7551Compliance} from "CMTAT/interfaces/tokenization/draft-IERC7551.sol";
 /* ==== RuleEngine === */
 import {IRule} from "RuleEngine/interfaces/IRule.sol";
 import {RuleInterfaceId} from "RuleEngine/modules/library/RuleInterfaceId.sol";
+/* ==== CMTAT libraries === */
+import {ERC1404ExtendInterfaceId} from "CMTAT/library/ERC1404ExtendInterfaceId.sol";
+import {RuleEngineInterfaceId} from "CMTAT/library/RuleEngineInterfaceId.sol";
 /* ==== Modules === */
 import {VersionModule} from "../../../../modules/VersionModule.sol";
 
@@ -19,32 +22,9 @@ abstract contract RuleTransferValidation is
     IERC7551Compliance,
     IRule
 {
-    /**
-     * @notice Internal transfer restriction check.
-     * @param from the origin address
-     * @param to the destination address
-     * @param value amount to transfer
-     * @return restrictionCode The restriction code for this rule.
-     */
-    function _detectTransferRestriction(address from, address to, uint256 value)
-        internal
-        view
-        virtual
-        returns (uint8 restrictionCode);
-
-    /**
-     * @notice Internal transfer restriction check for spender-initiated transfers.
-     * @param spender the caller executing the transfer
-     * @param from the origin address
-     * @param to the destination address
-     * @param value amount to transfer
-     * @return restrictionCode The restriction code for this rule.
-     */
-    function _detectTransferRestrictionFrom(address spender, address from, address to, uint256 value)
-        internal
-        view
-        virtual
-        returns (uint8 restrictionCode);
+    /*//////////////////////////////////////////////////////////////
+                        PUBLIC FUNCTIONS
+    //////////////////////////////////////////////////////////////*/
 
     /**
      * @inheritdoc IERC1404
@@ -104,6 +84,41 @@ abstract contract RuleTransferValidation is
     }
 
     function supportsInterface(bytes4 interfaceId) public view virtual returns (bool) {
-        return interfaceId == type(IRule).interfaceId || interfaceId == RuleInterfaceId.IRULE_INTERFACE_ID;
+        return interfaceId == RuleEngineInterfaceId.RULE_ENGINE_INTERFACE_ID
+            || interfaceId == ERC1404ExtendInterfaceId.ERC1404EXTEND_INTERFACE_ID
+            || interfaceId == RuleInterfaceId.IRULE_INTERFACE_ID
+            || interfaceId == type(IERC7551Compliance).interfaceId
+            || interfaceId == type(IERC3643IComplianceContract).interfaceId;
     }
+
+    /*//////////////////////////////////////////////////////////////
+                        INTERNAL FUNCTIONS
+    //////////////////////////////////////////////////////////////*/
+
+    /**
+     * @notice Internal transfer restriction check.
+     * @param from the origin address
+     * @param to the destination address
+     * @param value amount to transfer
+     * @return restrictionCode The restriction code for this rule.
+     */
+    function _detectTransferRestriction(address from, address to, uint256 value)
+        internal
+        view
+        virtual
+        returns (uint8 restrictionCode);
+
+    /**
+     * @notice Internal transfer restriction check for spender-initiated transfers.
+     * @param spender the caller executing the transfer
+     * @param from the origin address
+     * @param to the destination address
+     * @param value amount to transfer
+     * @return restrictionCode The restriction code for this rule.
+     */
+    function _detectTransferRestrictionFrom(address spender, address from, address to, uint256 value)
+        internal
+        view
+        virtual
+        returns (uint8 restrictionCode);
 }

@@ -19,7 +19,7 @@ contract TransferContextMocksTest is Test, HelperContract {
 
     function _deployWhitelistRule() internal returns (RuleWhitelist) {
         vm.prank(DEFAULT_ADMIN_ADDRESS);
-        RuleWhitelist rule = new RuleWhitelist(DEFAULT_ADMIN_ADDRESS, ZERO_ADDRESS, false);
+        RuleWhitelist rule = new RuleWhitelist(DEFAULT_ADMIN_ADDRESS, ZERO_ADDRESS, false, false);
         vm.startPrank(DEFAULT_ADMIN_ADDRESS);
         rule.addAddress(ADDRESS1);
         rule.addAddress(ADDRESS2);

@@ -2,7 +2,7 @@
 pragma solidity ^0.8.20;
 
 import {Test} from "forge-std/Test.sol";
-import {IAccessControl} from "OZ/access/IAccessControl.sol";
+import {IAccessControl} from "@openzeppelin/contracts/access/IAccessControl.sol";
 import {HelperContract} from "../../HelperContract.sol";
 import {RuleERC2980} from "src/rules/validation/deployment/RuleERC2980.sol";
 
@@ -20,7 +20,7 @@ contract RuleERC2980AccessControlTest is Test, HelperContract {
 
     function setUp() public {
         vm.startPrank(DEFAULT_ADMIN_ADDRESS);
-        ruleERC2980 = new RuleERC2980(DEFAULT_ADMIN_ADDRESS, ZERO_ADDRESS);
+        ruleERC2980 = new RuleERC2980(DEFAULT_ADMIN_ADDRESS, ZERO_ADDRESS, false);
         ruleERC2980.grantRole(WHITELIST_ADD, WHITELIST_OPERATOR);
         ruleERC2980.grantRole(WHITELIST_REMOVE, WHITELIST_OPERATOR);
         ruleERC2980.grantRole(FROZENLIST_ADD, FROZENLIST_OPERATOR);

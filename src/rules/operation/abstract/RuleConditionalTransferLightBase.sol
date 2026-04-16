@@ -6,37 +6,56 @@ import {IERC1404, IERC1404Extend} from "CMTAT/interfaces/tokenization/draft-IERC
 import {IERC3643ComplianceRead, IERC3643IComplianceContract} from "CMTAT/interfaces/tokenization/IERC3643Partial.sol";
 import {IERC7551Compliance} from "CMTAT/interfaces/tokenization/draft-IERC7551.sol";
 import {IRule} from "RuleEngine/interfaces/IRule.sol";
-import {ITransferContext} from "../../interfaces/ITransferContext.sol";
-import {IERC20} from "OZ/token/ERC20/IERC20.sol";
-import {RuleConditionalTransferLightInvariantStorage} from "./RuleConditionalTransferLightInvariantStorage.sol";
+import {ERC3643ComplianceModule} from "RuleEngine/modules/ERC3643ComplianceModule.sol";
+import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import {RuleConditionalTransferLightApprovalBase} from "./RuleConditionalTransferLightApprovalBase.sol";
 import {VersionModule} from "../../../modules/VersionModule.sol";
 
 /**
  * @title RuleConditionalTransferLightBase
- * @dev Requires operator approval for each transfer. Same transfer (from, to, value)
- *      can be approved multiple times to allow repeated transfers.
+ * @dev Wires the approval state machine into the ERC-3643 / ERC-1404 / IRule compliance
+ *      interface layer and enforces single-token binding.
  */
 abstract contract RuleConditionalTransferLightBase is
     VersionModule,
-    RuleConditionalTransferLightInvariantStorage,
+    ERC3643ComplianceModule,
+    RuleConditionalTransferLightApprovalBase,
     IRule
 {
-    // Mapping from transfer hash to approval count
-    mapping(bytes32 => uint256) public approvalCounts;
+    using SafeERC20 for IERC20;
 
-    function approveTransfer(address from, address to, uint256 value) public onlyTransferApprover {
-        bytes32 transferHash = _transferHash(from, to, value);
-        approvalCounts[transferHash] += 1;
-        emit TransferApproved(from, to, value, approvalCounts[transferHash]);
+    /*//////////////////////////////////////////////////////////////
+                        EXTERNAL FUNCTIONS
+    //////////////////////////////////////////////////////////////*/
+
+    function canReturnTransferRestrictionCode(uint8 restrictionCode) external pure override(IRule) returns (bool) {
+        return restrictionCode == CODE_TRANSFER_REQUEST_NOT_APPROVED;
     }
 
-    function cancelTransferApproval(address from, address to, uint256 value) public onlyTransferApprover {
-        bytes32 transferHash = _transferHash(from, to, value);
-        uint256 count = approvalCounts[transferHash];
-        require(count != 0, TransferApprovalNotFound());
-        approvalCounts[transferHash] = count - 1;
-        emit TransferApprovalCancelled(from, to, value, approvalCounts[transferHash]);
+    function messageForTransferRestriction(uint8 restrictionCode)
+        external
+        pure
+        override(IERC1404)
+        returns (string memory)
+    {
+        if (restrictionCode == CODE_TRANSFER_REQUEST_NOT_APPROVED) {
+            return TEXT_TRANSFER_REQUEST_NOT_APPROVED;
+        }
+        return TEXT_CODE_NOT_FOUND;
     }
+
+    function created(address to, uint256 value) external onlyBoundToken {
+        _transferred(address(0), to, value);
+    }
+
+    function destroyed(address from, uint256 value) external onlyBoundToken {
+        _transferred(from, address(0), value);
+    }
+
+    /*//////////////////////////////////////////////////////////////
+                        PUBLIC FUNCTIONS
+    //////////////////////////////////////////////////////////////*/
 
     /**
      * @notice Approves and performs a transferFrom using this rule as spender.
@@ -44,26 +63,21 @@ abstract contract RuleConditionalTransferLightBase is
      * @dev This function is only safe for tokens that call back `transferred()` during transfer.
      * @dev CEI is intentionally inverted so the approval exists for the callback.
      */
-    function approveAndTransferIfAllowed(address token, address from, address to, uint256 value)
+    function approveAndTransferIfAllowed(address from, address to, uint256 value)
         public
         onlyTransferApprover
         returns (bool)
     {
-        require(token != address(0), RuleConditionalTransferLight_TokenAddressZeroNotAllowed());
+        address token = getTokenBound();
+        require(token != address(0), RuleConditionalTransferLight_TokenNotBound());
 
         approveTransfer(from, to, value);
 
         uint256 allowed = IERC20(token).allowance(from, address(this));
         require(allowed >= value, RuleConditionalTransferLight_InsufficientAllowance(token, from, allowed, value));
 
-        bool success = IERC20(token).transferFrom(from, to, value);
-        require(success, RuleConditionalTransferLight_TransferFailed());
+        IERC20(token).safeTransferFrom(from, to, value);
         return true;
-    }
-
-    function approvedCount(address from, address to, uint256 value) public view returns (uint256) {
-        bytes32 transferHash = _transferHash(from, to, value);
-        return approvalCounts[transferHash];
     }
 
     function transferred(address from, address to, uint256 value)
@@ -86,6 +100,20 @@ abstract contract RuleConditionalTransferLightBase is
         onlyTransferExecutor
     {
         _transferred(from, to, value);
+    }
+
+    /**
+     * @notice Binds a token to this rule. Reverts if a token is already bound.
+     * @dev Enforces single-token binding to prevent cross-token approval replay.
+     *      To migrate to a new token, call `unbindToken` first.
+     * @dev WARNING: `unbindToken` does not clear `approvalCounts`. Stale approvals
+     *      from the previous token remain in storage and can be consumed after rebinding.
+     *      The operator who controls rebinding also controls approvals, so the trust
+     *      model is preserved, but integrators should be aware of this behavior.
+     */
+    function bindToken(address token) public override onlyComplianceManager {
+        require(getTokenBound() == address(0), RuleConditionalTransferLight_TokenAlreadyBound());
+        _bindToken(token);
     }
 
     function detectTransferRestriction(address from, address to, uint256 value)
@@ -138,69 +166,11 @@ abstract contract RuleConditionalTransferLightBase is
             == uint8(IERC1404Extend.REJECTED_CODE_BASE.TRANSFER_OK);
     }
 
-    function canReturnTransferRestrictionCode(uint8 restrictionCode) external pure override(IRule) returns (bool) {
-        return restrictionCode == CODE_TRANSFER_REQUEST_NOT_APPROVED;
-    }
-
-    function messageForTransferRestriction(uint8 restrictionCode)
-        external
-        pure
-        override(IERC1404)
-        returns (string memory)
-    {
-        if (restrictionCode == CODE_TRANSFER_REQUEST_NOT_APPROVED) {
-            return TEXT_TRANSFER_REQUEST_NOT_APPROVED;
-        }
-        return TEXT_CODE_NOT_FOUND;
-    }
-
-    function transferred(ITransferContext.FungibleTransferContext calldata ctx) external onlyTransferExecutor {
-        _transferredFromContext(ctx);
-    }
-
-    function _transferredFromContext(ITransferContext.FungibleTransferContext calldata ctx) internal virtual {
-        _transferred(ctx.from, ctx.to, ctx.value);
-    }
-
-    function _transferred(address from, address to, uint256 value) internal virtual {
-        if (from == address(0) || to == address(0)) {
-            return;
-        }
-        bytes32 transferHash = _transferHash(from, to, value);
-        uint256 count = approvalCounts[transferHash];
-
-        require(count != 0, TransferNotApproved());
-
-        approvalCounts[transferHash] = count - 1;
-        emit TransferExecuted(from, to, value, approvalCounts[transferHash]);
-    }
-
-    function _transferHash(address from, address to, uint256 value) internal pure virtual returns (bytes32 hash) {
-        // Linter suggestion (`asm-keccak256`): hash packed values in assembly to avoid abi.encodePacked overhead.
-        assembly ("memory-safe") {
-            let ptr := mload(0x40)
-            mstore(ptr, shl(96, from))
-            mstore(add(ptr, 0x20), shl(96, to))
-            mstore(add(ptr, 0x40), value)
-            hash := keccak256(ptr, 0x60)
-        }
-    }
-
     /*//////////////////////////////////////////////////////////////
                             ACCESS CONTROL
     //////////////////////////////////////////////////////////////*/
 
-    modifier onlyTransferApprover() {
-        _authorizeTransferApproval();
-        _;
+    function _authorizeTransferExecution() internal view override {
+        require(isTokenBound(_msgSender()), RuleConditionalTransferLight_TransferExecutorUnauthorized(_msgSender()));
     }
-
-    modifier onlyTransferExecutor() {
-        _authorizeTransferExecution();
-        _;
-    }
-
-    function _authorizeTransferApproval() internal view virtual;
-
-    function _authorizeTransferExecution() internal view virtual;
 }

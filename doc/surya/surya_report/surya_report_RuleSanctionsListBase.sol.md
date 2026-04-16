@@ -5,7 +5,7 @@
 
 |  File Name  |  SHA-1 Hash  |
 |-------------|--------------|
-| ./rules/validation/abstract/base/RuleSanctionsListBase.sol | bdaa898898ea6ba654f2b627b3dd0161b3c39d39 |
+| ./rules/validation/abstract/base/RuleSanctionsListBase.sol | c2e3984467b78f44467fceaeb9773a6dbd98ba83 |
 
 
 ### Contracts Description Table
@@ -17,18 +17,18 @@
 ||||||
 | **RuleSanctionsListBase** | Implementation | MetaTxModuleStandalone, RuleNFTAdapter, RuleSanctionsListInvariantStorage |||
 | └ | <Constructor> | Public ❗️ | 🛑  | MetaTxModuleStandalone |
-| └ | _detectTransferRestriction | Internal 🔒 |   | |
-| └ | _detectTransferRestrictionFrom | Internal 🔒 |   | |
 | └ | canReturnTransferRestrictionCode | External ❗️ |   |NO❗️ |
-| └ | messageForTransferRestriction | Public ❗️ |   |NO❗️ |
 | └ | setSanctionListOracle | Public ❗️ | 🛑  | onlySanctionListManager |
 | └ | clearSanctionListOracle | Public ❗️ | 🛑  | onlySanctionListManager |
 | └ | transferred | Public ❗️ |   |NO❗️ |
 | └ | transferred | Public ❗️ |   |NO❗️ |
+| └ | messageForTransferRestriction | Public ❗️ |   |NO❗️ |
+| └ | _authorizeSanctionListManager | Internal 🔒 |   | |
+| └ | _detectTransferRestriction | Internal 🔒 |   | |
+| └ | _detectTransferRestrictionFrom | Internal 🔒 |   | |
 | └ | _transferred | Internal 🔒 |   | |
 | └ | _transferredFrom | Internal 🔒 |   | |
 | └ | _setSanctionListOracle | Internal 🔒 | 🛑  | |
-| └ | _authorizeSanctionListManager | Internal 🔒 |   | |
 
 
 ### Legend

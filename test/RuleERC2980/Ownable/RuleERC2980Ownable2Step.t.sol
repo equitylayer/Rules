@@ -9,7 +9,7 @@ import {
 contract RuleERC2980Ownable2StepTest is Ownable2StepTestBase {
     function _deployOwnable2Step() internal override returns (IOwnable2StepLike, address) {
         address ownerAddr = WHITELIST_OPERATOR_ADDRESS;
-        RuleERC2980Ownable2StepContract rule = new RuleERC2980Ownable2StepContract(ownerAddr, ZERO_ADDRESS);
+        RuleERC2980Ownable2StepContract rule = new RuleERC2980Ownable2StepContract(ownerAddr, ZERO_ADDRESS, false);
         return (IOwnable2StepLike(address(rule)), ownerAddr);
     }
 }

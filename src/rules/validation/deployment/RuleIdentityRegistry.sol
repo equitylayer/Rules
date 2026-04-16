@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MPL-2.0
 pragma solidity ^0.8.20;
 
-import {AccessControlEnumerable} from "OZ/access/extensions/AccessControlEnumerable.sol";
+import {AccessControlEnumerable} from "@openzeppelin/contracts/access/extensions/AccessControlEnumerable.sol";
 import {AccessControlModuleStandalone} from "../../../modules/AccessControlModuleStandalone.sol";
 import {RuleIdentityRegistryBase} from "../abstract/base/RuleIdentityRegistryBase.sol";
 import {RuleTransferValidation} from "../abstract/core/RuleTransferValidation.sol";
@@ -12,10 +12,18 @@ import {RuleTransferValidation} from "../abstract/core/RuleTransferValidation.so
  * @dev Burns (to == address(0)) are allowed even if the sender is not verified.
  */
 contract RuleIdentityRegistry is AccessControlModuleStandalone, RuleIdentityRegistryBase {
+    /*//////////////////////////////////////////////////////////////
+                             CONSTRUCTOR
+    //////////////////////////////////////////////////////////////*/
+
     constructor(address admin, address identityRegistry_)
         AccessControlModuleStandalone(admin)
         RuleIdentityRegistryBase(identityRegistry_)
     {}
+
+    /*//////////////////////////////////////////////////////////////
+                          PUBLIC FUNCTIONS
+    //////////////////////////////////////////////////////////////*/
 
     function supportsInterface(bytes4 interfaceId)
         public

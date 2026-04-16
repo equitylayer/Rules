@@ -19,7 +19,7 @@ contract RuleERC2980Test is Test, HelperContract {
 
     function setUp() public {
         vm.prank(DEFAULT_ADMIN_ADDRESS);
-        ruleERC2980 = new RuleERC2980(DEFAULT_ADMIN_ADDRESS, ZERO_ADDRESS);
+        ruleERC2980 = new RuleERC2980(DEFAULT_ADMIN_ADDRESS, ZERO_ADDRESS, false);
 
         // Whitelist ADDRESS2 (recipient) so transfer tests can focus on the specific check
         vm.prank(DEFAULT_ADMIN_ADDRESS);
@@ -101,6 +101,21 @@ contract RuleERC2980Test is Test, HelperContract {
         // ADDRESS1 is not whitelisted but can still send to whitelisted ADDRESS2
         assertFalse(ruleERC2980.whitelist(ADDRESS1));
         resUint8 = ruleERC2980.detectTransferRestriction(ADDRESS1, ADDRESS2, 50);
+        assertEq(resUint8, NO_ERROR);
+    }
+
+    function testBurnRecipientNotWhitelistedByDefault() public {
+        assertFalse(ruleERC2980.whitelist(ZERO_ADDRESS));
+        resUint8 = ruleERC2980.detectTransferRestriction(ADDRESS1, ZERO_ADDRESS, 20);
+        assertEq(resUint8, CODE_TO_NOT_WHITELISTED);
+    }
+
+    function testAllowBurnConstructorWhitelistsZeroAddress() public {
+        vm.prank(DEFAULT_ADMIN_ADDRESS);
+        RuleERC2980 burnEnabledRule = new RuleERC2980(DEFAULT_ADMIN_ADDRESS, ZERO_ADDRESS, true);
+
+        assertTrue(burnEnabledRule.whitelist(ZERO_ADDRESS));
+        resUint8 = burnEnabledRule.detectTransferRestriction(ADDRESS1, ZERO_ADDRESS, 20);
         assertEq(resUint8, NO_ERROR);
     }
 

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MPL-2.0
 pragma solidity ^0.8.20;
 
-import {AccessControlEnumerable} from "OZ/access/extensions/AccessControlEnumerable.sol";
+import {AccessControlEnumerable} from "@openzeppelin/contracts/access/extensions/AccessControlEnumerable.sol";
 import {AccessControlModuleStandalone} from "../../../modules/AccessControlModuleStandalone.sol";
 import {RuleMaxTotalSupplyBase} from "../abstract/base/RuleMaxTotalSupplyBase.sol";
 import {RuleTransferValidation} from "../abstract/core/RuleTransferValidation.sol";
@@ -11,6 +11,10 @@ import {RuleTransferValidation} from "../abstract/core/RuleTransferValidation.so
  * @notice Restricts minting so that total supply never exceeds a maximum value.
  */
 contract RuleMaxTotalSupply is AccessControlModuleStandalone, RuleMaxTotalSupplyBase {
+    /*//////////////////////////////////////////////////////////////
+                             CONSTRUCTOR
+    //////////////////////////////////////////////////////////////*/
+
     /**
      * @param admin Address that receives the default admin role.
      * @param tokenContract_ Token contract that exposes totalSupply (must be non-zero).
@@ -20,6 +24,10 @@ contract RuleMaxTotalSupply is AccessControlModuleStandalone, RuleMaxTotalSupply
         AccessControlModuleStandalone(admin)
         RuleMaxTotalSupplyBase(tokenContract_, maxTotalSupply_)
     {}
+
+    /*//////////////////////////////////////////////////////////////
+                          PUBLIC FUNCTIONS
+    //////////////////////////////////////////////////////////////*/
 
     function supportsInterface(bytes4 interfaceId)
         public

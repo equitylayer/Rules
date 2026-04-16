@@ -20,7 +20,9 @@ node_modules/
 /history
 /ERCSpecification
 *.dbg.json
-/skills
+
+# Codex
+.codex
 
 #drawio
 *.bkp

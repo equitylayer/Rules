@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MPL-2.0
 pragma solidity ^0.8.20;
 
-import {AccessControlEnumerable} from "OZ/access/extensions/AccessControlEnumerable.sol";
-import {Context} from "OZ/utils/Context.sol";
+import {AccessControlEnumerable} from "@openzeppelin/contracts/access/extensions/AccessControlEnumerable.sol";
+import {Context} from "@openzeppelin/contracts/utils/Context.sol";
 /* ==== Abstract contracts === */
 import {AccessControlModuleStandalone} from "../../../modules/AccessControlModuleStandalone.sol";
 import {RuleERC2980Base} from "../abstract/base/RuleERC2980Base.sol";
@@ -37,14 +37,15 @@ contract RuleERC2980 is RuleERC2980Base, AccessControlModuleStandalone {
     /**
      * @param admin Address that receives `DEFAULT_ADMIN_ROLE` (implicitly holds all roles).
      * @param forwarderIrrevocable Address of the ERC-2771 forwarder for meta-transactions.
+     * @param allowBurn If true, whitelists `address(0)` at deployment to allow burn/redemption flows.
      */
-    constructor(address admin, address forwarderIrrevocable)
-        RuleERC2980Base(forwarderIrrevocable)
+    constructor(address admin, address forwarderIrrevocable, bool allowBurn)
+        RuleERC2980Base(forwarderIrrevocable, allowBurn)
         AccessControlModuleStandalone(admin)
     {}
 
     /*//////////////////////////////////////////////////////////////
-                           INTERFACE SUPPORT
+                           PUBLIC FUNCTIONS
     //////////////////////////////////////////////////////////////*/
 
     function supportsInterface(bytes4 interfaceId)
@@ -68,6 +69,10 @@ contract RuleERC2980 is RuleERC2980Base, AccessControlModuleStandalone {
     function _authorizeFrozenlistAdd() internal view virtual override onlyRole(FROZENLIST_ADD_ROLE) {}
 
     function _authorizeFrozenlistRemove() internal view virtual override onlyRole(FROZENLIST_REMOVE_ROLE) {}
+
+    /*//////////////////////////////////////////////////////////////
+                        INTERNAL FUNCTIONS
+    //////////////////////////////////////////////////////////////*/
 
     function _msgSender() internal view virtual override(Context, RuleERC2980Base) returns (address sender) {
         return super._msgSender();

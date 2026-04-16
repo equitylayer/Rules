@@ -3,13 +3,17 @@
 pragma solidity ^0.8.20;
 
 /* ==== OpenZeppelin === */
-import {AccessControl} from "OZ/access/AccessControl.sol";
-import {IAccessControl} from "OZ/access/IAccessControl.sol";
-import {AccessControlEnumerable} from "OZ/access/extensions/AccessControlEnumerable.sol";
+import {AccessControl} from "@openzeppelin/contracts/access/AccessControl.sol";
+import {IAccessControl} from "@openzeppelin/contracts/access/IAccessControl.sol";
+import {AccessControlEnumerable} from "@openzeppelin/contracts/access/extensions/AccessControlEnumerable.sol";
 
 abstract contract AccessControlModuleStandalone is AccessControlEnumerable {
     error AccessControlModuleStandalone_AddressZeroNotAllowed();
-    /* ============ Constructor ============ */
+
+    /*//////////////////////////////////////////////////////////////
+                             CONSTRUCTOR
+    //////////////////////////////////////////////////////////////*/
+
     /**
      * @notice Assigns the provided address as the default admin.
      * @dev
@@ -20,7 +24,6 @@ abstract contract AccessControlModuleStandalone is AccessControlEnumerable {
      *
      * @param admin The address that will receive the `DEFAULT_ADMIN_ROLE`.
      */
-
     constructor(address admin) {
         require(admin != address(0), AccessControlModuleStandalone_AddressZeroNotAllowed());
         // we don't check the return value
@@ -30,8 +33,9 @@ abstract contract AccessControlModuleStandalone is AccessControlEnumerable {
     }
 
     /*//////////////////////////////////////////////////////////////
-                            PUBLIC/EXTERNAL FUNCTIONS
+                          PUBLIC FUNCTIONS
     //////////////////////////////////////////////////////////////*/
+
     /**
      * @dev Returns `true` if `account` has been granted `role`.
      */

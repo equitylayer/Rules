@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MPL-2.0
 pragma solidity ^0.8.20;
 
-import {AccessControlEnumerable} from "OZ/access/extensions/AccessControlEnumerable.sol";
-import {Context} from "OZ/utils/Context.sol";
+import {AccessControlEnumerable} from "@openzeppelin/contracts/access/extensions/AccessControlEnumerable.sol";
+import {Context} from "@openzeppelin/contracts/utils/Context.sol";
 /* ==== Abstract contracts === */
 import {AccessControlModuleStandalone} from "../../../modules/AccessControlModuleStandalone.sol";
 import {RuleWhitelistBase} from "../abstract/base/RuleWhitelistBase.sol";
@@ -25,15 +25,19 @@ contract RuleWhitelist is RuleWhitelistBase, AccessControlModuleStandalone {
     /**
      * @param admin Address of the contract (Access Control)
      * @param forwarderIrrevocable Address of the forwarder, required for the gasless support
+     * @param checkSpender_ Enables spender checks for transferFrom when true.
+     * @param allowMintBurn Pre-lists `address(0)` at deployment when true.
      */
-    constructor(address admin, address forwarderIrrevocable, bool checkSpender_)
-        RuleWhitelistBase(forwarderIrrevocable, checkSpender_)
+    constructor(address admin, address forwarderIrrevocable, bool checkSpender_, bool allowMintBurn)
+        RuleWhitelistBase(forwarderIrrevocable, checkSpender_, allowMintBurn)
         AccessControlModuleStandalone(admin)
     {
         // no-op
     }
 
-    /* ============  View Functions ============ */
+    /*//////////////////////////////////////////////////////////////
+                          PUBLIC FUNCTIONS
+    //////////////////////////////////////////////////////////////*/
 
     /**
      * @notice Indicates whether this contract supports a given interface.
@@ -60,6 +64,10 @@ contract RuleWhitelist is RuleWhitelistBase, AccessControlModuleStandalone {
     function _authorizeAddressListAdd() internal view virtual override onlyRole(ADDRESS_LIST_ADD_ROLE) {}
 
     function _authorizeAddressListRemove() internal view virtual override onlyRole(ADDRESS_LIST_REMOVE_ROLE) {}
+
+    /*//////////////////////////////////////////////////////////////
+                        INTERNAL FUNCTIONS
+    //////////////////////////////////////////////////////////////*/
 
     function _msgSender() internal view virtual override(Context, RuleAddressSet) returns (address sender) {
         return super._msgSender();

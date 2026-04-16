@@ -24,9 +24,9 @@ contract CMTATIntegrationWhitelistWrapper is Test, HelperContract {
     // Arrange
     function setUp() public {
         vm.prank(WHITELIST_OPERATOR_ADDRESS);
-        ruleWhitelist = new RuleWhitelist(WHITELIST_OPERATOR_ADDRESS, ZERO_ADDRESS, true);
-        ruleWhitelist2 = new RuleWhitelist(WHITELIST_OPERATOR_ADDRESS, ZERO_ADDRESS, true);
-        ruleWhitelist3 = new RuleWhitelist(WHITELIST_OPERATOR_ADDRESS, ZERO_ADDRESS, true);
+        ruleWhitelist = new RuleWhitelist(WHITELIST_OPERATOR_ADDRESS, ZERO_ADDRESS, true, false);
+        ruleWhitelist2 = new RuleWhitelist(WHITELIST_OPERATOR_ADDRESS, ZERO_ADDRESS, true, false);
+        ruleWhitelist3 = new RuleWhitelist(WHITELIST_OPERATOR_ADDRESS, ZERO_ADDRESS, true, false);
         ruleWhitelistWrapper = new RuleWhitelistWrapper(WHITELIST_OPERATOR_ADDRESS, ZERO_ADDRESS, true);
         vm.prank(WHITELIST_OPERATOR_ADDRESS);
         ruleWhitelistWrapper.addRule(ruleWhitelist);
@@ -342,7 +342,7 @@ contract CMTATIntegrationWhitelistWrapper is Test, HelperContract {
     function testInternalTransferredSpenderOverload() public {
         RuleWhitelistWrapperHarnessInternal wrapperHarness =
             new RuleWhitelistWrapperHarnessInternal(WHITELIST_OPERATOR_ADDRESS, ZERO_ADDRESS, true);
-        RuleWhitelist child = new RuleWhitelist(WHITELIST_OPERATOR_ADDRESS, ZERO_ADDRESS, true);
+        RuleWhitelist child = new RuleWhitelist(WHITELIST_OPERATOR_ADDRESS, ZERO_ADDRESS, true, false);
 
         vm.prank(WHITELIST_OPERATOR_ADDRESS);
         wrapperHarness.addRule(child);

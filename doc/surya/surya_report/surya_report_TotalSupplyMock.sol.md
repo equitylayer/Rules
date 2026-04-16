@@ -5,7 +5,7 @@
 
 |  File Name  |  SHA-1 Hash  |
 |-------------|--------------|
-| ./mocks/TotalSupplyMock.sol | 200ea8b14c36b646b38d1487be97223685750a0f |
+| ./mocks/TotalSupplyMock.sol | 6c950ae26666c8693a87d9c66ea2a87107d03dd1 |
 
 
 ### Contracts Description Table
@@ -16,8 +16,8 @@
 |     └      |  **Function Name**  |  **Visibility**  |  **Mutability**  |  **Modifiers**  |
 ||||||
 | **TotalSupplyMock** | Implementation |  |||
-| └ | totalSupply | External ❗️ |   |NO❗️ |
 | └ | setTotalSupply | External ❗️ | 🛑  |NO❗️ |
+| └ | totalSupply | External ❗️ |   |NO❗️ |
 
 
 ### Legend

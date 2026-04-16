@@ -24,10 +24,6 @@ abstract contract RuleAddressSet is
     IAddressList
 {
     /*//////////////////////////////////////////////////////////////
-                                STATE
-    //////////////////////////////////////////////////////////////*/
-
-    /*//////////////////////////////////////////////////////////////
                               CONSTRUCTOR
     //////////////////////////////////////////////////////////////*/
 
@@ -38,7 +34,25 @@ abstract contract RuleAddressSet is
     constructor(address forwarderIrrevocable) MetaTxModuleStandalone(forwarderIrrevocable) {}
 
     /*//////////////////////////////////////////////////////////////
-                              CORE LOGIC
+                            ACCESS CONTROL
+    //////////////////////////////////////////////////////////////*/
+
+    modifier onlyAddressListAdd() {
+        _authorizeAddressListAdd();
+        _;
+    }
+
+    modifier onlyAddressListRemove() {
+        _authorizeAddressListRemove();
+        _;
+    }
+
+    function _authorizeAddressListAdd() internal view virtual;
+
+    function _authorizeAddressListRemove() internal view virtual;
+
+    /*//////////////////////////////////////////////////////////////
+                          PUBLIC FUNCTIONS
     //////////////////////////////////////////////////////////////*/
 
     /**
@@ -91,24 +105,6 @@ abstract contract RuleAddressSet is
         emit RemoveAddress(targetAddress);
     }
 
-    /*//////////////////////////////////////////////////////////////
-                            ACCESS CONTROL
-    //////////////////////////////////////////////////////////////*/
-
-    modifier onlyAddressListAdd() {
-        _authorizeAddressListAdd();
-        _;
-    }
-
-    modifier onlyAddressListRemove() {
-        _authorizeAddressListRemove();
-        _;
-    }
-
-    function _authorizeAddressListAdd() internal view virtual;
-
-    function _authorizeAddressListRemove() internal view virtual;
-
     /**
      * @notice Returns the total number of currently listed addresses.
      * @return count The number of listed addresses.
@@ -148,7 +144,7 @@ abstract contract RuleAddressSet is
     }
 
     /*//////////////////////////////////////////////////////////////
-                             ERC-2771 META TX
+                             INTERNAL FUNCTIONS
     //////////////////////////////////////////////////////////////*/
 
     /// @inheritdoc ERC2771Context

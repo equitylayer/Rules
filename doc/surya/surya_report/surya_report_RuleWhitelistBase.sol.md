@@ -5,7 +5,7 @@
 
 |  File Name  |  SHA-1 Hash  |
 |-------------|--------------|
-| ./rules/validation/abstract/base/RuleWhitelistBase.sol | c294dd72e48d0a71699d3b54c560e1e5c23d52da |
+| ./rules/validation/abstract/base/RuleWhitelistBase.sol | 3dc6bbac3c9d6bbbb012578f4d0ecd1fd790f44c |
 
 
 ### Contracts Description Table
@@ -17,13 +17,13 @@
 ||||||
 | **RuleWhitelistBase** | Implementation | RuleAddressSet, RuleWhitelistShared, IIdentityRegistryVerified |||
 | └ | <Constructor> | Public ❗️ | 🛑  | RuleAddressSet |
-| └ | _detectTransferRestriction | Internal 🔒 |   | |
-| └ | _detectTransferRestrictionFrom | Internal 🔒 |   | |
-| └ | isVerified | Public ❗️ |   |NO❗️ |
 | └ | setCheckSpender | Public ❗️ | 🛑  | onlyCheckSpenderManager |
-| └ | _setCheckSpender | Internal 🔒 | 🛑  | |
+| └ | isVerified | Public ❗️ |   |NO❗️ |
 | └ | supportsInterface | Public ❗️ |   |NO❗️ |
 | └ | _authorizeCheckSpenderManager | Internal 🔒 |   | |
+| └ | _detectTransferRestriction | Internal 🔒 |   | |
+| └ | _detectTransferRestrictionFrom | Internal 🔒 |   | |
+| └ | _setCheckSpender | Internal 🔒 | 🛑  | |
 
 
 ### Legend

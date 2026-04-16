@@ -6,6 +6,7 @@ import {HelperContract} from "../HelperContract.sol";
 import {RuleConditionalTransferLight} from "src/rules/operation/RuleConditionalTransferLight.sol";
 import {MockERC20WithTransferContext} from "src/mocks/MockERC20WithTransferContext.sol";
 import {MockERC20TransferFromFalse} from "src/mocks/MockERC20TransferFromFalse.sol";
+import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
 contract RuleConditionalTransferLightApproveAndTransfer is Test, HelperContract {
     RuleConditionalTransferLight private rule;
@@ -28,17 +29,18 @@ contract RuleConditionalTransferLightApproveAndTransfer is Test, HelperContract 
         token.approve(address(rule), 10);
 
         vm.prank(DEFAULT_ADMIN_ADDRESS);
-        rule.approveAndTransferIfAllowed(address(token), ADDRESS1, ADDRESS2, 10);
+        rule.approveAndTransferIfAllowed(ADDRESS1, ADDRESS2, 10);
 
         assertEq(token.balanceOf(ADDRESS1), 90);
         assertEq(token.balanceOf(ADDRESS2), 10);
         assertEq(rule.approvedCount(ADDRESS1, ADDRESS2, 10), 0);
     }
 
-    function testApproveAndTransferIfAllowedRevertsOnZeroToken() public {
-        vm.expectRevert(RuleConditionalTransferLight_TokenAddressZeroNotAllowed.selector);
+    function testApproveAndTransferIfAllowedRevertsWhenNoTokenBound() public {
+        RuleConditionalTransferLight freshRule = new RuleConditionalTransferLight(DEFAULT_ADMIN_ADDRESS);
+        vm.expectRevert(RuleConditionalTransferLight_TokenNotBound.selector);
         vm.prank(DEFAULT_ADMIN_ADDRESS);
-        rule.approveAndTransferIfAllowed(ZERO_ADDRESS, ADDRESS1, ADDRESS2, 10);
+        freshRule.approveAndTransferIfAllowed(ADDRESS1, ADDRESS2, 10);
     }
 
     function testApproveAndTransferIfAllowedRevertsOnInsufficientAllowance() public {
@@ -48,15 +50,20 @@ contract RuleConditionalTransferLightApproveAndTransfer is Test, HelperContract 
             )
         );
         vm.prank(DEFAULT_ADMIN_ADDRESS);
-        rule.approveAndTransferIfAllowed(address(token), ADDRESS1, ADDRESS2, 10);
+        rule.approveAndTransferIfAllowed(ADDRESS1, ADDRESS2, 10);
     }
 
     function testApproveAndTransferIfAllowedRevertsOnTransferFailure() public {
         MockERC20TransferFromFalse failingToken = new MockERC20TransferFromFalse();
         failingToken.setAllowance(ADDRESS1, address(rule), 10);
 
-        vm.expectRevert(RuleConditionalTransferLight_TransferFailed.selector);
+        vm.startPrank(DEFAULT_ADMIN_ADDRESS);
+        rule.unbindToken(address(token));
+        rule.bindToken(address(failingToken));
+        vm.stopPrank();
+
+        vm.expectRevert(abi.encodeWithSelector(SafeERC20.SafeERC20FailedOperation.selector, address(failingToken)));
         vm.prank(DEFAULT_ADMIN_ADDRESS);
-        rule.approveAndTransferIfAllowed(address(failingToken), ADDRESS1, ADDRESS2, 10);
+        rule.approveAndTransferIfAllowed(ADDRESS1, ADDRESS2, 10);
     }
 }
