@@ -800,7 +800,7 @@ forge coverage --report lcov
 forge coverage --no-match-coverage "(script|mocks|test)" --report lcov && genhtml lcov.info --branch-coverage --prefix "$PWD/" --output-dir coverage
 ```
 
-See [Solidity Coverage in VS Code with Foundry](https://mirror.xyz/devanon.eth/RrDvKPnlD-pmpuW7hQeR5wWdVjklrpOgPCOA-PJkWFU) & [Foundry forge coverage](
+See [Solidity Coverage in VS Code with Foundry](https://mirror.xyz/devanon.eth/RrDvKPnlD-pmpuW7hQeR5wWdVjklrpOgPCOA-PJkWFU) & [Foundry forge coverage](https://www.rareskills.io/post/foundry-forge-coverage)
 
 ### Other
 
@@ -1681,27 +1681,29 @@ Returns the number of approvals for the transfer hash.
 
 ### Automated Analysis
 
-#### Aderyn (v0.2.0)
+Latest tool outputs for this release cycle (including feedback documents) are available in [`doc/security/audits/tools/v0.3.0/`](./doc/security/audits/tools/v0.3.0/).
+`v0.3.0` cleanup: removed unused `RuleConditionalTransferLight_TransferFailed` custom error after SafeERC20 migration.
 
-Static analysis was performed with [Aderyn](https://github.com/Cyfrin/aderyn). The full report and the project team's feedback are available in [`doc/security/audits/tools/v0.2.0/`](./doc/security/audits/tools/v0.2.0/).
+#### Aderyn (v0.3.0)
+
+Static analysis was performed with [Aderyn](https://github.com/Cyfrin/aderyn). The full report and the project team's feedback are available in [`doc/security/audits/tools/v0.3.0/`](./doc/security/audits/tools/v0.3.0/).
 
 | ID | Title | Instances | Verdict |
 |---|---|---|---|
-| L-1 | Centralization Risk | 41 | Acknowledged — by design (regulated token issuer model) |
-| L-2 | Unsafe ERC20 Operation | 1 | Acknowledged — return value already checked with `require` |
-| L-3 | Unspecific Solidity Pragma | 48 | Acknowledged — intentional for a library |
-| L-4 | Address State Variable Set Without Checks | 1 | False positive — check enforced in public-facing function |
-| L-5 | PUSH0 Opcode | 48 | Acknowledged — project targets Prague EVM |
-| L-6 | Modifier Invoked Only Once | 2 | Acknowledged — template method pattern; inlining would break abstraction |
-| L-7 | Empty Block | 34 | Acknowledged — `_authorize*()` hooks use modifier; `created()`/`destroyed()` are intentional no-ops |
-| L-8 | Costly Operations Inside Loop | 6 | Acknowledged — unavoidable (`EnumerableSet` requires one `SSTORE` per element) |
-| L-9 | Unchecked Return | 13 | False positive — all instances are `void` calls, checked in caller, or intentionally ignored |
+| L-1 | Centralization Risk | 46 | Acknowledged — by design (regulated token issuer model) |
+| L-2 | Unspecific Solidity Pragma | 54 | Acknowledged — intentional for a library |
+| L-3 | Address State Variable Set Without Checks | 1 | False positive — check enforced in public-facing function |
+| L-4 | PUSH0 Opcode | 54 | Acknowledged — project targets Prague EVM |
+| L-5 | Modifier Invoked Only Once | 2 | Acknowledged — template method pattern; inlining would break abstraction |
+| L-6 | Empty Block | 38 | Acknowledged — `_authorize*()` hooks use modifiers; intentional no-op implementations in required interface paths |
+| L-7 | Costly operations inside loop | 6 | Acknowledged — unavoidable (`EnumerableSet` requires one `SSTORE` per element) |
+| L-8 | Unchecked Return | 13 | Mixed — mostly false positives (`void` helpers or pre-checked single-item paths); constructor `_grantRole` intentionally ignored |
 
 No high-severity issues were reported.
 
-#### Slither (v0.2.0)
+#### Slither (v0.3.0)
 
-Static analysis was performed with [Slither](https://github.com/crytic/slither). The full report and the project team's feedback are available in [`doc/security/audits/tools/v0.2.0/`](./doc/security/audits/tools/v0.2.0/).
+Static analysis was performed with [Slither](https://github.com/crytic/slither). The full report and the project team's feedback are available in [`doc/security/audits/tools/v0.3.0/`](./doc/security/audits/tools/v0.3.0/).
 
 | Category | Severity | Instances | Verdict |
 |---|---|---|---|
@@ -1709,10 +1711,9 @@ Static analysis was performed with [Slither](https://github.com/crytic/slither).
 | unused-return | Medium | 6 | False positive — existence pre-checked at public layer before calling internal helper |
 | calls-loop | Low | 16 | Acknowledged — by design; wrapper must query each child rule; child rules are read-only |
 | assembly | Informational | 1 | Acknowledged — intentional gas optimisation in `_transferHash`; minimal and well-scoped |
-| missing-inheritance | Informational | 1 | Acknowledged — `TotalSupplyMock` is a test-only mock; strict interface declaration unnecessary |
 | naming-convention | Informational | 2 | Acknowledged — parameter names match ERC-2980 spec |
 | unindexed-event-address | Informational | 2 | Out of scope (both in `lib/RuleEngine`); `IAddressList` events previously fixed |
-| unused-state | Informational | 60 | False positive — `RuleNFTAdapter` constants used in base dispatch logic; Slither per-contract analysis limitation |
+| unused-state | Informational | 8 | False positive — `RuleNFTAdapter` constants used in base dispatch logic; Slither per-contract analysis limitation |
 
 #### Wake Arena (v0.2.0)
 

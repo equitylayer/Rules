@@ -5,7 +5,7 @@
 
 |  File Name  |  SHA-1 Hash  |
 |-------------|--------------|
-| ./modules/AccessControlModuleStandalone.sol | 7fe229319e09b3003bee1b06a28b28ee15babe4b |
+| ./modules/AccessControlModuleStandalone.sol | 1c7c0ffeb2ce2999fb14155cf49b1bb2339cc335 |
 
 
 ### Contracts Description Table

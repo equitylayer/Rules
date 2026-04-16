@@ -61,6 +61,7 @@ Custom changelog tag: `Dependencies`, `Documentation`, `Testing`
 - `RuleConditionalTransferLightOwnable2Step` now inherits `ERC3643ComplianceModule` via the base (consistent with the AccessControl variant); `_authorizeTransferExecution` consolidated into the base and checks `isTokenBound(_msgSender())`.
 - `approveAndTransferIfAllowed` no longer takes a `token` parameter — bound token is retrieved directly via `getTokenBound()`.
 - `RuleConditionalTransferLightBase.approveAndTransferIfAllowed` now uses OpenZeppelin `SafeERC20.safeTransferFrom` to handle non-standard ERC-20 return behavior safely.
+- Removed unused custom error `RuleConditionalTransferLight_TransferFailed` from `RuleConditionalTransferLightInvariantStorage`.
 - Custom error `RuleConditionalTransferLight_TokenAddressZeroNotAllowed` renamed to `RuleConditionalTransferLight_TokenNotBound` for clarity.
 - `RuleERC2980` and `RuleERC2980Ownable2Step` constructors now include `allowBurn` and whitelist `address(0)` at deployment when enabled.
 - `RuleWhitelist` and `RuleWhitelistOwnable2Step` constructors now include `allowMintBurn`; when enabled, `address(0)` is pre-listed at deployment.
@@ -92,6 +93,7 @@ Custom changelog tag: `Dependencies`, `Documentation`, `Testing`
 - Added `RuleWhitelist` constructor tests covering `allowMintBurn=true` zero-address pre-listing.
 - Added a Hardhat smoke test (`test/hardhat/smoke.test.js`) and npm scripts for Hardhat compile/smoke execution.
 - Updated `RuleConditionalTransferLightApproveAndTransfer` transfer-failure test to assert OpenZeppelin `SafeERC20` revert semantics.
+- Removed now-unused `RuleConditionalTransferLight_TransferFailed` declaration; no behavior change.
 
 ## v0.2.0 - 2026-03-10
 

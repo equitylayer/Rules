@@ -24,7 +24,6 @@ abstract contract RuleConditionalTransferLightInvariantStorage is RuleSharedInva
     error RuleConditionalTransferLight_InsufficientAllowance(
         address token, address owner, uint256 allowance, uint256 required
     );
-    error RuleConditionalTransferLight_TransferFailed();
     error TransferNotApproved();
     error TransferApprovalNotFound();
 }

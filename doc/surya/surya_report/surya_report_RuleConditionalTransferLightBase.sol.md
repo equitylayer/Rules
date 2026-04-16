@@ -5,7 +5,7 @@
 
 |  File Name  |  SHA-1 Hash  |
 |-------------|--------------|
-| ./rules/operation/abstract/RuleConditionalTransferLightBase.sol | e7ae736312060dc7f23e687e6061cddbd5a9cdc6 |
+| ./rules/operation/abstract/RuleConditionalTransferLightBase.sol | 32e9a0425e0706764501785c3a4220b65ddeaec7 |
 
 
 ### Contracts Description Table

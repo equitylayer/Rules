@@ -5,7 +5,7 @@
 
 |  File Name  |  SHA-1 Hash  |
 |-------------|--------------|
-| ./rules/validation/deployment/RuleERC2980Ownable2Step.sol | 2d414134b0a91a14312ebbe19453c9795107db93 |
+| ./rules/validation/deployment/RuleERC2980Ownable2Step.sol | 65d1a4469f2d80fda332499a277f75cfd96f07b3 |
 
 
 ### Contracts Description Table
