@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2026-04-15 15:25:09</td>
+            <td class="headerValue">2026-04-15 16:47:59</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntry">3</td>
@@ -72,8 +72,8 @@
 <a name="1"><span class="lineNum">       1 </span>                :            : // SPDX-License-Identifier: MPL-2.0</a>
 <a name="2"><span class="lineNum">       2 </span>                :            : pragma solidity ^0.8.20;</a>
 <a name="3"><span class="lineNum">       3 </span>                :            : </a>
-<a name="4"><span class="lineNum">       4 </span>                :            : import {AccessControlEnumerable} from &quot;OZ/access/extensions/AccessControlEnumerable.sol&quot;;</a>
-<a name="5"><span class="lineNum">       5 </span>                :            : import {IERC165} from &quot;OZ/utils/introspection/IERC165.sol&quot;;</a>
+<a name="4"><span class="lineNum">       4 </span>                :            : import {AccessControlEnumerable} from &quot;@openzeppelin/contracts/access/extensions/AccessControlEnumerable.sol&quot;;</a>
+<a name="5"><span class="lineNum">       5 </span>                :            : import {IERC165} from &quot;@openzeppelin/contracts/utils/introspection/IERC165.sol&quot;;</a>
 <a name="6"><span class="lineNum">       6 </span>                :            : import {IRule} from &quot;RuleEngine/interfaces/IRule.sol&quot;;</a>
 <a name="7"><span class="lineNum">       7 </span>                :            : import {RuleInterfaceId} from &quot;RuleEngine/modules/library/RuleInterfaceId.sol&quot;;</a>
 <a name="8"><span class="lineNum">       8 </span>                :            : import {ERC1404ExtendInterfaceId} from &quot;CMTAT/library/ERC1404ExtendInterfaceId.sol&quot;;</a>
@@ -121,7 +121,7 @@
 <a name="50"><span class="lineNum">      50 </span>                :            :                             ACCESS CONTROL</a>
 <a name="51"><span class="lineNum">      51 </span>                :            :     //////////////////////////////////////////////////////////////*/</a>
 <a name="52"><span class="lineNum">      52 </span>                :            : </a>
-<a name="53"><span class="lineNum">      53 </span>                :<span class="lineCov">       1862 :     function _authorizeTransferApproval() internal view virtual override onlyRole(OPERATOR_ROLE) {}</span></a>
+<a name="53"><span class="lineNum">      53 </span>                :<span class="lineCov">       1772 :     function _authorizeTransferApproval() internal view virtual override onlyRole(OPERATOR_ROLE) {}</span></a>
 <a name="54"><span class="lineNum">      54 </span>                :            : </a>
 <a name="55"><span class="lineNum">      55 </span>                :<span class="lineCov">         25 :     function _onlyComplianceManager() internal virtual override onlyRole(COMPLIANCE_MANAGER_ROLE) {}</span></a>
 <a name="56"><span class="lineNum">      56 </span>                :            : }</a>
